@@ -4,9 +4,10 @@ services:
       context: ./client
       dockerfile: Dockerfile
     volumes:
-      - ./client:/app 
+      - ./client:/app
     ports:
-      - "5173:5173"  
+      - "5173:5173"
+    container_name: keylab_client
 
   server:
     build:
@@ -15,6 +16,20 @@ services:
     volumes:
       - ./server:/app
     ports:
-      - "8080:8080"  
+      - "8080:8080"
     depends_on:
       - client
+    container_name: keylab_server
+
+  db:
+    image: mariadb:latest
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db_data:/var/lib/mysql
+    container_name: keylab_db
