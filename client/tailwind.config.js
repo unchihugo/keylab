@@ -7,12 +7,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#fde4aa',
-        primaryDark: '#ffd063',
-        primaryDarker: '#f1bc41',
-        secondary: '#aac3fd',
-        secondaryDark: '#6392ff',
-        secondaryDarker: '#4176f1'
+        primary: {
+          DEFAULT: '#fde4aa',
+          dark: '#ffd063',
+          darker: '#f1bc41',
+        },
+        
+        secondary: {
+          DEFAULT: '#aac3fd',
+          dark: '#6392ff',
+          darker: '#4176f1',
+        },
       },
       dropShadow: {
         'cartoon': '4px 4px 0px rgba(0, 0, 0, 1)',

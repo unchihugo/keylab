@@ -27,7 +27,7 @@ const NavBar: React.FC = () => {
                 ) : (
                     <div className='w-1/3 flex justify-end'>
                         <LinkButton to="/sign-in" text="Sign in" textClassNames="px-6" />
-                        <LinkButton to="/register" text="Register" textClassNames="px-6" buttonClassNames='bg-secondaryDarker ms-2' />
+                        <LinkButton to="/register" text="Register" textClassNames="px-6" buttonClassNames='bg-secondary-darker ms-2' />
                         {/* TODO: add button for: cart */}
                     </div>
                 )}
