@@ -1,6 +1,6 @@
 ## keylab;
 
-Keylab is an open-source keyboard e-commerce platform built using Laravel, MariaDB, HTML, CSS and JavaScript. This project was built by a group of 9 students as part of the Aston University Computer Science Team Project. 
+Keylab is an open-source keyboard e-commerce platform built using Tailwind, ReactJS and Go. This project was built by a group of 9 students as part of the Aston University Computer Science Team Project. 
 
 ## Table of Contents
 
