@@ -20,6 +20,8 @@ services:
     depends_on:
       - client
     container_name: keylab_server
+    env_file:
+      - .env
 
   db:
     image: mariadb:latest

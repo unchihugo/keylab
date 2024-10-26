@@ -1,13 +1,11 @@
 package routes
 
 import (
-	"net/http"
+	"keylab/handlers"
 
 	"github.com/labstack/echo/v4"
 )
 
 func RegisterRoutes(e *echo.Echo) {
-	e.GET("/", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, "Hello, World!")
-	})
+	e.GET("/", handlers.ExampleHandler)
 }
