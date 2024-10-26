@@ -1,4 +1,4 @@
-CREATE TABLE products_categories (
+CREATE TABLE product_categories (
   
   category_id BIGINT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255) NOT NULL,

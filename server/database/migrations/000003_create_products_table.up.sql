@@ -9,6 +9,6 @@ CREATE TABLE products (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_category
-        FOREIGN KEY (category_id) REFERENCES product_categories(category_id)
+      FOREIGN KEY (category_id) REFERENCES product_categories(category_id)
         
 );
