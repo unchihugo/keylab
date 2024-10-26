@@ -9,8 +9,6 @@
 /Gopkg.lock
 *.out
 *.cover
-go.sum
-go.mod
 *.idea/
 *.vscode/
 *.sublime-workspace
