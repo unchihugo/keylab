@@ -1,6 +1,7 @@
 import React from "react";
 import Divider from "../components/Divider";
 import LinkButton from "../components/LinkButton";
+import { House } from "lucide-react";
 
 const NotFound: React.FC = () => {
   return (
@@ -9,7 +10,7 @@ const NotFound: React.FC = () => {
       <div className="text-4xl font-display">404 - Page not found</div>
       <Divider />
       <div className="text-lg font-body">We couldn’t find the page you were looking for :(</div>
-      <LinkButton to="/" text="Go back home" buttonClassNames="mt-3 px-6" />
+      <LinkButton to="/" text="Go back home" buttonClassNames="mt-3 px-6" Icon={House}/>
       </div>
     </div>
   );
