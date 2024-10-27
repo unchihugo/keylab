@@ -1,5 +1,5 @@
 CREATE TABLE products (
-    product_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
@@ -8,7 +8,6 @@ CREATE TABLE products (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    CONSTRAINT fk_category
-      FOREIGN KEY (category_id) REFERENCES product_categories(category_id)
+      FOREIGN KEY (category_id) REFERENCES product_categories(id)
         
 );

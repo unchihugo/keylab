@@ -1,0 +1,11 @@
+CREATE TABLE product_images (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    product_id BIGINT,
+    image VARCHAR(255) NOT NULL,
+    primary_image boolean NOT NULL DEFAULT FALSE, 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+      FOREIGN KEY (product_id) REFERENCES products(id)
+
+);
