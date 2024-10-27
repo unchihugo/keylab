@@ -7,6 +7,5 @@ CREATE TABLE ordered_items(
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    FOREIGN KEY(product_id) REFERENCES products(id),
     FOREIGN KEY(order_id) REFERENCES orders(id)    
 );
