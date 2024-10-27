@@ -1,0 +1,11 @@
+CREATE TABLE cart_items(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    product_id BIGINT,
+    user_id BIGINT,
+    quantity INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+        FOREIGN KEY(user_id) REFERENCES users(id)
+
+);
