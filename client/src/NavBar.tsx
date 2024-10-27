@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import LinkButton from './components/LinkButton';
 import keylabIcon from './assets/keylab-icon.svg';
 import { ShoppingCart, UserRound, Heart } from 'lucide-react';
-// TODO: import auth state
+import { useAuth } from './AuthContext';
 
 const NavBar: React.FC = () => {
-    const isAuthenticated = false; // TODO: replace with auth state
+    const { isAuthenticated } = useAuth(); // gets auth state from AuthContext
 
     return (
         // TODO: add a mobile menu
