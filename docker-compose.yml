@@ -21,7 +21,7 @@ services:
       - client
     container_name: keylab_server
     env_file:
-      - .env
+      - ./server/.env
 
   db:
     image: mariadb:latest
