@@ -5,9 +5,21 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./client:/app
+    restart: always
     ports:
       - "5173:5173"
     container_name: keylab_client
+
+  db:
+    image: mariadb:latest
+    env_file:
+      - ./server/.env
+    ports:
+      - "3306:3306"
+    restart: always
+    volumes:
+      - ./db_data:/var/lib/mysql
+    container_name: keylab_db
 
   server:
     build:
@@ -18,17 +30,9 @@ services:
     ports:
       - "8080:8080"
     depends_on:
+      - db
       - client
     container_name: keylab_server
+    restart: always
     env_file:
       - ./server/.env
-
-  db:
-    image: mariadb:latest
-    env_file:
-      - ./server/.env
-    ports:
-      - "3306:3306"
-    volumes:
-      - ./db_data:/var/lib/mysql
-    container_name: keylab_db
