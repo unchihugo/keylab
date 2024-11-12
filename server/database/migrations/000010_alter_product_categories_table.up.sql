@@ -1,0 +1,2 @@
+ALTER TABLE product_categories
+ADD COLUMN slug VARCHAR(255) NOT NULL UNIQUE AFTER name;
