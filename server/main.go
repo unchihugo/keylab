@@ -27,7 +27,7 @@ func main() {
 	hashKey := []byte(os.Getenv("HASH_KEY"))
 
 	if len(sessionKey) < 32 || len(hashKey) < 32 {
-		e.Logger.Fatal("SESSIONS_SECRET and HASH_KEY are empty or need to be at least 32 characters.")
+		e.Logger.Fatal("SESSIONS_KEY and HASH_KEY are empty or need to be at least 32 characters.")
 	}
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{

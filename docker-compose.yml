@@ -19,6 +19,7 @@ services:
       - "8080:8080"
     depends_on:
       - client
+      - db
     container_name: keylab_server
     env_file:
       - ./server/.env
