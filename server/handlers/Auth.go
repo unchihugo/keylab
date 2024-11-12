@@ -64,9 +64,11 @@ func Register(c echo.Context) error {
 	}
 
 	exists, err := repositories.FindUserByEmail(user.Email)
+
 	if err != nil {
 		return jsonResponse(c, http.StatusInternalServerError, "Error checking existing user")
 	}
+
 	if exists != nil {
 		return jsonResponse(c, http.StatusBadRequest, "Email already exists")
 	}
