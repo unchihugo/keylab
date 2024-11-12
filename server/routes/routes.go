@@ -16,8 +16,8 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	authGroup.GET("/logout", handlers.Logout(sessionStore))
 
 	// Protected related routes (example only but following the same pattern)
-	productedRoutes := e.Group("/protected", middleware.AuthMiddleware(sessionStore))
-	productedRoutes.GET("/", handlers.Protected)
+	protectedRoutes := e.Group("/protected", middleware.AuthMiddleware(sessionStore))
+	protectedRoutes.GET("/", handlers.Protected)
 
 	// Category related routes
 	categoryGroup := e.Group("/categories")
