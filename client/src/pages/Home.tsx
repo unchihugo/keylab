@@ -7,7 +7,7 @@ export default function Home() {
 />
 
         {/* Hero Section */}
-        <section className="bg-yellow-200 py-28 px-8 text-left mt-20">
+        <section className="bg-primary py-28 px-8 text-left mt-20">
           <div className="max-w-4xl mx-auto flex items-center">
             {/* Left Text Section */}
             <div className="flex flex-col space-y-4 w-full">
