@@ -5,7 +5,7 @@ import InputBox from "../components/InputBox";
 
 export default function Cart() {
 
-  {/* Example basket before getting products from database */}
+  {/* example basket before getting products from database */}
 
   const [itemsInBasket, setItemsinBasket] = useState([
     { product: 1, name: "Keyboard", quantity: 2, price: 35 },
@@ -13,23 +13,42 @@ export default function Cart() {
     { product: 3, name: "Key-cap", quantity: 3, price: 5 },
   ]);
 
-  const [quanitity, setQuantity] = useState(1);
-
-  const getProducts = () => itemsInBasket;
-
-  const totalPrice = getProducts().reduce((accumulator, product) => accumulator + (product.price * product.quantity), 0).toFixed(2);
+  // the function that displays the total amount in the order summary section
+  const totalPrice = itemsInBasket.reduce((accumulator, product) => accumulator + (product.price * product.quantity), 0).toFixed(2);
   
-  // allows users to decrease quanitity of orders
-  const handleDelete = (product: number) => {
-    const newItem = itemsInBasket.filter((item) => item.product !== product);
-    setItemsinBasket(newItem);
+  // a function that lets users decrease quantity 
+  const handleDelete = (item: { product: any; name?: string; quantity?: number; price?: number }) => {
+    const isItemInCart = itemsInBasket.find((basketItem) => basketItem.product === basketItem.product);
+    if(isItemInCart)
+      if (isItemInCart.quantity === 1) {
+        setItemsinBasket(itemsInBasket.filter((basketItem) => basketItem.product !== basketItem.product)); 
+    }   else {
+        setItemsinBasket(
+          itemsInBasket.map((basketItem) =>
+            basketItem.product === item.product
+            ? { ...basketItem, quantity: basketItem.quantity - 1 } 
+            : basketItem
+        )
+      );
+    }
   };
   
- 
-  //ToDo: Create function to handle increasing quantity of items in basket
-
+  // a function that lets users add quantity 
+  const handleAdd = (item: { product: any; name?: string; quantity?: number; price?: number; }) => {
+    const isItemInBasket = itemsInBasket.find((basketItem) => basketItem.product === item.product); 
+  
+    if (isItemInBasket) {
+    setItemsinBasket(
+        itemsInBasket.map((basketItem) => 
+        basketItem.product === item.product
+            ? { ...basketItem, quantity: basketItem.quantity + 1 }
+            : basketItem 
+        )
+    );
+    } 
+  };
     
-    {/* Product section of the cart page where users can see their products and add/remove */}
+    {/* product section of the cart page where users can see their products and add/remove */}
     return (       
         <div className="flex bg-primary items-start">
           <div className="w-1/2 bg-white ml-10 mt-40 drop-shadow-cartoon rounded-lg border border-black">
@@ -45,7 +64,8 @@ export default function Cart() {
                     <Divider />
                     <li className="text-gray-400">{item.quantity}</li>
                   </ul>
-                  <button onClick = {() => handleDelete(item.product)} className="px-2 py-1 bg-red-600 rounded-lg text-white">-</button>
+                  <button onClick = {() => handleDelete(item)} className="px-2 py-1 bg-red-600 rounded-lg text-white">-</button>
+                  <button onClick = {() => handleAdd(item)} className="px-2 py-1 bg-green-600 rounded-lg text-white">+</button>
                  </div>
                 ))}
               </div>
@@ -53,7 +73,7 @@ export default function Cart() {
           </div>
 
 
-        {/* Order section of the cart page */}
+        {/* order section of the cart page */}
         <div className="flex flex-col pr-10 items-end justify-center h-screen w-1/2">
           
             <div className="px-8 py-8 pb-40 mt-20 bg-white drop-shadow-cartoon rounded-lg border border-black">
