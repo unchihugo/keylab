@@ -15,8 +15,8 @@ type Product struct {
 	Stock       int             `gorm:"type:int;not null" validate:"required,gte=0" json:"stock"`
 	CategoryID  int64           `gorm:"not null" json:"category_id"`
 	Category    ProductCategory `gorm:"foreignKey:CategoryID" json:"category"`
-	CreatedAt   time.Time       `gorm:"autoCreateTime" json:"created_at"`
-	UpdatedAt   time.Time       `gorm:"autoUpdateTime" json:"updated_at"`
+	CreatedAt   time.Time       `json:"created_at"`
+	UpdatedAt   time.Time       `json:"updated_at"`
 }
 
 func (p *Product) Validate() error {
