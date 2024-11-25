@@ -10,8 +10,12 @@ const SignIn: React.FC = () => {
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
 
+    // handle login form submission
     const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+
+        // TODO: add form validation
+
         try {
             await login(email, password);
         } catch (error) {
@@ -41,6 +45,7 @@ const SignIn: React.FC = () => {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     className="border border-gray-300 p-2 rounded-lg w-full"
+                                    placeholder="Enter your email"
                                     required
                                 />
                             </div>
@@ -51,6 +56,7 @@ const SignIn: React.FC = () => {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     className="border border-gray-300 p-2 rounded-lg mb-3 w-full"
+                                    placeholder="Enter your password"
                                     required
                                 />
                             </div>
