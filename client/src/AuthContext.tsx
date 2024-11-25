@@ -16,7 +16,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const login = async (email: string, password: string) => {
         // this is where we make a request to backend to authenticate the user (makes sure that the email and password are valid)
-        const response = await fetch("auth/login", {
+        const response = await fetch("http://localhost:8080/auth/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
