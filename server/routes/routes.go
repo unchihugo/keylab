@@ -13,7 +13,7 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	authGroup := e.Group("/auth")
 	authGroup.POST("/register", handlers.Register)
 	authGroup.POST("/login", handlers.Login(sessionStore))
-	authGroup.GET("/logout", handlers.Logout(sessionStore))
+	authGroup.POST("/logout", handlers.Logout(sessionStore))
 
 	// Protected related routes (example only but following the same pattern)
 	protectedRoutes := e.Group("/protected", middleware.AuthMiddleware(sessionStore))

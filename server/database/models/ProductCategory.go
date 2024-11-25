@@ -12,8 +12,8 @@ type ProductCategory struct {
 	Slug        string    `gorm:"type:varchar(255);not null;unique" validate:"required,max=255" json:"slug"`
 	Description string    `gorm:"type:varchar(255);not null" validate:"required,max=255" json:"description"`
 	Products    []Product `gorm:"foreignKey:CategoryID" json:"products"`
-	CreatedAt   time.Time `gorm:"autoCreateTime" json:"created_at"`
-	UpdatedAt   time.Time `gorm:"autoUpdateTime" json:"updated_at"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 func (pc *ProductCategory) Validate() error {
