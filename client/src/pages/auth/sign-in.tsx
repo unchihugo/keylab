@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import { useAuth } from "../AuthContext";
-import Divider from "../components/Divider";
-import LinkButton from "../components/LinkButton";
+import { useAuth } from "../../AuthContext";
+import Divider from "../../components/Divider";
+import LinkButton from "../../components/LinkButton";
 import { ArrowUpRight } from "lucide-react";
 import { Navigate } from "react-router-dom";
 
@@ -32,7 +32,7 @@ const SignIn: React.FC = () => {
 
     return (
         <div className="flex justify-center items-center md:h-screen bg-secondary">
-            <div className="md:grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <div className="px-4 md:grid md:grid-cols-2 gap-10 lg:gap-16 items-center max-w-screen-lg w-full">
                 <form onSubmit={handleLogin}>
                     <div className="px-8 py-8 bg-white drop-shadow-cartoon rounded-lg border border-black mb-4 md:mb-0">
                         <div className="text-2xl font-display">Sign in</div>
@@ -55,7 +55,7 @@ const SignIn: React.FC = () => {
                                     type="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="border border-gray-300 p-2 rounded-lg mb-3 w-full"
+                                    className="border border-gray-300 p-2 rounded-lg mb-4 w-full"
                                     placeholder="Enter your password"
                                     required
                                 />

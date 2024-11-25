@@ -7,7 +7,9 @@ import { AuthProvider } from './AuthContext'
 import AppLayout from './layouts/AppLayout'
 import Home from './pages/Home'
 import NotFound from './pages/NotFound'
-import SignIn from './pages/sign-in'
+import SignIn from './pages/auth/sign-in'
+import Register from './pages/auth/register'
+
 import ProtectedRoute from './components/ProtectedRoute'
 
 const router = createBrowserRouter([
@@ -19,6 +21,7 @@ const router = createBrowserRouter([
       { path: "/example", element: <div>Example</div> },
       { path: "/protected", element: <ProtectedRoute> <div>Protected</div> </ProtectedRoute> },
       { path: "/sign-in", element: <SignIn /> },
+      { path: "/register", element: <Register /> },
       { path: "*", element: <NotFound /> },
     ]
   }
