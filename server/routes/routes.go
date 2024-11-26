@@ -24,7 +24,7 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	categoryGroup.GET("", handlers.GetCategories)
 	categoryGroup.GET("/:slug", handlers.GetCategoryBySlug)
 
-	// Protected category routes - To be moved under Admin middleware in the future
+	// TODO: Add admin middleware to the following routes
 	categoryGroup.POST("", handlers.CreateCategory)
 	categoryGroup.DELETE("/:slug", handlers.DeleteCategory)
 	categoryGroup.PUT("/:slug", handlers.UpdateCategory)
@@ -36,7 +36,7 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	productGroup.GET("/category/:category", handlers.GetProductsByCategory)
 	productGroup.GET("/search/:query", handlers.SearchProducts)
 
-	// Protected product routes - To be moved under Admin middleware in the future
+	// TODO: Add admin middleware to the following routes
 	productGroup.POST("", handlers.CreateProduct)
 	productGroup.DELETE("/:slug", handlers.DeleteProduct)
 	productGroup.PUT("/:slug", handlers.UpdateProduct)
