@@ -20,7 +20,7 @@ const InputBox: React.FC<InputBoxProps> = ({placeholder = "Enter here", onChange
         />
         <button className="px-4 py-2 ml-5 bg-sky-400 text-white rounded-lg">Apply</button>
     </div>
-  );
+  ); 
 }
 
 export default InputBox;
