@@ -1,73 +1,168 @@
 package handlers
 
-import "github.com/labstack/echo/v4"
+import (
+	"errors"
+	db "keylab/database"
+	"keylab/database/models"
+	"log"
+	"net/http"
 
-/*
+	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
+)
 
-	TODO: Comment the GetProductCategories function - Fetch all product categories from the database
-
-*/
+// Get Categories Handler [GET /categories]
+// 1. Fetches all product categories from the database.
+// 2. Returns status 200 if successful.
+// 3. Returns status 404 if no categories are found.
+// 4. Returns status 500 if an error occurs.
+// 5. Returns the product categories as JSON.
 
 func GetCategories(c echo.Context) error {
-	// TODO: Fetch all product categories from the database
-	// TODO: Return the product categories as JSON
+	var categories []models.ProductCategory
 
-	return c.JSON(200, "GetProductCategories")
+	if err := db.DB.Find(&categories).Error; err != nil {
+		log.Printf("Error fetching categories: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error fetching categories")
+	}
+
+	if len(categories) == 0 {
+		return jsonResponse(c, http.StatusNotFound, "No categories found", categories)
+	}
+
+	return jsonResponse(c, http.StatusOK, "Categories found", categories)
 }
 
-/*
-
-	TODO: Comment the GetProductCategoryBySlug function - Fetch a product category by slug from the database
-
-*/
+// Get Category By Slug Handler [GET /categories/:slug]
+// 1. Fetches a product category by slug from the database.
+// 2. Returns status 200 if successful.
+// 3. Returns status 404 if no category is found.
+// 4. Returns status 500 if an error occurs.
+// 5. Returns the product category as JSON.
 
 func GetCategoryBySlug(c echo.Context) error {
-	// TODO: Parse category slug from URL
-	// TODO: Fetch the product category by slug from the database
-	// TODO: Return the product category as JSON
+	var category models.ProductCategory
 
-	return c.JSON(200, "GetProductCategoryBySlug")
+	slug := c.Param("slug")
+	if err := category.Validate(slug); err != nil {
+		return jsonResponse(c, http.StatusBadRequest, "Invalid category slug")
+	}
+
+	if err := db.DB.Where("slug = ?", slug).First(&category).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return jsonResponse(c, http.StatusNotFound, "Category not found")
+		}
+
+		log.Printf("Error fetching category by slug: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error fetching category by slug")
+	}
+
+	return jsonResponse(c, http.StatusOK, "Category found", category)
 }
 
-/*
-
-	TODO: Comment the CreateProductCategory function - Create a new product category
-
-*/
+// Create Category Handler [POST /categories]
+// 1. Parses the product category from the request body.
+// 2. Validates the product category.
+// 3. Checks if a category with the same slug exists.
+// 4. Creates the product category in the database.
+// 5. Returns status 201 if successful.
+// 6. Returns status 400 if invalid input.
+// 7. Returns status 500 if an error occurs.
 
 func CreateCategory(c echo.Context) error {
-	// TODO: Parse product category from request body
-	// TOOD: Create a new product category model and save it to the database
-	// TODO: Return the created product category as JSON
+	var category models.ProductCategory
 
-	return c.JSON(200, "CreateProductCategory")
+	if err := c.Bind(&category); err != nil {
+		return jsonResponse(c, http.StatusBadRequest, "Invalid input creating product category")
+	}
+
+	if err := category.Validate(); err != nil {
+		return jsonResponse(c, http.StatusBadRequest, err.Error())
+	}
+
+	if err := db.DB.Where("slug = ?", category.Slug).First(&category).Error; err == nil {
+		return jsonResponse(c, http.StatusBadRequest, "Category already exists with the same slug")
+	}
+
+	if err := db.DB.Create(&category).Error; err != nil {
+		log.Printf("Error creating product category: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error creating product category")
+	}
+
+	return jsonResponse(c, http.StatusCreated, "Product category created", category)
 }
 
-/*
-
-	TODO: Comment the DeleteProductCategory function - Delete a product category
-
-*/
+// Delete Category Handler [DELETE /categories/:slug]
+// 1. Fetches a product category by slug from the database.
+// 2. Deletes the product category from the database.
+// 3. Returns status 200 if successful.
+// 4. Returns status 404 if no category is found.
+// 5. Returns status 500 if an error occurs.
 
 func DeleteCategory(c echo.Context) error {
-	// TODO: Parse category slug from URL
-	// TODO: Delete the product category by slug from the database
-	// TODO: Return a success message
+	var category models.ProductCategory
 
-	return c.JSON(200, "DeleteProductCategory")
+	slug := c.Param("slug")
+	if err := category.Validate(slug); err != nil {
+		return jsonResponse(c, http.StatusBadRequest, "Invalid category slug")
+	}
+
+	if err := db.DB.Where("slug = ?", slug).First(&category).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return jsonResponse(c, http.StatusNotFound, "Category not found")
+		}
+
+		log.Printf("Error fetching category by slug: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error fetching category by slug")
+	}
+
+	if err := db.DB.Delete(&category).Error; err != nil {
+		log.Printf("Error deleting product category: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error deleting product category")
+	}
+
+	return jsonResponse(c, http.StatusOK, "Product category deleted", category)
 }
 
-/*
-
-	TODO: Comment the UpdateProductCategory function - Update a product category
-
-*/
+// Update Category Handler [PUT /categories/:slug]
+// 1. Fetches a product category by slug from the database.
+// 2. Parses the product category from the request body.
+// 3. Validates the product category.
+// 4. Updates the product category in the database.
+// 5. Returns status 200 if successful.
+// 6. Returns status 400 if invalid input.
+// 7. Returns status 404 if no category is found.
+// 8. Returns status 500 if an error occurs.
 
 func UpdateCategory(c echo.Context) error {
-	// TODO: Parse category slug from URL
-	// TODO: Parse updated product category from request body
-	// TODO: Update the product category by slug in the database
-	// TODO: Return the updated product category as JSON
+	var category models.ProductCategory
 
-	return c.JSON(200, "UpdateProductCategory")
+	slug := c.Param("slug")
+	if err := category.Validate(slug); err != nil {
+		return jsonResponse(c, http.StatusBadRequest, "Invalid category slug")
+	}
+
+	if err := db.DB.Where("slug = ?", slug).First(&category).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return jsonResponse(c, http.StatusNotFound, "Category not found")
+		}
+
+		log.Printf("Error fetching category by slug: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error fetching category by slug")
+	}
+
+	if err := c.Bind(&category); err != nil {
+		return jsonResponse(c, http.StatusBadRequest, "Invalid input updating product category")
+	}
+
+	if err := category.Validate(); err != nil {
+		return jsonResponse(c, http.StatusBadRequest, err.Error())
+	}
+
+	if err := db.DB.Save(&category).Error; err != nil {
+		log.Printf("Error updating product category: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error updating product category")
+	}
+
+	return jsonResponse(c, http.StatusOK, "Product category updated", category)
 }

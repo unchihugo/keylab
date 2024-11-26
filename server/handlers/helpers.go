@@ -5,8 +5,18 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func jsonResponse(c echo.Context, httpCode int, message string) error {
-	return c.JSON(httpCode, echo.Map{"message": message})
+func jsonResponse(c echo.Context, httpCode int, message string, data ...interface{}) error {
+	response := echo.Map{
+		"message": message,
+	}
+
+	if len(data) > 0 && data[0] != nil {
+		response["data"] = data[0]
+	} else {
+		response["data"] = []string{}
+	}
+
+	return c.JSON(httpCode, response)
 }
 
 func initiateSession(session *sessions.Session, userID int64) {

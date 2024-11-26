@@ -16,7 +16,12 @@ type ProductCategory struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
-func (pc *ProductCategory) Validate() error {
+func (pc *ProductCategory) Validate(fields ...string) error {
 	validate := validator.New()
+
+	if len(fields) > 0 {
+		return validate.StructPartial(pc, fields...)
+	}
+
 	return validate.Struct(pc)
 }
