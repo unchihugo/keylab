@@ -50,6 +50,7 @@ jobs:
           VALIDATE_TSX: true
           VALIDATE_ESLINT: true
           LINTER_RULES_PATH: client
+          VALIDATE_ALL_CODEBASE: false
       - name: Commit and push linting fixes
         # Run only on:
         # - Pull requests
