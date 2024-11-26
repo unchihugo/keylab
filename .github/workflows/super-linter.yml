@@ -9,23 +9,23 @@ permissions:
   contents: read
 
 jobs:
-  lint:
-    permissions:
-      contents: read
-      packages: read
-      # To report GitHub Actions status checks
-      statuses: write
-    name: Run Linter in Check-Only Mode
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Run Super-Linter in Check Mode
-        uses: super-linter/super-linter@v7.2.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LINTER_RULES_PATH: client
+  # lint:
+  #   permissions:
+  #     contents: read
+  #     packages: read
+  #     # To report GitHub Actions status checks
+  #     statuses: write
+  #   name: Run Linter in Check-Only Mode
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+  #     - name: Run Super-Linter in Check Mode
+  #       uses: super-linter/super-linter@v7.2.0
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         LINTER_RULES_PATH: client
 
   fix-lint-issues:
     permissions:
@@ -44,6 +44,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FIX_TSX: true
           FIX_TYPESCRIPT_PRETTIER: true
+          VALIDATE_TYPESCRIPT_PRETTIER: true
           VALIDATE_TYPESCRIPT: true
           VALIDATE_JSX: true
           VALIDATE_TSX: true
