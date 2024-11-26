@@ -22,7 +22,7 @@ jobs:
   #       with:
   #         fetch-depth: 0
   #     - name: Run Super-Linter in Check Mode
-  #       uses: super-linter/super-linter@v7.2.0
+  #       uses: super-linter/super-linter/slim@v7.2.0
   #       env:
   #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   #         LINTER_RULES_PATH: client
@@ -38,8 +38,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Run Super-Linter in Fix Mode
-        uses: super-linter/super-linter@v7.2.0 # x-release-please-version
+          token: ${{ secrets.SUPER_LINTER_TOKEN }}
+      - name: Validate and fix with Super-Linter
+        uses: super-linter/super-linter/slim@v7.2.0 # x-release-please-version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FIX_TSX: true
