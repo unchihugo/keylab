@@ -1,0 +1,66 @@
+---
+name: Lint Codebase
+
+on: # yamllint disable-line rule:truthy
+  push: null
+  pull_request: null
+
+permissions:
+  contents: read
+
+jobs:
+  # lint:
+  #   permissions:
+  #     contents: read
+  #     packages: read
+  #     # To report GitHub Actions status checks
+  #     statuses: write
+  #   name: Run Linter in Check-Only Mode
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+  #     - name: Run Super-Linter in Check Mode
+  #       uses: super-linter/super-linter@v7.2.0
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         LINTER_RULES_PATH: client
+
+  fix-lint-issues:
+    permissions:
+      # To write linting fixes
+      contents: write
+      # To write Super-linter status checks
+      statuses: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Run Super-Linter in Fix Mode
+        uses: super-linter/super-linter@v7.2.0 # x-release-please-version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FIX_TSX: true
+          FIX_TYPESCRIPT_PRETTIER: true
+          VALIDATE_TYPESCRIPT_PRETTIER: true
+          VALIDATE_TYPESCRIPT: true
+          VALIDATE_JSX: true
+          VALIDATE_TSX: true
+          VALIDATE_ESLINT: true
+          LINTER_RULES_PATH: client
+          VALIDATE_ALL_CODEBASE: false
+      - name: Commit and push linting fixes
+        # Run only on:
+        # - Pull requests
+        # - Not on the default branch
+        if: >
+          github.event_name == 'pull_request' &&
+          github.ref_name != github.event.repository.default_branch
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          branch: ${{ github.event.pull_request.head.ref || github.head_ref || github.ref }}
+          commit_message: "chore: fix linting issues"
+          commit_user_name: super-linter
+          commit_user_email: super-linter@super-linter.dev
