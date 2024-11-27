@@ -6,7 +6,7 @@ export default function Home() {
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
 />
 
-        {/* Hero Section */}
+        {/* Section */}
         <section className="bg-primary py-28 px-8 text-left mt-20">
           <div className="max-w-4xl mx-auto flex items-center">
             {/* Left Text Section */}
@@ -27,52 +27,53 @@ export default function Home() {
            KEYBOARD
                 </h2>
               <div className="flex justify-start space-x-4 mt-6">
-              <button className="bg-white text-black px-6 py-2 rounded-full border-2 border-black hover:opacity-90">
+              <button 
+              onClick={() => (window.location.href = "http://localhost:5173/shop")}
+              className="bg-white text-black px-6 py-2 rounded-full border-2 border-black hover:opacity-90">
           Shop Now
             </button>
-                <button className="bg-yellow-500 text-black px-6 py-2 rounded-full hover:bg-yellow-600">
-                  Try Our Keyboard Designer
-                </button>
+            <button
+  onClick={() => (window.location.href = "http://localhost:5173/keyboard-designer")}
+  className="bg-yellow-500 text-black px-6 py-2 rounded-full border-2 border-black hover:bg-yellow-600"
+>
+  Try Our Keyboard Designer
+</button>
+
               </div>
             </div>
   
             {/* Right Image Section with Border */}
-          <div className="w-3/3 pl-1 ml-2">
+          <div className="w-2/1 pl-1 ml-2">
             <img
-              src="https://via.placeholder.com/600x400?text=Product+Image" // Replace product image URL
+              src="https://via.placeholder.com/600x400?text=Product+Image" 
               alt="Keyboard or Keycaps"
-              className="w-full h-auto rounded-lg shadow-lg border-4 border-gray-400"
+              className="w-full h-auto rounded-lg shadow-lg border-2 border-gray-400"
             />
           </div>
         </div>
       </section>
   
-      <section className="py-16 px-8 border-2 border-gray-300">
+      <section className="py-16 px-8">
   <div className="grid grid-cols-3 gap-6 max-w-5xl mx-auto">
-    {["Keycaps", "Switches", "Keyboard Bases"].map((category, index) => (
+    {[
+      { name: "Keycaps", img: "https://via.placeholder.com/600x400?text=Product+Image" },
+      { name: "Switches", img: "https://via.placeholder.com/600x400?text=Product+Image" },
+      { name: "Keyboard Bases", img: "https://via.placeholder.com/600x400?text=Product+Image" },
+    ].map(({ name, img }, index) => (
       <div
-        key={category}
-        className={`${
-          index === 0
-            ? "bg-blue-100"
-            : index === 1
-            ? "bg-blue-100"
-            : "bg-blue-100"
-        } rounded-lg p-8 flex flex-col items-center shadow-md border-2 border-gray-400`}
+        key={name}
+        className="bg-blue-200 rounded-lg p-8 flex flex-col items-center shadow-md border-2 border-gray-400" // Added border class
       >
-        {/* Image Box with Text */}
-        <div className="h-40 w-full bg-gray-200 rounded-md mb-4 flex items-center justify-center">
-          <p className="text-gray-700 font-bold">Product Image</p>
-        </div>
-        <h3 className="text-xl font-bold">{category}</h3>
+        {/* Image */}
+        <img
+          src={img} // Dynamic image URL
+          alt={name}
+          className="h-40 w-full object-cover rounded-md mb-4"
+        />
+        <h3 className="text-xl font-bold">{name}</h3>
         <button
-          className={`mt-4 ${
-            index === 0
-              ? "bg-blue-500 hover:bg-blue-600"
-              : index === 1
-              ? "bg-blue-500 hover:bg-blue-600"
-              : "bg-blue-500 hover:bg-blue-600"
-          } text-white px-4 py-2 rounded-full border-2 border-black`}
+          onClick={() => (window.location.href = "http://localhost:5173/shop")}
+          className="mt-4 bg-blue-500 hover:bg-blue-600 text-black px-4 py-2 rounded-full border-2 border-black"
         >
           Shop →
         </button>
@@ -83,17 +84,28 @@ export default function Home() {
 
 
 
+
+
+
     
-        {/* Product Images Section */}
 <section className="py-16 px-8">
   <div className="grid grid-cols-2 gap-6 max-w-5xl mx-auto">
+
     {/* First Product Image Box */}
     <div className="h-64 w-full bg-gray-200 rounded-md border-2 border-gray-400 flex items-center justify-center">
-      <p className="text-gray-700 font-bold">Product Image</p>
+      <img
+        src="https://via.placeholder.com/600x400?text=Product+Image" // Replace with image URL
+        alt="Keycaps"
+        className="w-full h-full object-cover rounded-md"
+      />
     </div>
     {/* Second Product Image Box */}
     <div className="h-64 w-full bg-gray-200 rounded-md border-2 border-gray-400 flex items-center justify-center">
-      <p className="text-gray-700 font-bold">Product Image</p>
+      <img
+        src="https://via.placeholder.com/600x400?text=Product+Image" // Replace with image URL
+        alt="Switches"
+        className="w-full h-full object-cover rounded-md"
+      />
     </div>
   </div>
 </section>
@@ -132,59 +144,59 @@ export default function Home() {
     
         {/* Footer */}
         <footer className="bg-white py-12 px-8 border-t text-sm">
-        <div className="max-w-5xl mx-auto flex justify-between">
-          <div className="space-y-2">
-            <p className="font-bold text-gray-700">keylab</p>
-            <p className="text-gray-500">Explore | Resources</p>
-          </div>
-          <div className="grid grid-cols-2 gap-8">
-            <div>
-              <h3 className="font-semibold mb-2">Explore</h3>
-              <ul className="space-y-1">
-                {[
-                  "Development Features",
-                  "Design Systems",
-                  "Collaboration",
-                ].map((item) => (
-                  <li key={item}>
-                    <a href="#" className="text-gray-500 hover:text-gray-700">
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-2">Resources</h3>
-              <ul className="space-y-1">
-                {["Blog", "Support", "Resource Library"].map((item) => (
-                  <li key={item}>
-                    <a href="#" className="text-gray-500 hover:text-gray-700">
-                      {item}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
+  <div className="max-w-5xl mx-auto flex flex-col items-center space-y-6">
+    {/* Logo Section */}
+    <div>
+      <img 
+        src="https://cdn.discordapp.com/attachments/1290735940368859211/1300104585242742875/Group_1.png?ex=67472d3f&is=6745dbbf&hm=a22a7939334b30f0703bc3356c22f8540ff32be2c3e3c60bb943244166cd91d8&" // Replace with your logo's URL
+        alt="Logo"
+        className="h-10" // Adjust height as needed
+      />
+    </div>
 
-        {/* Social Media Icons */}
-        <div className="mt-8 flex justify-start space-x-6">
-          <a href="#" className="text-gray-500 hover:text-gray-700">
-            <i className="fab fa-facebook-f text-xl"></i>
-          </a>
-          <a href="#" className="text-gray-500 hover:text-gray-700">
-            <i className="fab fa-twitter text-xl"></i>
-          </a>
-          <a href="#" className="text-gray-500 hover:text-gray-700">
-            <i className="fab fa-instagram text-xl"></i>
-          </a>
-          <a href="#" className="text-gray-500 hover:text-gray-700">
-            <i className="fab fa-linkedin-in text-xl"></i>
-          </a>
-        </div>
-      </footer>
+    {/* Navigation Links Section with Dividers */}
+    <div className="flex items-center space-x-6 text-gray-700">
+      <a 
+        href="http://localhost:5173/shop"
+        className="hover:text-gray-900 font-medium"
+      >
+        Shop
+      </a>
+      <span className="border-l border-gray-400 h-5"></span> {/* Divider */}
+      <a 
+        href="http://localhost:5173/keyboard-designer"
+        className="hover:text-gray-900 font-medium"
+      >
+        Keyboard Designer
+      </a>
+      <span className="border-l border-gray-400 h-5"></span> {/* Divider */}
+      <a 
+        href="http://localhost:5173/about" 
+        className="hover:text-gray-900 font-medium"
+      >
+        About
+      </a>
+    </div>
+
+    {/* Social Media Icons */}
+    <div className="flex justify-center space-x-6">
+      <a href="#" className="text-gray-500 hover:text-gray-700">
+        <i className="fab fa-facebook-f text-xl"></i>
+      </a>
+      <a href="#" className="text-gray-500 hover:text-gray-700">
+        <i className="fab fa-twitter text-xl"></i>
+      </a>
+      <a href="#" className="text-gray-500 hover:text-gray-700">
+        <i className="fab fa-instagram text-xl"></i>
+      </a>
+      <a href="#" className="text-gray-500 hover:text-gray-700">
+        <i className="fab fa-linkedin-in text-xl"></i>
+      </a>
+    </div>
+  </div>
+</footer>
+
+
       </div>
     
     );
