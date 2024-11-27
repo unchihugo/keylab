@@ -95,6 +95,16 @@ func Register(c echo.Context) error {
 		return jsonResponse(c, http.StatusBadRequest, "User already exists")
 	}
 
+	// Password regex validation (at least one lowercase, one uppercase, one digit)
+	matched, err := utils.ValidatePassword(user.Password)
+	if err != nil {
+		return jsonResponse(c, http.StatusInternalServerError, "Error validating password")
+	}
+
+	if !matched {
+		return jsonResponse(c, http.StatusBadRequest, "Password does not meet requirements")
+	}
+
 	// Hashes user's password
 	hashedPassword, err := utils.HashPassword(user.Password)
 	if err != nil {
