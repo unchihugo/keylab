@@ -97,12 +97,10 @@ func CreateProduct(c echo.Context) error {
         return jsonResponse(c, http.StatusBadRequest, err.Error())
     }
 
-    if err := db.DB.Where("slug = ? AND id != ?", product.Slug, product.ID).First(&models.Product{}).Error; err == nil {
+    if err := db.DB.Where("slug = ?", product.Slug).First(&product).Error; err == nil {
         return jsonResponse(c, http.StatusBadRequest, "Product already exists with the same slug")
-    } else if err != gorm.ErrRecordNotFound {
-        return jsonResponse(c, http.StatusInternalServerError, "Error checking product uniqueness")
-    }
-
+    } 
+    
     if err := db.DB.Create(&product).Error; err != nil {
         return jsonResponse(c, http.StatusInternalServerError, "Error creating product")
     }
