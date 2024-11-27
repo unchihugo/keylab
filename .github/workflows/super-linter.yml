@@ -1,0 +1,101 @@
+---
+name: Lint Code Base
+
+on: # trigger workflow on push or pull request
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions: {}
+
+jobs:
+  check-lint-issues:
+    permissions:
+      contents: read
+      packages: read
+      # To report GitHub Actions status checks
+      statuses: write
+    name: Validate linting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate linting with Super-Linter
+        uses: super-linter/super-linter/slim@v7.2.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LINTER_RULES_PATH: client
+          VALIDATE_ALL_CODEBASE: false
+
+          VALIDATE_TYPESCRIPT_PRETTIER: true
+          VALIDATE_TSX_PRETTIER: true
+          VALIDATE_CSS_PRETTIER: true
+          # VALIDATE_GO: true
+
+          SAVE_SUPER_LINTER_SUMMARY: true
+          ENABLE_GITHUB_ACTIONS_STEP_SUMMARY: true
+          SAVE_SUPER_LINTER_OUTPUT: true
+
+  # uncomment for automatic lint fixing nad committing
+  # fix-lint-issues:
+  #   # Run only when all is true:
+  #   # - Is a pull request
+  #   # - Is not on the default branch
+  #   # - Head author & committer is not "super-linter"
+  #   if: >
+  #     github.event_name == 'pull_request' &&
+  #     github.ref_name != github.event.repository.default_branch &&
+  #     !contains(github.event.head_commit.author.name, 'super-linter') &&
+  #     !contains(github.event.head_commit.committer.name, 'super-linter')
+  #   permissions:
+  #     # To write linting fixes
+  #     contents: write
+  #     # To write Super-linter status checks
+  #     statuses: write
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+  #         token: ${{ secrets.SUPER_LINTER_TOKEN }}
+  #     - name: Validate and fix with Super-Linter
+  #       uses: super-linter/super-linter/slim@v7.2.0 # x-release-please-version
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         FIX_TSX: true
+  #         FIX_TYPESCRIPT_PRETTIER: true
+  #         VALIDATE_TYPESCRIPT_PRETTIER: true
+  #         VALIDATE_TYPESCRIPT: true
+  #         VALIDATE_JSX: true
+  #         VALIDATE_TSX: true
+  #         VALIDATE_ESLINT: true
+  #         LINTER_RULES_PATH: client
+  #         VALIDATE_ALL_CODEBASE: false
+  #         SAVE_SUPER_LINTER_SUMMARY: true
+  #         ENABLE_GITHUB_ACTIONS_STEP_SUMMARY: true
+  #         SAVE_SUPER_LINTER_OUTPUT: true
+  #     - name: Commit and push linting fixes
+  #       uses: stefanzweifel/git-auto-commit-action@v5
+  #       with:
+  #         branch: ${{ github.event.pull_request.head.ref || github.head_ref || github.ref }}
+  #         commit_message: "chore: fix linting issues"
+  #         commit_user_name: super-linter
+  #         commit_user_email: super-linter@super-linter.dev
+  #     - name: Mark linter commit as successful
+  #       if: success()
+  #       uses: actions/github-script@v7
+  #       with:
+  #         github-token: ${{ secrets.GITHUB_TOKEN }}
+  #         script: |
+  #           github.rest.repos.createCommitStatus({
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             sha: context.sha,
+  #             state: 'success',
+  #             context: 'Linter',
+  #             description: 'Linting issues automatically fixed'
+  #           })
