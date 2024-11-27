@@ -29,10 +29,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           LINTER_RULES_PATH: client
+          TYPESCRIPT_PRETTIER_CONFIG_FILE: client/.prettierrc
           VALIDATE_ALL_CODEBASE: false
 
           VALIDATE_TYPESCRIPT_PRETTIER: true
-          VALIDATE_TSX_PRETTIER: true
+          VALIDATE_TSX: true
+          VALIDATE_JSX_PRETTIER: true
           VALIDATE_CSS_PRETTIER: true
           # VALIDATE_GO: true
 
