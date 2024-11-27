@@ -32,7 +32,7 @@ const LinkButton: React.FC<LinkButtonProps> = ({
 						size={20}
 						strokeWidth={1.75}
 						absoluteStrokeWidth={true}
-                        className="duration-200 group-active:translate-y-0.5"
+						className="duration-200 group-active:translate-y-0.5"
 					/>
 				) : null}
 				{text ? (
@@ -46,7 +46,7 @@ const LinkButton: React.FC<LinkButtonProps> = ({
 						size={20}
 						strokeWidth={1.75}
 						absoluteStrokeWidth={true}
-                        className="duration-200 group-active:translate-y-0.5"
+						className="duration-200 group-active:translate-y-0.5"
 					/>
 				) : null}
 			</div>

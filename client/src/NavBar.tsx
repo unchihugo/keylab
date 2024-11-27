@@ -37,11 +37,11 @@ const NavBar: React.FC = () => {
 					</Link>
 				</div>
 				<div className="flex w-1/3 justify-end items-center">
-                {/* TODO: add mobile menu implementation */}
+					{/* TODO: add mobile menu implementation */}
 					<button className="flex md:hidden">
-                        <Menu />
-                    </button>
-                    
+						<Menu />
+					</button>
+
 					<div className="hidden md:flex">
 						{isAuthenticated ? (
 							<>
