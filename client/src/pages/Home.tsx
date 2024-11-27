@@ -81,12 +81,6 @@ export default function Home() {
     ))}
   </div>
 </section>
-
-
-
-
-
-
     
 <section className="py-16 px-8">
   <div className="grid grid-cols-2 gap-6 max-w-5xl mx-auto">
