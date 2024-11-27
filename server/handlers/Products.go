@@ -7,7 +7,6 @@ import (
     "keylab/database/models"
     db "keylab/database"
     "net/http"
-    "regexp"
 	"errors"
 )
 
@@ -20,7 +19,7 @@ import (
 func ListProducts(c echo.Context) error {
     var products []models.Product
 
-    if err := db.DB.Find(&products).Error; err != nil {
+    if err := db.DB.Preload("Category").Find(&products).Error; err != nil {
         return jsonResponse(c, http.StatusInternalServerError, "Error fetching products")
     }
 
@@ -46,7 +45,7 @@ func GetProductBySlug(c echo.Context) error {
 		return jsonResponse(c, http.StatusBadRequest, "Invalid product slug")
 	}
 
-    if err := db.DB.Where("slug = ?", slug).First(&product).Error; err != nil {
+    if err := db.DB.Preload("Category").Where("slug = ?", slug).First(&product).Error; err != nil {
         if err == gorm.ErrRecordNotFound {
 			return jsonResponse(c, http.StatusNotFound, "Product not found")
         }
@@ -63,10 +62,10 @@ func GetProductBySlug(c echo.Context) error {
 // 4. Returns status 500 if an error occurs.
 
 func GetProductsByCategory(c echo.Context) error {
-    categoryID := c.Param("categoryID")
+    category := c.Param("category")
     var products []models.Product
     
-    if err := db.DB.Where("category_id = ?", categoryID).Find(&products).Error; err != nil {
+    if err := db.DB.Preload("Category").Where("category_id = ?", category).Find(&products).Error; err != nil {
         return jsonResponse(c, http.StatusInternalServerError, "Error fetching products from database")
     }
 
@@ -81,27 +80,34 @@ func GetProductsByCategory(c echo.Context) error {
 // Create Product Handler [POST /products]
 // 1. Parses the product data from the request body.
 // 2. Checks for validation errors.
-// 3. Creates the product data in the database.
-// 4. Returns status 201 if successful.
-// 5. Returns status 400 for invalid input.
-// 6. Returns status 500 if an error occurs.
+// 3. Checks if a produce with the same slug exists.
+// 4. Creates the product data in the database.
+// 5. Returns status 201 if successful.
+// 6. Returns status 400 for invalid input.
+// 7. Returns status 500 if an error occurs.
 
 func CreateProduct(c echo.Context) error {
-	var product models.Product
+    var product models.Product
 
-	if err := c.Bind(&product); err != nil {
-		return jsonResponse(c, http.StatusBadRequest, "Invalid input creating product")
-	}
+    if err := c.Bind(&product); err != nil {
+        return jsonResponse(c, http.StatusBadRequest, "Invalid input creating product")
+    }
 
-	if err := product.Validate(); err != nil {
-		return jsonResponse(c, http.StatusBadRequest, err.Error())
-	}
+    if err := product.Validate(); err != nil {
+        return jsonResponse(c, http.StatusBadRequest, err.Error())
+    }
 
-	if err := db.DB.Create(&product).Error; err != nil {
-		return jsonResponse(c, http.StatusInternalServerError, "Error creating product")
-	}
+    if err := db.DB.Where("slug = ? AND id != ?", product.Slug, product.ID).First(&models.Product{}).Error; err == nil {
+        return jsonResponse(c, http.StatusBadRequest, "Product already exists with the same slug")
+    } else if err != gorm.ErrRecordNotFound {
+        return jsonResponse(c, http.StatusInternalServerError, "Error checking product uniqueness")
+    }
 
-	return jsonResponse(c, http.StatusCreated, "Product created successfully", product)
+    if err := db.DB.Create(&product).Error; err != nil {
+        return jsonResponse(c, http.StatusInternalServerError, "Error creating product")
+    }
+
+    return jsonResponse(c, http.StatusCreated, "Product created successfully", product)
 }
 
 // Delete Product Handler [DELETE /products/:id]
@@ -147,7 +153,7 @@ func UpdateProduct(c echo.Context) error {
 	}
 
     if err := c.Bind(&product); err != nil {
-        return c.JSON(http.StatusBadRequest, "Invalid input updating product")
+        return jsonResponse(c, http.StatusBadRequest, "Invalid input updating product")
     }
 
 	if err := product.Validate(); err != nil {
@@ -170,7 +176,7 @@ func SearchProducts(c echo.Context) error {
     query := c.QueryParam("query") 
     var products []models.Product
 
-    if err := db.DB.Where("name LIKE ? OR description LIKE ?", "%"+query+"%", "%"+query+"%").Find(&products).Error; err != nil {
+    if err := db.DB.Preload("Category").Where("name LIKE ? OR description LIKE ?", "%"+query+"%", "%"+query+"%").Find(&products).Error; err != nil {
         return jsonResponse(c, http.StatusInternalServerError, "Error searching for products")
 	}
     

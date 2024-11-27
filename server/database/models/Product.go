@@ -19,7 +19,12 @@ type Product struct {
 	UpdatedAt   time.Time       `json:"updated_at"`
 }
 
-func (p *Product) Validate() error {
-	validate := validator.New()
-	return validate.Struct(p)
+func (p *Product) Validate(fields ...string) error {
+    validate := validator.New()
+
+    if len(fields) > 0 {
+        return validate.StructPartial(p, fields...)
+    }
+
+    return validate.Struct(p)
 }
