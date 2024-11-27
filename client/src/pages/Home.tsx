@@ -62,11 +62,11 @@ export default function Home() {
     ].map(({ name, img }, index) => (
       <div
         key={name}
-        className="bg-blue-200 rounded-lg p-8 flex flex-col items-center shadow-md border-2 border-gray-400" // Added border class
+        className="bg-blue-200 rounded-lg p-8 flex flex-col items-center shadow-md border-2 border-gray-400" 
       >
         {/* Image */}
         <img
-          src={img} // Dynamic image URL
+          src={img} 
           alt={name}
           className="h-40 w-full object-cover rounded-md mb-4"
         />
@@ -150,7 +150,7 @@ export default function Home() {
       <img 
         src="https://cdn.discordapp.com/attachments/1290735940368859211/1300104585242742875/Group_1.png?ex=67472d3f&is=6745dbbf&hm=a22a7939334b30f0703bc3356c22f8540ff32be2c3e3c60bb943244166cd91d8&" // Replace with your logo's URL
         alt="Logo"
-        className="h-10" // Adjust height as needed
+        className="h-10" 
       />
     </div>
 
