@@ -55,22 +55,23 @@ export const validatePassword = (password: string) => {
  * - Is not longer than 100 characters
  * - Contains only letters and spaces
  * @param name Name to validate
+ * @param type Type of name being validated
  * @param min Minimum length of the name
  * @returns Error message if name is invalid, otherwise an empty string
  */
-export const validateName = (name: string, min: number) => {
+export const validateName = (name: string, type: string, min: number) => {
 	const regex = /^[a-zA-Z\s]*$/
 	if (!name) {
-		return "Name is required"
+		return `${type} is required`
 	}
 	if (name.length < min) {
-		return `Name must be at least ${min} characters`
+		return `${type} must be at least ${min} characters`
 	}
 	if (name.length > 100) {
-		return "Name is too long"
+		return `${type} is too long`
 	}
 	if (!regex.test(name)) {
-		return "Name must only contain letters and spaces"
+		return `${type} must only contain letters and spaces`
 	}
 	return ""
 }
@@ -83,7 +84,7 @@ export const validateName = (name: string, min: number) => {
  * @returns Error message if first name is invalid, otherwise an empty string
  */
 export const validateFirstName = (firstName: string) => {
-	return validateName(firstName, 2)
+	return validateName(firstName, "First name", 2)
 }
 
 /**
@@ -94,7 +95,7 @@ export const validateFirstName = (firstName: string) => {
  * @returns Error message if last name is invalid, otherwise an empty string
  */
 export const validateLastName = (lastName: string) => {
-	return validateName(lastName, 2)
+	return validateName(lastName, "Last name", 2)
 }
 
 /**
