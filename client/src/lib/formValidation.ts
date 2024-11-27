@@ -104,9 +104,13 @@ export const validateLastName = (lastName: string) => {
  * @param type Type of strings being compared (default is "Strings")
  * @returns Error message if strings do not match, otherwise an empty string
  */
-export const validateMatch = (string1: string, string2: string, type: string = "Strings") => {
-    if (string1 !== string2) {
-        return `${type} do not match`
-    }
-    return ""
+export const validateMatch = (
+	string1: string,
+	string2: string,
+	type: string = "Strings",
+) => {
+	if (string1 !== string2) {
+		return `${type} do not match`
+	}
+	return ""
 }

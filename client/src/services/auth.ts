@@ -33,7 +33,7 @@ export const authService = {
 		forename: string,
 		surname: string,
 		email: string,
-		password: string
+		password: string,
 	) {
 		const response = await fetch(`${AUTH_API_URL}/register`, {
 			method: "POST",
