@@ -6,6 +6,7 @@ import { Navigate } from "react-router-dom"
 import LinkButton from "../../components/LinkButton"
 import Divider from "../../components/Divider"
 import { CheckCheck, ChevronRight } from "lucide-react"
+import * as formValidation from "../../lib/formValidation"
 
 const Register: React.FC = () => {
 	const { register, isAuthenticated } = useAuth()
@@ -19,9 +20,20 @@ const Register: React.FC = () => {
 	const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
 
-		// TODO: add more form validation
-		if (password !== passwordConfirm) {
-			console.error("Passwords do not match")
+		// validate all form fields and return an array of errors
+		// password will only be validated if it matches the confirm password
+		// if error is empty, filter it out
+		const errors = [
+			formValidation.validateFirstName(firstName),
+			formValidation.validateLastName(lastName),
+			formValidation.validateEmail(email),
+			formValidation.validateMatch(password, passwordConfirm) ||
+				formValidation.validatePassword(password),
+		].filter(Boolean)
+
+		// if there are errors, log them and return
+		if (errors.length) {
+			console.error(errors)
 			return
 		}
 
@@ -43,7 +55,7 @@ const Register: React.FC = () => {
 
 	return (
 		<div className="flex justify-center items-center md:h-screen bg-primary">
-			<div className="px-4 md:grid md:grid-cols-2 gap-10 lg:gap-16 items-center max-w-screen-lg w-full">
+			<div className="px-4 mt-24 md:mt-0 md:grid md:grid-cols-2 gap-10 lg:gap-16 items-center max-w-screen-lg w-full">
 				<form onSubmit={handleRegister}>
 					<div className="px-8 py-8 bg-white drop-shadow-cartoon rounded-lg border border-black mb-4 md:mb-0 w-full">
 						<div className="text-2xl font-display">Register</div>
@@ -64,7 +76,6 @@ const Register: React.FC = () => {
 										}
 										className="border border-gray-300 p-2 rounded-lg w-full"
 										placeholder="John"
-										required
 									/>
 								</div>
 								<div className="grow">
@@ -81,7 +92,6 @@ const Register: React.FC = () => {
 										}
 										className="border border-gray-300 p-2 rounded-lg w-full"
 										placeholder="Doe"
-										required
 									/>
 								</div>
 							</div>
@@ -97,7 +107,6 @@ const Register: React.FC = () => {
 									onChange={(e) => setEmail(e.target.value)}
 									className="border border-gray-300 p-2 rounded-lg w-full"
 									placeholder="Enter your email"
-									required
 								/>
 							</div>
 							<div>
@@ -114,7 +123,6 @@ const Register: React.FC = () => {
 									}
 									className="border border-gray-300 p-2 rounded-lg w-full"
 									placeholder="Enter your password"
-									required
 								/>
 							</div>
 							<div>
@@ -131,7 +139,6 @@ const Register: React.FC = () => {
 									}
 									className="border border-gray-300 p-2 rounded-lg mb-4 w-full"
 									placeholder="Confirm your password"
-									required
 								/>
 							</div>
 							<Divider />
