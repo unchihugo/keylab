@@ -12,7 +12,7 @@ export default function Cart() {
     { product: 2, name: "Switch", quantity: 1, price: 5 },
     { product: 3, name: "Key-cap", quantity: 3, price: 5 },
   ]);
-
+  
   // the function that displays the total amount in the order summary section
   const totalPrice = itemsInBasket.reduce((accumulator, product) => accumulator + (product.price * product.quantity), 0).toFixed(2);
   
