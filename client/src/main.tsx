@@ -13,6 +13,7 @@ import SignIn from "./pages/auth/sign-in"
 import Register from "./pages/auth/register"
 //import Cart from './pages/Cart'
 import ProtectedRoute from "./components/ProtectedRoute"
+import About from "./pages/About"
 
 const router = createBrowserRouter([
 	{
@@ -34,6 +35,7 @@ const router = createBrowserRouter([
 			{ path: "/sign-in", element: <SignIn /> },
 			{ path: "/register", element: <Register /> },
 			{ path: "*", element: <NotFound /> },
+			{ path: "/about", element: <About /> },
 		],
 	},
 ])
@@ -43,5 +45,5 @@ createRoot(document.getElementById("root")!).render(
 		<AuthProvider>
 			<RouterProvider router={router} />
 		</AuthProvider>
-	</StrictMode>
+	</StrictMode>,
 )
