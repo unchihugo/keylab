@@ -1,11 +1,10 @@
 /** @format */
 
-import React from "react"
 import Divider from "../components/Divider"
 import LinkButton from "../components/LinkButton"
 import { House } from "lucide-react"
 
-const NotFound: React.FC = () => {
+export default function NotFound() {
 	return (
 		<div className="flex justify-center items-center h-screen bg-primary">
 			<div className="mx-4 px-8 md:px-20 py-12 md:py-28 bg-white drop-shadow-cartoon rounded-lg border border-black max-w-screen-lg">
@@ -26,5 +25,3 @@ const NotFound: React.FC = () => {
 		</div>
 	)
 }
-
-export default NotFound

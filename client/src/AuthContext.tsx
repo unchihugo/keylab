@@ -10,7 +10,7 @@ interface AuthContextProps {
 		forename: string,
 		surname: string,
 		email: string,
-		password: string
+		password: string,
 	) => Promise<void>
 	logout: () => void
 }
@@ -22,9 +22,7 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined)
  * AuthProvider component that provides the auth state and functions to all components wrapped in AuthProvider
  * @returns AuthContext.Provider
  */
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-	children,
-}) => {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const [isAuthenticated, setIsAuthenticated] = useState(false)
 	const [isTesting] = useState(false) // TODO: set to false when we have supporting backend
 
@@ -46,7 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 		forename: string,
 		surname: string,
 		email: string,
-		password: string
+		password: string,
 	) => {
 		try {
 			if (!isTesting) {
@@ -54,7 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 					forename,
 					surname,
 					email,
-					password
+					password,
 				)
 				console.log(data.message)
 			}
@@ -91,7 +89,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 	)
 }
 
-export const useAuth = () => {
+export function useAuth() {
 	const context = useContext(AuthContext)
 	if (!context) {
 		throw new Error("useAuth must be used within an AuthProvider")

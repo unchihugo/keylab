@@ -9,7 +9,7 @@ import { Navigate } from "react-router-dom"
 import * as formValidation from "../../lib/formValidation"
 import ErrorBox from "../../components/ErrorBox"
 
-const SignIn: React.FC = () => {
+export default function SignIn() {
 	const { login, isAuthenticated } = useAuth()
 	const [email, setEmail] = React.useState("")
 	const [password, setPassword] = React.useState("")
@@ -123,5 +123,3 @@ const SignIn: React.FC = () => {
 		</div>
 	)
 }
-
-export default SignIn

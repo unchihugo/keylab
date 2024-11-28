@@ -1,9 +1,10 @@
-import React from "react";
+/** @format */
 
-const Divider: React.FC = () => {
-    return (
-        <div className="border-t border-black my-3" />
-    );
+/**
+ * Component to display a horizontal line to separate content
+ */
+function Divider() {
+	return <div className="border-t border-black my-3" />
 }
 
-export default Divider;
+export default Divider

@@ -9,7 +9,7 @@ import { CheckCheck, ChevronRight } from "lucide-react"
 import * as formValidation from "../../lib/formValidation"
 import ErrorBox from "../../components/ErrorBox"
 
-const Register: React.FC = () => {
+export default function Register() {
 	const { register, isAuthenticated } = useAuth()
 	const [firstName, setFirstName] = React.useState("")
 	const [lastName, setLastName] = React.useState("")
@@ -202,5 +202,3 @@ const Register: React.FC = () => {
 		</div>
 	)
 }
-
-export default Register

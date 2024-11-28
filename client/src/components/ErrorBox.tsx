@@ -1,7 +1,5 @@
 /** @format */
 
-import React from "react"
-
 interface ErrorBoxProps {
 	children: string[] | null
 }
@@ -10,7 +8,7 @@ interface ErrorBoxProps {
  * Component to display error messages in a bulleted list
  * Pass an array of error messages to display them and unhide the component
  */
-const ErrorBox: React.FC<ErrorBoxProps> = ({ children }) => {
+function ErrorBox({ children }: ErrorBoxProps) {
 	if (children === null || children.length === 0) {
 		return null
 	}

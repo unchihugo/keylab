@@ -1,6 +1,5 @@
 /** @format */
 
-import React from "react"
 import { Link } from "react-router-dom"
 import { LucideIcon } from "lucide-react"
 
@@ -13,14 +12,14 @@ interface LinkButtonProps {
 	iconRight?: boolean
 }
 
-const LinkButton: React.FC<LinkButtonProps> = ({
+function LinkButton({
 	to,
 	text,
 	buttonClassNames,
 	textClassNames,
 	Icon,
 	iconRight,
-}) => {
+}: LinkButtonProps) {
 	return (
 		<Link to={to}>
 			<div
