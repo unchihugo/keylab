@@ -1,0 +1,15 @@
+CREATE TABLE addresses(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT,
+    street VARCHAR(255) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    county VARCHAR(100) NOT NULL,
+    postal_code VARCHAR(20) NOT NULL,
+    country VARCHAR(100) NOT NULL,
+    type ENUM('billing','shipping') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    is_deleted BOOLEAN DEFAULT FALSE,
+
+        FOREIGN KEY (user_id) REFERENCES users(id)
+);

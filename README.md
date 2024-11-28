@@ -4,7 +4,40 @@ Keylab is an open-source keyboard e-commerce platform built using Tailwind, Reac
 
 ## Table of Contents
 
+- [Setup](#Setup)
 - [Contributors](#contributors)
+
+## Setup
+
+### Prerequisites
+
+- **Node.js** (v16 or later)
+- **Go** (v1.23.3 or later) 
+- **MariaDB** 
+- **Docker** (for Docker setup)
+
+### Docker Setup
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/unchihugo/keylab.git
+cd keylab
+```
+
+2. Copy the environment file and configure:
+
+```bash
+cd server
+cp .env.example .env  # Linux
+copy .env.example .env  # Windows
+```
+
+3. Start application with Docker
+
+```bash
+docker-compose up --build
+```
 
 ## Contributors
 
