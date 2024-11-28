@@ -18,11 +18,11 @@ export default function Cart() {
   
   // a function that lets users decrease quantity 
   const handleDelete = (item: { product: any; name?: string; quantity?: number; price?: number }) => {
-    const isItemInCart = itemsInBasket.find((basketItem) => basketItem.product === basketItem.product);
+    const isItemInCart = itemsInBasket.find((basketItem) => basketItem.product === item.product);
     if(isItemInCart)
       if (isItemInCart.quantity === 1) {
-        setItemsinBasket(itemsInBasket.filter((basketItem) => basketItem.product !== basketItem.product)); 
-    }   else {
+        setItemsinBasket(itemsInBasket.filter((basketItem) => basketItem.product !== item.product)); 
+    }   else if (isItemInCart.quantity > 1) {
         setItemsinBasket(
           itemsInBasket.map((basketItem) =>
             basketItem.product === item.product
