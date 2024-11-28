@@ -21,6 +21,10 @@ export default {
       },
       dropShadow: {
         'cartoon': '4px 4px 0px rgba(0, 0, 0, 1)',
+        'cartoon-y': '0px 0.25rem 0px rgba(0, 0, 0, 1)',
+      },
+      boxShadow: {
+        'inner-cartoon-y': 'inset 0px 0.125rem 0px rgba(0, 0, 0, 1)',
       },
     },
     fontFamily: {
