@@ -39,6 +39,6 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	// TODO: Add admin middleware to the following routes
 	productGroup.POST("", handlers.CreateProduct)
 	productGroup.DELETE("/:id", handlers.DeleteProduct)
-	productGroup.PUT("/:slug", handlers.UpdateProduct)
+	productGroup.PUT("/:id", handlers.UpdateProduct)
 
 }
