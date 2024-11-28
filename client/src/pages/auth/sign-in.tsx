@@ -71,6 +71,7 @@ const SignIn: React.FC = () => {
 										}
 										className="border border-gray-300 p-2 rounded-lg w-full"
 										placeholder="Enter your email"
+										required
 									/>
 								</div>
 								<div>
@@ -87,6 +88,7 @@ const SignIn: React.FC = () => {
 										}
 										className="border border-gray-300 p-2 rounded-lg w-full"
 										placeholder="Enter your password"
+										required
 									/>
 								</div>
 								<ErrorBox>{errors}</ErrorBox>

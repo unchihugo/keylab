@@ -83,6 +83,7 @@ const Register: React.FC = () => {
 											}
 											className="border border-gray-300 p-2 rounded-lg w-full"
 											placeholder="John"
+											required
 										/>
 									</div>
 									<div className="grow">
@@ -99,6 +100,7 @@ const Register: React.FC = () => {
 											}
 											className="border border-gray-300 p-2 rounded-lg w-full"
 											placeholder="Doe"
+											required
 										/>
 									</div>
 								</div>
@@ -116,6 +118,7 @@ const Register: React.FC = () => {
 										}
 										className="border border-gray-300 p-2 rounded-lg w-full"
 										placeholder="Enter your email"
+										required
 									/>
 								</div>
 								<div>
@@ -132,6 +135,7 @@ const Register: React.FC = () => {
 										}
 										className="border border-gray-300 p-2 rounded-lg w-full"
 										placeholder="Enter your password"
+										required
 									/>
 								</div>
 								<div>
@@ -148,6 +152,7 @@ const Register: React.FC = () => {
 										}
 										className="border border-gray-300 p-2 rounded-lg mb-4 w-full"
 										placeholder="Confirm your password"
+										required
 									/>
 								</div>
 								<ErrorBox>{errors}</ErrorBox>
