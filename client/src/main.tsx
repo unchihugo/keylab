@@ -10,6 +10,7 @@ import NotFound from './pages/NotFound'
 import SignIn from './pages/sign-in'
 import Cart from './pages/Cart'
 import ProtectedRoute from './components/ProtectedRoute'
+import About from './pages/About'
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,7 @@ const router = createBrowserRouter([
       { path: "/protected", element: <ProtectedRoute> <div>Protected</div> </ProtectedRoute> },
       { path: "/sign-in", element: <SignIn /> },
       { path: "*", element: <NotFound /> },
+      { path: "/about", element: <About /> },
     ]
   }
 ])
