@@ -1,4 +1,3 @@
-
 export default function Home() {
     return (
       <div className="bg-yellow-50 min-h-screen font-sans">
@@ -11,7 +10,7 @@ export default function Home() {
         <section className="bg-primary py-28 px-8 text-left mt-20">
           <div className="max-w-screen-lg mx-auto flex flex-col md:flex-row items-center">
             
-            {/* Left Text Section */}
+            {/* Left Text Section */} 
             <div className="flex flex-col space-y-4 w-full md:w-1/2">
               <h2 className="text-3xl font-display text-primary-darker drop-shadow-cartoon">
                 Your one-stop shop for
@@ -70,7 +69,7 @@ export default function Home() {
         <h3 className="text-xl font-body">{name}</h3>
         <button
           onClick={() => (window.location.href = "http://localhost:5173/shop")}
-          className="mt-4 bg-secondary-darker hover:bg-blue-600 text-black font-body px-4 py-2 rounded-full border-2 border-black shadow-lg"
+          className="mt-4 bg-secondary-darker hover:bg-blue-600 text-black font-body px-4 py-2 w-48 rounded-full border-2 border-black drop-shadow-cartoon"
         >
           Shop →
         </button>
@@ -134,59 +133,7 @@ export default function Home() {
         </div>
       </section>
     
-        {/* Footer */}
-        <footer className="bg-white py-12 px-8 border-t text-sm">
-  <div className="max-w-screen-lg mx-auto flex flex-col items-center space-y-6">
-    {/* Logo Section */}
-    <div>
-      <img 
-        src="https://cdn.discordapp.com/attachments/1290735940368859211/1300104585242742875/Group_1.png?ex=67472d3f&is=6745dbbf&hm=a22a7939334b30f0703bc3356c22f8540ff32be2c3e3c60bb943244166cd91d8&" // Replace with your logo's URL
-        alt="Logo"
-        className="h-10" 
-      />
-    </div>
-
-    {/* Navigation Links Section with Dividers */}
-    <div className="flex items-center space-x-6 text-gray-700">
-      <a 
-        href="http://localhost:5173/shop"
-        className="hover:text-gray-900 font-body"
-      >
-        Shop
-      </a>
-      <span className="border-l border-gray-400 h-5"></span> {/* Divider */}
-      <a 
-        href="http://localhost:5173/keyboard-designer"
-        className="hover:text-gray-900 font-body"
-      >
-        Keyboard Designer
-      </a>
-      <span className="border-l border-gray-400 h-5"></span> {/* Divider */}
-      <a 
-        href="http://localhost:5173/about" 
-        className="hover:text-gray-900 font-body"
-      >
-        About
-      </a>
-    </div>
-
-    {/* Social Media Icons */}
-    <div className="flex justify-center space-x-6">
-      <a href="#" className="text-gray-500 hover:text-gray-700">
-        <i className="fab fa-facebook-f text-xl"></i>
-      </a>
-      <a href="#" className="text-gray-500 hover:text-gray-700">
-        <i className="fab fa-twitter text-xl"></i>
-      </a>
-      <a href="#" className="text-gray-500 hover:text-gray-700">
-        <i className="fab fa-instagram text-xl"></i>
-      </a>
-      <a href="#" className="text-gray-500 hover:text-gray-700">
-        <i className="fab fa-linkedin-in text-xl"></i>
-      </a>
-    </div>
-  </div>
-</footer>
+        
       </div>
     
     );
