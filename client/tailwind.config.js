@@ -12,7 +12,7 @@ export default {
           dark: '#ffd063',
           darker: '#f1bc41',
         },
-        
+
         secondary: {
           DEFAULT: '#aac3fd',
           dark: '#6392ff',
@@ -25,6 +25,10 @@ export default {
       },
       boxShadow: {
         'inner-cartoon-y': 'inset 0px 0.125rem 0px rgba(0, 0, 0, 1)',
+      },
+      transitionDelay: {
+        '50': '50ms',
+        '250': '250ms',
       },
     },
     fontFamily: {
