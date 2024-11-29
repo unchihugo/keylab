@@ -1,6 +1,5 @@
 
 
-const Footer = () => (
 <footer className="bg-white py-12 px-8 border-t text-sm">
   <div className="max-w-screen-lg mx-auto flex flex-col items-center space-y-6">
     {/* Logo Section */}
@@ -51,5 +50,6 @@ const Footer = () => (
         <i className="fab fa-linkedin-in text-xl"></i>
       </a>
     </div>
+
   </div>
-</footer> );
+</footer> 
