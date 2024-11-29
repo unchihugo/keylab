@@ -41,4 +41,14 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	productGroup.DELETE("/:id", handlers.DeleteProduct)
 	productGroup.PUT("/:id", handlers.UpdateProduct)
 
+	productReviewGroup := e.Group("/products/:product_slug/reviews")
+	productReviewGroup.GET("", handlers.GetReviewsByProduct)
+	productReviewGroup.GET("/user/:user_id", handlers.GetReviewByUser)
+	productReviewGroup.GET("/:id", handlers.GetReview)
+	productReviewGroup.GET("/statistics", handlers.GetReviewStatistics)
+	e.GET("/users/:user_id/reviews", handlers.GetReviewsByUser)
+
+	productReviewGroup.POST("", handlers.CreateReview, middleware.AuthMiddleware(sessionStore))
+	productReviewGroup.PUT("/:id", handlers.UpdateReview, middleware.AuthMiddleware(sessionStore))
+	productReviewGroup.DELETE("/:id", handlers.DeleteReview, middleware.AuthMiddleware(sessionStore))
 }

@@ -7,7 +7,7 @@ import (
 )
 
 type User struct {
-	ID          int64     `gorm:"primaryKey;autoIncrement"`
+	ID          int64     `gorm:"primaryKey;autoIncrement" json:"id"`
 	Forename    string    `gorm:"type:varchar(100);not null" validate:"required,min=2,max=100" json:"forename"`
 	Surname     string    `gorm:"type:varchar(100);not null" validate:"required,min=2,max=100" json:"surname"`
 	Email       string    `gorm:"type:varchar(320);not null;unique" validate:"required,email,max=320" json:"email"`
