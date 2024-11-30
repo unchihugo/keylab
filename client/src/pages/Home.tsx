@@ -1,3 +1,6 @@
+import LinkButton from "../components/LinkButton";
+import { ChevronRight } from "lucide-react";
+
 export default function Home() {
     return (
       <div className="bg-yellow-50 min-h-screen font-sans">
@@ -21,20 +24,19 @@ export default function Home() {
             <h2 className="text-5xl font-display text-primary-dark drop-shadow-cartoon"> 
            KEYBOARD
             </h2>
-              <div className="flex justify-start space-x-4 mt-6">
-              <button 
-              onClick={() => (window.location.href = "http://localhost:5173/shop")}
-              className="bg-white text-black font-body px-6 py-2 rounded-full border-2 border-black drop-shadow-cartoon hover:opacity-90">
-          Shop Now
-            </button>
-            <button
-  onClick={() => (window.location.href = "http://localhost:5173/keyboard-designer")}
-  className="bg-yellow-500 text-black font-body px-6 py-2 rounded-full border-2 border-black drop-shadow-cartoon hover:bg-yellow-600"
->
-  Try Our Keyboard Designer
-</button>
 
-              </div>
+              <div className="flex justify-start space-x-4 mt-6">
+              <LinkButton text="Shop now" 
+              buttonClassNames=" bg-white " 
+              textClassNames="px-6 py-2" 
+              to="/Display-page"/>  
+
+              <LinkButton text="Try our Keyboard Designer" 
+              buttonClassNames="bg-primary-darker" 
+              textClassNames="px-6 py-2" 
+              to="/keyboard-designer" />
+            </div>
+
             </div>
   
             {/* Right Image Section with Border */}
@@ -58,21 +60,26 @@ export default function Home() {
     ].map(({ name, img }, index) => (
       <div
         key={index}
-        className="bg-secondary rounded-lg p-8 flex flex-col items-center shadow-md border-2 border-black" 
+        className="bg-secondary rounded-lg p-12 flex flex-col items-center border border-black" 
       >
-        {/* Image */}
-        <img
-          src={img} 
-          alt={name}
-          className="h-40 w-full object-cover rounded-md mb-4"
-        />
-        <h3 className="text-xl font-body">{name}</h3>
-        <button
-          onClick={() => (window.location.href = "http://localhost:5173/shop")}
-          className="mt-4 bg-secondary-darker hover:bg-blue-600 text-black font-body px-4 py-2 w-48 rounded-full border-2 border-black drop-shadow-cartoon"
-        >
-          Shop →
-        </button>
+
+        {/* Product Image */}
+        <div className="w-full h-60 overflow-hidden mb-6">
+          <img
+            src={img}
+            alt={name}
+            className="w-full h-full object-cover"
+          />
+        </div>
+
+
+        <h3 className="text-xl font-body text-black mb-5">{name}</h3>
+          <LinkButton text="Shop" 
+        buttonClassNames="bg-secondary-darker" 
+        textClassNames="px-10 py-3" to="/shop" 
+        Icon={ChevronRight} 
+        iconRight={true} />
+        
       </div>
     ))}
   </div>
@@ -102,7 +109,7 @@ export default function Home() {
 </section>
 
     
-        {/* Reviews Section with Star Icons */}
+        {/* Reviews Section */}
       <section className="py-16 px-8 bg-yellow-50">
         <h2 className="text-2xl font-body text-center mb-8">Latest Reviews</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-screen-lg mx-auto">

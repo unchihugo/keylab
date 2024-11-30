@@ -1,11 +1,14 @@
+import React from "react"
+import keylabicon from "./assets/keylab-icon.svg"
 
-
+export default function Footer(){
+return (
 <footer className="bg-white py-12 px-8 border-t text-sm">
   <div className="max-w-screen-lg mx-auto flex flex-col items-center space-y-6">
     {/* Logo Section */}
     <div>
       <img 
-        src="https://cdn.discordapp.com/attachments/1290735940368859211/1300104585242742875/Group_1.png?ex=67472d3f&is=6745dbbf&hm=a22a7939334b30f0703bc3356c22f8540ff32be2c3e3c60bb943244166cd91d8&" // Replace with your logo's URL
+        src={keylabicon} 
         alt="Logo"
         className="h-10" 
       />
@@ -53,3 +56,6 @@
 
   </div>
 </footer> 
+
+)
+}
