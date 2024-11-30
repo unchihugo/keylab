@@ -22,7 +22,7 @@ export default function NotFound({ errorMessage, bodyMessage }: NotFoundProps) {
 					{bodyMessage ? (
 						<>
 							<br />
-							bodyMessage
+							{bodyMessage}
 						</>
 					) : null}
 				</div>

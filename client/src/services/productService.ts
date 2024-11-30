@@ -29,12 +29,12 @@ export const productService = {
 		return response.json()
 	},
 
-    /**
-     * Get a product by its slug
-     * @param {string} slug The product's slug
-     * @returns {Promise} A promise that resolves when the product is retrieved
-     * @throws {Error} An error from the API request
-     */
+	/**
+	 * Get a product by its slug
+	 * @param {string} slug The product's slug
+	 * @returns {Promise} A promise that resolves when the product is retrieved
+	 * @throws {Error} An error from the API request
+	 */
 	async getProductBySlug(slug: string) {
 		const response = await fetch(`${PRODUCTS_API_URL}/${slug}`, {
 			method: "GET",
@@ -53,12 +53,12 @@ export const productService = {
 		return response.json()
 	},
 
-    /**
-     * Get a list of products by category
-     * @param {string} category The category to filter by
-     * @returns {Promise} A promise that resolves with the list of products
-     * @throws {Error} An error from the API request
-     */
+	/**
+	 * Get a list of products by category
+	 * @param {string} category The category to filter by
+	 * @returns {Promise} A promise that resolves with the list of products
+	 * @throws {Error} An error from the API request
+	 */
 	async getProductsByCategory(category: string) {
 		const response = await fetch(
 			`${PRODUCTS_API_URL}/category/${category}`,
@@ -80,12 +80,12 @@ export const productService = {
 		return response.json()
 	},
 
-    /**
-     * Get a list of products by search query
-     * @param {string} query The search query
-     * @returns {Promise} A promise that resolves with the list of products
-     * @throws {Error} An error from the API request
-     */
+	/**
+	 * Get a list of products by search query
+	 * @param {string} query The search query
+	 * @returns {Promise} A promise that resolves with the list of products
+	 * @throws {Error} An error from the API request
+	 */
 	async searchProducts(query: string) {
 		const response = await fetch(`${PRODUCTS_API_URL}/search/${query}`, {
 			method: "GET",

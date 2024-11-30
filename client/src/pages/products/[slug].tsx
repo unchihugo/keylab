@@ -47,11 +47,11 @@ export default function Product() {
 							</div>
 						</div>
 						<div className="text-4xl font-display">
-							{product.name}
+							{product.data.name}
 						</div>
 						<div>
 							<div className="text-2xl font-medium">
-								£{product.price}
+								£{product.data.price}
 							</div>
 							<div className="text-xs text-black/50">
 								Tax included.
@@ -86,27 +86,33 @@ export default function Product() {
 								Description
 							</div>
 							<div className="leading-tight">
-								{product.description}
+								{product.data.description}
 							</div>
 						</div>
 					</div>
 				</div>
 
-                <div className="my-12">
-                    <div className="text-2xl font-display my-4">Related products</div>
-                    {/* TODO: component for products carousel */}
-                    <div className="flex h-40 bg-black/10"/>
-                </div>
+				<div className="my-12">
+					<div className="text-2xl font-display my-4">
+						Related products
+					</div>
+					{/* TODO: component for products carousel */}
+					<div className="flex h-40 bg-black/10" />
+				</div>
 
-                <div className="my-12">
-                    <div className="text-2xl font-display my-4">Black Friday deals</div>
-                    <div className="flex h-40 bg-black/10"/>
-                </div>
+				<div className="my-12">
+					<div className="text-2xl font-display my-4">
+						Black Friday deals
+					</div>
+					<div className="flex h-40 bg-black/10" />
+				</div>
 
-                <div className="my-24">
-                    <div className="text-2xl font-display w-full my-4 text-center">User reviews</div>
-                    <div className="flex h-screen bg-black/10"/>
-                </div>
+				<div className="my-24">
+					<div className="text-2xl font-display w-full my-4 text-center">
+						User reviews
+					</div>
+					<div className="flex h-screen bg-black/10" />
+				</div>
 			</div>
 		</div>
 	)
