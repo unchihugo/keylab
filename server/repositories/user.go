@@ -4,6 +4,7 @@ import (
 	"errors"
 	db "keylab/database"
 	"keylab/database/models"
+	"log"
 
 	"gorm.io/gorm"
 )
@@ -22,12 +23,14 @@ func FindUserByEmail(email string) (*models.User, error) {
 	return &user, nil
 }
 
-func FindUserByID(id int64) (*models.User, error) {
+func FindUserByID(id int64) (models.User, error) {
 	var user models.User
 
-	if err := db.DB.Where("id = ?", id).First(&user).Error; err != nil {
-		return &user, err
+	err := db.DB.Where("id = ?", id).First(&user).Error
+
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		log.Printf("Error fetching user by ID: %v", err)
 	}
 
-	return &user, nil
+	return user, err
 }
