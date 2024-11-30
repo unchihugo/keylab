@@ -24,21 +24,25 @@ const DisplayPage: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
 
       {/* Shop Banner */}
-      <div className="text-center py-8 bg-primary mt-20">
-        <h1 className="text-4xl font-bold text-white font-display drop-shadow-cartoon">SHOP</h1>
-        <p className="mt-2 text-lg font-display text-white  drop-shadow-cartoon">New Halloween keycaps in stock!</p>
+      <div className="text-center py-12 bg-primary mt-20 rounded-xl shadow-xl">
+        <h1 className="text-5xl font-bold text-white font-display drop-shadow-lg">
+          SHOP
+          </h1>
+          <p className="mt-2 text-xl font-display text-white drop-shadow-lg">
+            New Halloween keycaps in stock!
+            </p>
       </div>
 
       {/* Filters and Products Section */}
-      <main className="flex flex-col lg:flex-row">
+      <main className="container mx-auto flex flex-col lg:flex-row">
         <aside className="w-full lg:w-1/4 bg-white p-4 shadow-lg rounded-2xl space-y-4 mb-6 lg:mb-0">
           <h2 className="text-xl font-body text-gray-700">Filters</h2>
           <div>
             <h3 className="font-medium text-gray-600">Switches</h3>
-            <div className="flex items-center">
+            <div className="flex items-center space-x-2">
             <input
                type="checkbox" 
-               className="mr-2w-4 h-4 text-primary rounded focus:ring focus:ring-primary-dark" 
+               className="w-4 h-4 text-primary rounded focus:ring focus:ring-primary-dark" 
                id="switches-filter"
                /> 
                <label htmlFor="switches-filter" className="text-gray-600">
@@ -59,12 +63,13 @@ const DisplayPage: React.FC = () => {
               </label>
           </div>
         </div>
+        {/* Keyboards Filter */}
           <div>
           <h3 className="font-medium text-gray-600">Keyboards</h3>
-            <div className="flex items-center">
+            <div className="flex items-center space-x-2">
               <input
               type="checkbox" 
-              className="mr-2 w-4 h-4 text-primary rounded focus:ring focus:ring-primary-dark" 
+              className="w-4 h-4 text-primary rounded focus:ring focus:ring-primary-dark" 
               id="keyboards-filter"
               /> 
               <label htmlFor="keyboards-filter" className="text-gray-600">
@@ -83,54 +88,64 @@ const DisplayPage: React.FC = () => {
           </div>
           <div>
             <h3 className="font-medium text-gray-600">Color</h3>
-            <label className="block">
-              <input type="checkbox" className="mr-2" /> Red
-            </label>
-            <label className="block">
-              <input type="checkbox" className="mr-2" /> Blue
-            </label>
-            <label className="block">
-              <input type="checkbox" className="mr-2" /> Green
-            </label>
+            <div className="flex flex-wrap space-x-4">
+              <label className="flex items-center space-x-2">
+                <input type="checkbox" className="w-4 h-4 text-primary rounded" />
+                <span className="text-gray-600">Red</span>
+                </label>
+                <label className="flex items-center space-x-2">
+                  <input type="checkbox" className="w-4 h-4 text-primary rounded" />
+                  <span className="text-gray-600">Blue</span>
+                  </label>
+                  <label className="flex items-center space-x-2">
+                    <input type="checkbox" className="w-4 h-4 text-primary rounded" />
+                    <span className="text-gray-600">Green</span>
+                  </label>
+              </div>
           </div>
           <div>
-            <h3 className="font-medium text-gray-600">Size</h3>
-            <label className="block">
-              <input type="checkbox" className="mr-2" /> Small
-            </label>
-            <label className="block">
-              <input type="checkbox" className="mr-2" /> Medium
-            </label>
-            <label className="block">
-              <input type="checkbox" className="mr-2" /> Large
-            </label>
-          </div>
-        </aside>
+    <h3 className="font-medium text-gray-600">Size</h3>
+    <div className="flex flex-wrap space-x-4">
+      <label className="flex items-center space-x-2">
+        <input type="checkbox" className="w-4 h-4 text-primary rounded" />
+        <span className="text-gray-600">Small</span>
+      </label>
+      <label className="flex items-center space-x-2">
+        <input type="checkbox" className="w-4 h-4 text-primary rounded" />
+        <span className="text-gray-600">Medium</span>
+      </label>
+      <label className="flex items-center space-x-2">
+        <input type="checkbox" className="w-4 h-4 text-primary rounded" />
+        <span className="text-gray-600">Large</span>
+      </label>
+    </div>
+  </div>
+</aside>
 
         {/* Products Section */}
         <section className="w-full lg:w-3/4 p-4">
           {/* Search and Sorting */}
           <div className="flex items-center justify-between bg-white p-4 rounded-full shadow-md mb-6">
-            <input
-              type="text"
-              placeholder="Search products"
-              className="border-none outline-none px-4 py-2 w-2/3 text-gray-600 placeholder-gray-400 rounded-full" // Updated styles for input
-            />
-            <div className="flex space-x-2">
-              <button className="px-4 py-2 bg-primary text-white rounded-full hover:bg-primary-dark">
-                New
-              </button>
-              <button className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300">
-                Price ↑
-              </button>
-              <button className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300">
-                Price ↓
-              </button>
-              <button className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300">
-                Rating
-              </button>
-            </div>
-          </div>
+  <input
+    type="text"
+    placeholder="Search products"
+    className="border-none outline-none px-4 py-2 w-2/3 text-gray-600 placeholder-gray-400 rounded-full"
+  />
+  <div className="flex space-x-2">
+    <button className="px-4 py-2 bg-primary text-white rounded-full hover:bg-primary-dark">
+      New
+    </button>
+    <button className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300">
+      Price ↑
+    </button>
+    <button className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300">
+      Price ↓
+    </button>
+    <button className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300">
+      Rating
+    </button>
+  </div>
+</div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {products.map((product) => (
