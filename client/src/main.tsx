@@ -8,6 +8,7 @@ import AppLayout from './layouts/AppLayout'
 import Home from './pages/Home'
 import NotFound from './pages/NotFound'
 import SignIn from './pages/sign-in'
+import Displaypage from './pages/Displaypage'
 import ProtectedRoute from './components/ProtectedRoute'
 
 const router = createBrowserRouter([
@@ -19,6 +20,7 @@ const router = createBrowserRouter([
       { path: "/example", element: <div>Example</div> },
       { path: "/protected", element: <ProtectedRoute> <div>Protected</div> </ProtectedRoute> },
       { path: "/sign-in", element: <SignIn /> },
+      { path: "/Displaypage", element: <Displaypage /> },
       { path: "*", element: <NotFound /> },
     ]
   }
