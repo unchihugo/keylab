@@ -159,7 +159,7 @@ func GetReviewStatistics(c echo.Context) error {
 	}
 
 	var (
-		totalReviews  = len(reviews)
+		totalReviews = len(reviews)
 		averageRating float64
 	)
 
