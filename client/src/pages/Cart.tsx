@@ -1,7 +1,10 @@
+/** @format */
+
 import { useState } from "react"
 import Divider from "../components/Divider"
 import InputBox from "../components/InputBox"
 import LinkButton from "../components/LinkButton"
+import { LockKeyhole, Minus, Plus } from "lucide-react"
 
 export default function Cart() {
 	{
@@ -80,41 +83,50 @@ export default function Cart() {
 		/* product section of the cart page where users can see their products and add/remove */
 	}
 	return (
-		<div className="flex bg-primary justify-center items-start">
+		<div className="flex bg-primary/50 justify-center items-start">
 			<div className="flex flex-col w-full lg:flex-row max-w-screen-lg">
 				<div className="w-full lg:w-1/2 bg-white mt-40 drop-shadow-cartoon rounded-lg border border-black h-fit">
-					<div className="text-3xl font-display pl-2 mt-6">
+					<div className="text-3xl font-display pl-6 my-6">
 						Basket Summary
 					</div>
 					<Divider />
-					<div className="p-2 font-display">
-						Your Items:   
-						<Divider />
+					<div className="p-6 font-display">
+						Your Items:
 						<div className="Items space-y-4 font-body">
 							{itemsInBasket.map((item) => (
 								<div>
-									<ul 
-										key={item.product}
-										className="flex justify-between items-center border-black pb-2">
-										<li>{item.name}</li>
+									<div className="opacity-25">
 										<Divider />
-										<li className="text-gray-400">
-											{item.quantity}
-										</li>
-                                        <li className="text-gray-400"> 
-                                        £{item.price * item.quantity}
-                                        </li>
-									</ul>
-									<button
-										onClick={() => handleDelete(item)}
-										className="px-2 py-1 bg-red-600 rounded-lg text-white">
-										-
-									</button>
-									<button
-										onClick={() => handleAdd(item)}
-										className="px-2 py-1 bg-green-600 rounded-lg text-white">
-										+
-									</button>
+									</div>
+									<div className="p-3">
+										<ul
+											key={item.product}
+											className="flex justify-between items-center font-medium text-lg border-black">
+											<li>{item.name}</li>
+											<Divider />
+											<li>
+												£{item.price * item.quantity}
+											</li>
+										</ul>
+										<div className="text-black/50 flex items-center gap-x-3">
+											<span className="">Qty:</span>
+											<button
+												onClick={() =>
+													handleDelete(item)
+												}
+												className="p-1 border rounded-full">
+												<Minus size={16} />
+											</button>
+											<span className="">
+												{item.quantity}
+											</span>
+											<button
+												onClick={() => handleAdd(item)}
+												className="p-1 border rounded-full">
+												<Plus size={16} />
+											</button>
+										</div>
+									</div>
 								</div>
 							))}
 						</div>
@@ -122,8 +134,8 @@ export default function Cart() {
 				</div>
 
 				{/* order section of the cart page */}
-				<div className="w-full lg:w-1/2 flex flex-col pr-10 items-end justify-center h-screen w-1/2">
-					<div className="px-8 py-8 pb-40 mt-20 bg-white drop-shadow-cartoon rounded-lg border border-black">
+				<div className="w-full lg:w-1/2 flex flex-col pr-10 items-end justify-center h-screen">
+					<div className="px-8 py-8 mt-20 bg-white drop-shadow-cartoon rounded-lg border border-black w-fit">
 						<div className="text-4xl font-display">
 							Order Summary
 						</div>
@@ -136,11 +148,13 @@ export default function Cart() {
 						</div>
 						{/* @ts-expect-error Async*/}
 						<InputBox />
-						<div className="flex">
-							<LinkButton to="/cart/checkout" 
-              buttonClassNames="px-10 py-5 bg-secondary text-white rounded-lg absolute bottom-12 ml-24" 
-              text="Checkout">
-							</LinkButton>
+						<div className="flex flex-col w-full">
+							<LinkButton
+								to="/cart/checkout"
+								buttonClassNames="px-10 py-5 bg-secondary-dark w-full mt-12"
+								text="Checkout"
+								Icon={LockKeyhole}
+							/>
 						</div>
 					</div>
 				</div>
