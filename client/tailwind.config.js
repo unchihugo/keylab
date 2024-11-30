@@ -29,6 +29,7 @@ export default {
       transitionDelay: {
         '50': '50ms',
         '250': '250ms',
+        '350': '350ms',
       },
     },
     fontFamily: {
