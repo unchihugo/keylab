@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ProductCard from "./components/ProductCard";
+import ProductCard from ".\components\ProductCard";
 
 // Define types for the product card
 interface Product {

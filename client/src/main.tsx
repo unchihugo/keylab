@@ -16,6 +16,7 @@ import Product from "./pages/products/[slug]"
 import Cart from './pages/Cart'
 import ProtectedRoute from "./components/ProtectedRoute"
 import About from "./pages/About"
+import DisplayPage from "./pages/Displaypage"
 
 const router = createBrowserRouter([
 	{
@@ -39,6 +40,7 @@ const router = createBrowserRouter([
 			{ path: "/products/:slug", element: <Product /> },
 			{ path: "*", element: <NotFound /> },
 			{ path: "/about", element: <About /> },
+			{ path: "/shop", element: <DisplayPage /> },
 		],
 	},
 =======
@@ -59,7 +61,7 @@ const router = createBrowserRouter([
       { path: "/example", element: <div>Example</div> },
       { path: "/protected", element: <ProtectedRoute> <div>Protected</div> </ProtectedRoute> },
       { path: "/sign-in", element: <SignIn /> },
-      { path: "/Displaypage", element: <Displaypage /> },
+      { path: "/shop", element: <Displaypage /> },
       { path: "*", element: <NotFound /> },
     ]
   }
