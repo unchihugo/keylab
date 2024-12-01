@@ -51,4 +51,11 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	productReviewGroup.POST("", handlers.CreateReview, middleware.AuthMiddleware(sessionStore))
 	productReviewGroup.PUT("/:id", handlers.UpdateReview, middleware.AuthMiddleware(sessionStore))
 	productReviewGroup.DELETE("/:id", handlers.DeleteReview, middleware.AuthMiddleware(sessionStore))
-}
+
+	// Cart related routes
+	cartGroup := e.Group("/cart-items")
+	cartGroup.GET("", handlers.ListCartItems)        
+	cartGroup.POST("", handlers.AddCartItem)         
+	cartGroup.PUT("/:id", handlers.UpdateCartItemQuantity)
+	cartGroup.DELETE("/:id", handlers.DeleteCartItem) 
+	}
