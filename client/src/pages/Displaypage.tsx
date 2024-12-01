@@ -100,7 +100,7 @@ const DisplayPage: React.FC = () => {
     <div className="min-h-screen bg-gray-50">
 
       {/* Shop Banner */}
-      <div className="text-center py-12 bg-primary mt-20 rounded-xl shadow-xl">
+      <div className="text-center py-12 bg-primary bg-opacity-70 mt-20 rounded-xl shadow-xl">
         <h1 className="text-5xl font-bold text-secondary-dark font-display drop-shadow-lg">
           SHOP
           </h1>
@@ -110,8 +110,8 @@ const DisplayPage: React.FC = () => {
       </div>
 
       {/* Filters and Products Section */}
-      <main className="container mx-auto flex flex-col lg:flex-row">
-        <aside className="w-full lg:w-1/4 bg-white p-4 shadow-lg rounded-2xl space-y-4 mb-6 lg:mb-0">
+      <main className="container mx-auto flex flex-col lg:flex-row bg-primary bg-opacity-20">
+        <aside className="w-full lg:w-1/5 bg-primary-dark bg-opacity-50 p-4 shadow-lg rounded-2xl space-y-4 mb-6 lg:mb-0 h-auto border border-gray-700">
           <h2 className="text-xl font-body text-gray-700">Filters</h2>
           <div>
             <h3 className="font-medium text-gray-600">Switches</h3>
