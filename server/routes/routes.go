@@ -24,10 +24,10 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	categoryGroup.GET("", handlers.GetCategories)
 	categoryGroup.GET("/:slug", handlers.GetCategoryBySlug)
 
-	// TODO: Add admin middleware to the following routes
-	categoryGroup.POST("", handlers.CreateCategory)
-	categoryGroup.DELETE("/:slug", handlers.DeleteCategory)
-	categoryGroup.PUT("/:slug", handlers.UpdateCategory)
+	// admin only for creating, updating and deleting categories
+	categoryGroup.POST("", handlers.CreateCategory, middleware.AuthMiddleware(sessionStore), middleware.PermissionMiddleware(sessionStore, "manage_categories"))
+	categoryGroup.DELETE("/:slug", handlers.DeleteCategory, middleware.AuthMiddleware(sessionStore), middleware.PermissionMiddleware(sessionStore, "manage_categories"))
+	categoryGroup.PUT("/:slug", handlers.UpdateCategory, middleware.AuthMiddleware(sessionStore), middleware.PermissionMiddleware(sessionStore, "manage_categories"))
 
 	// Product related routes
 	productGroup := e.Group("/products")
@@ -36,10 +36,10 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	productGroup.GET("/category/:category", handlers.GetProductsByCategory)
 	productGroup.GET("/search/:query", handlers.SearchProducts)
 
-	// TODO: Add admin middleware to the following routes
-	productGroup.POST("", handlers.CreateProduct)
-	productGroup.DELETE("/:id", handlers.DeleteProduct)
-	productGroup.PUT("/:id", handlers.UpdateProduct)
+	// admin only for creating, updating and deleting categories
+	productGroup.POST("", handlers.CreateProduct, middleware.AuthMiddleware(sessionStore), middleware.PermissionMiddleware(sessionStore, "manage_products"))
+	productGroup.DELETE("/:id", handlers.DeleteProduct, middleware.AuthMiddleware(sessionStore), middleware.PermissionMiddleware(sessionStore, "manage_products"))
+	productGroup.PUT("/:id", handlers.UpdateProduct, middleware.AuthMiddleware(sessionStore), middleware.PermissionMiddleware(sessionStore, "manage_products"))
 
 	productReviewGroup := e.Group("/products/:product_slug/reviews")
 	productReviewGroup.GET("", handlers.GetReviewsByProduct)
