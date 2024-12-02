@@ -1,0 +1,163 @@
+openapi: 3.0.0
+info:
+  version: "1.0.0"
+  title: "Keylab API"
+  description: "API for products, product categories, and product reviews"
+
+paths:
+  /products:
+    get:
+      tags:
+        - Products
+      summary: Gets all products
+      description: Fetches all products from the database
+      operationId: ListProducts
+      responses:
+        '200':
+          description: List of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+    
+    post:
+      summary: Create a new product
+      operationId: createProduct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Product successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Invalid input
+
+  /products/{slug}:
+    get:
+      summary: Get a product by slug
+      operationId: getProductBySlug
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A single product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+
+  /products/category/{category}:
+    get:
+      summary: Get products by category
+      operationId: getProductsByCategory
+      parameters:
+        - in: path
+          name: category
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of products by category
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '404':
+          description: No products found in this category
+
+  /products/{id}:
+    put:
+      summary: Update a product by ID
+      operationId: updateProduct
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Invalid input
+        '404':
+          description: Product not found
+
+    delete:
+      summary: Delete a product by ID
+      operationId: deleteProduct
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Product deleted successfully
+        '404':
+          description: Product not found
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the product
+        name:
+          type: string
+          description: Name of the product
+        slug:
+          type: string
+          description: Slug for the product URL
+        description:
+          type: string
+          description: Description of the product
+        price:
+          type: number
+          format: float
+          description: Price of the product
+        categoryId:
+          type: integer
+          description: ID of the product's category
+        category:
+          $ref: '#/components/schemas/Category'
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+          description: A brief description of the category
