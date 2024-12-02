@@ -29,3 +29,30 @@ func AuthMiddleware(sessionStore *sessions.CookieStore) echo.MiddlewareFunc {
 		}
 	}
 }
+func PermissionMiddleware(sessionStore *sessions.CookieStore, requiredPermissions ...string) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			session, _ := sessionStore.Get(c.Request(), "session-key")
+			userID, ok := session.Values["user_id"].(int64)
+			if !ok {
+				return echo.NewHTTPError(http.StatusUnauthorized, "User not logged in")
+			}
+
+			
+			user, err := repositories.FindUserByID(userID)
+			if err != nil || user == nil {
+				return echo.NewHTTPError(http.StatusUnauthorized, "User not found")
+			}
+
+			
+			roleID := user.RoleID
+
+			hasPermission, err := repositories.CheckRolePermissions(roleID, requiredPermissions)
+			if err != nil || !hasPermission {
+				return echo.NewHTTPError(http.StatusForbidden, "You do not have access to this resource")
+			}
+
+			return next(c)
+		}
+	}
+}
