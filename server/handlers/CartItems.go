@@ -3,11 +3,11 @@ package handlers
 import (
     db "keylab/database"
     "keylab/database/models"
+    "keylab/repositories"
     "log"
     "net/http"
     "github.com/labstack/echo/v4"
-    "gorm.io/gorm"
-	"errors"
+    
 )
 
 // List Cart Items Handler [GET /cart items]
@@ -19,16 +19,14 @@ import (
 
 func ListCartItems(c echo.Context) error {
     var cartItems []models.CartItems
-    userID := c.QueryParam("user_id")
 
-    if userID == "" {
-        return jsonResponse(c, http.StatusBadRequest, "User ID is required")
-    }
-
-    if err := db.DB.Preload("Product").Preload("Product.Category").Where("user_id = ?", userID).Find(&cartItems).Error; err != nil {
-        log.Printf("Error fetching cart items: %v", err)
-        return jsonResponse(c, http.StatusInternalServerError, "Error fetching cart items")
-    }
+    user:= c.Get("user").(models.User)
+    
+    cartItems, err := repositories.GetCartItemsByUserID(user.ID)
+    if err != nil {
+		log.Printf("Error fetching cart items: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error fetching cart items")
+	}
 
     if len(cartItems) == 0 {
         return jsonResponse(c, http.StatusNotFound, "No cart items found for the user")
@@ -50,37 +48,33 @@ func AddCartItem(c echo.Context) error {
     var cartItem models.CartItems
 
     if err := c.Bind(&cartItem); err != nil {
-        log.Printf("Error binding cart item: %v", err)
         return jsonResponse(c, http.StatusBadRequest, "Invalid input for cart item")
     }
 
     if err := cartItem.Validate(); err != nil {
-		log.Printf("Validation error: %v", err)
         return jsonResponse(c, http.StatusBadRequest, err.Error())
     }
 
-    var product models.Product
-    if err := db.DB.First(&product, cartItem.ProductID).Error; err != nil {
-        if errors.Is(err, gorm.ErrRecordNotFound) {
-            return jsonResponse(c, http.StatusNotFound, "Product not found")
-        }
-        log.Printf("Error fetching product: %v", err)
-        return jsonResponse(c, http.StatusInternalServerError, "Error fetching product")
-    }
+    product, err := repositories.GetProductByID(cartItem.ProductID)
+	if err != nil {
+		return jsonResponse(c, http.StatusNotFound, "Product not found")
+	}
 
     if product.Stock < cartItem.Quantity {
         return jsonResponse(c, http.StatusBadRequest, "Insufficient stock for the product")
     }
 
-    
+    user := c.Get("user").(models.User)
+    cartItem.UserID = user.ID
+
     var existingCartItem models.CartItems
-    if err := db.DB.Where("user_id = ? AND product_id = ?", cartItem.UserID, cartItem.ProductID).
-        First(&existingCartItem).Error; err == nil {
-        
+    if err := db.DB.Where("user_id = ? AND product_id = ?", cartItem.UserID, cartItem.ProductID).First(&existingCartItem).Error; err == nil {
+
         existingCartItem.Quantity += cartItem.Quantity
         if existingCartItem.Quantity > product.Stock {
             return jsonResponse(c, http.StatusBadRequest, "Insufficient stock for the updated quantity")
         }
+        
         if err := db.DB.Save(&existingCartItem).Error; err != nil {
             log.Printf("Error updating cart item: %v", err)
             return jsonResponse(c, http.StatusInternalServerError, "Error updating cart item")
@@ -105,21 +99,21 @@ func AddCartItem(c echo.Context) error {
 
 func DeleteCartItem(c echo.Context) error {
     var cartItem models.CartItems
+    user := c.Get("user").(models.User)
 
-    idParam := c.Param("id")
-    id, err := convertToInt64(idParam)
+    idParam, err := convertToInt64(c.Param("id"))
     if err != nil {
-        log.Printf("Error converting cart item ID: %v", err)
         return jsonResponse(c, http.StatusBadRequest, "Invalid cart item ID")
     }
-
-    if err := db.DB.First(&cartItem, id).Error; err != nil {
-        if errors.Is(err, gorm.ErrRecordNotFound) {
-            return jsonResponse(c, http.StatusNotFound, "Cart item not found")
-        }
-        log.Printf("Error fetching cart item: %v", err)
-        return jsonResponse(c, http.StatusInternalServerError, "Error fetching cart item")
+    
+    cartItem, err := repositories.GetCartItemByID(idParam)
+    if err != nil {
+        return jsonResponse(c, http.StatusNotFound, "Cart item not found")
     }
+
+    if cartItem.UserID != user.ID {
+		return jsonResponse(c, http.StatusForbidden, "You are not authorized to delete this cart item")
+	}
 
     if err := db.DB.Delete(&cartItem).Error; err != nil {
         log.Printf("Error deleting cart item: %v", err)
@@ -141,39 +135,36 @@ func DeleteCartItem(c echo.Context) error {
 
 func UpdateCartItemQuantity(c echo.Context) error {
     var cartItem models.CartItems
+    user := c.Get("user").(models.User)
 
-    idParam := c.Param("id")
-    id, err := convertToInt64(idParam)
-    if err != nil {
-        log.Printf("Error converting cart item ID: %v", err)
-        return jsonResponse(c, http.StatusBadRequest, "Invalid cart item ID")
-    }
+    idParam, err := convertToInt64(c.Param("id"))
+	if err != nil {
+		return jsonResponse(c, http.StatusBadRequest, "Invalid cart item ID")
+	}
 
-    if err := db.DB.First(&cartItem, id).Error; err != nil {
-        if errors.Is(err, gorm.ErrRecordNotFound) {
-            return jsonResponse(c, http.StatusNotFound, "Cart item not found")
-        }
-        log.Printf("Error fetching cart item: %v", err)
-        return jsonResponse(c, http.StatusInternalServerError, "Error fetching cart item")
-    }
+    cartItem, err := repositories.GetCartItemByID(idParam)
+	if err != nil {
+		return jsonResponse(c, http.StatusNotFound, "Cart item not found")
+	}
+
+    if cartItem.UserID != user.ID {
+		return jsonResponse(c, http.StatusForbidden, "You are not authorized to update this cart item")
+	}
 
     if err := c.Bind(&cartItem); err != nil {
-        log.Printf("Error binding cart item data: %v",err)
         return jsonResponse(c, http.StatusBadRequest, "Invalid input for updating cart item")
     }
 
-    var product models.Product
-    if err := db.DB.First(&product, cartItem.ProductID).Error; err != nil {
-        log.Printf("Error fetching product: %v", err)
-        return jsonResponse(c, http.StatusInternalServerError, "Error fetching product")
-    }
+    product, err := repositories.GetProductByID(cartItem.ProductID)
+    if err != nil {
+		return jsonResponse(c, http.StatusNotFound, "Product not found")
+	}
 
     if cartItem.Quantity > product.Stock {
-        return jsonResponse(c, http.StatusBadRequest, "Insufficient stock for the product")
-    }
+		return jsonResponse(c, http.StatusBadRequest, "Insufficient stock for the product")
+	}
 
     if err:= cartItem.Validate(); err !=nil {
-        log.Printf("Validation error: %v", err)
         return jsonResponse(c, http.StatusBadRequest, err.Error())
     }
 
