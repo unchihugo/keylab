@@ -1,3 +1,3 @@
 ALTER TABLE users
-ADD COLUMN role_id BIGINT AFTER phone_number;
-ADD FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE SET NULL;
+ADD role_id BIGINT AFTER phone_number,
+ADD CONSTRAINT fk_role_id FOREIGN KEY (role_id) REFERENCES roles(id);
