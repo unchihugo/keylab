@@ -144,11 +144,3 @@ func Logout(sessionStore *sessions.CookieStore) echo.HandlerFunc {
 		return jsonResponse(c, http.StatusOK, "Logged out successfully!")
 	}
 }
-
-// Temp handler to test protected route
-
-func Protected(c echo.Context) error {
-	user := c.Get("user").(*models.User)
-
-	return c.JSON(http.StatusOK, user)
-}

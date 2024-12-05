@@ -15,10 +15,6 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	authGroup.POST("/login", handlers.Login(sessionStore))
 	authGroup.POST("/logout", handlers.Logout(sessionStore))
 
-	// Protected related routes (example only but following the same pattern)
-	protectedRoutes := e.Group("/protected", middleware.AuthMiddleware(sessionStore))
-	protectedRoutes.GET("/", handlers.Protected)
-
 	// Category related routes
 	categoryGroup := e.Group("/categories")
 	categoryGroup.GET("", handlers.GetCategories)
@@ -53,9 +49,9 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	productReviewGroup.DELETE("/:id", handlers.DeleteReview, middleware.AuthMiddleware(sessionStore))
 
 	// Cart related routes
-	cartGroup := e.Group("/cart-items")
-	cartGroup.GET("", handlers.ListCartItems)        
-	cartGroup.POST("", handlers.AddCartItem)         
+	cartGroup := e.Group("/cart", middleware.AuthMiddleware(sessionStore))
+	cartGroup.GET("", handlers.ListCartItems)
+	cartGroup.POST("", handlers.AddCartItem)
 	cartGroup.PUT("/:id", handlers.UpdateCartItemQuantity)
-	cartGroup.DELETE("/:id", handlers.DeleteCartItem) 
-	}
+	cartGroup.DELETE("/:id", handlers.DeleteCartItem)
+}
