@@ -9,23 +9,28 @@ import (
 
 // Seeds all data into the database
 func SeedAll(DB *gorm.DB) error {
-	if err := cleanTables(DB); err != nil {
+	if err := CleanTables(DB); err != nil {
 		return err
 	}
 
-	if err := SeedProductCategories(DB); err != nil {
+	if err := seedProductCategories(DB); err != nil {
 		return err
 	}
 
-	if err := SeedProducts(DB); err != nil {
+	if err := seedProducts(DB); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func cleanTables(DB *gorm.DB) error {
+func CleanTables(DB *gorm.DB) error {
 	tables := []string{"products", "product_categories"}
+
+	// Disable foreign key checks
+	if err := DB.Exec("SET FOREIGN_KEY_CHECKS = 0").Error; err != nil {
+		return err
+	}
 
 	for _, table := range tables {
 		if err := DB.Exec("DELETE FROM " + table).Error; err != nil {
@@ -36,10 +41,14 @@ func cleanTables(DB *gorm.DB) error {
 		}
 	}
 
+	if err := DB.Exec("SET FOREIGN_KEY_CHECKS = 1").Error; err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func SeedProductCategories(DB *gorm.DB) error {
+func seedProductCategories(DB *gorm.DB) error {
 	categories := []models.ProductCategory{
 		{ParentID: nil, Name: "Keyboards", Slug: "keyboards", Description: "Find your next mechanical, ergonomic, or aesthetic keyboards here", CreatedAt: time.Now(), UpdatedAt: time.Now()},
 		{ParentID: nil, Name: "Switches", Slug: "switches", Description: "Find your next tactile, clicky, or linear switches here", CreatedAt: time.Now(), UpdatedAt: time.Now()},
@@ -67,7 +76,7 @@ func SeedProductCategories(DB *gorm.DB) error {
 	return nil
 }
 
-func SeedProducts(DB *gorm.DB) error {
+func seedProducts(DB *gorm.DB) error {
 	products := []models.Product{
 		{Name: "Keychron K6", Slug: "keychron-k6", Description: "A compact 65% wireless mechanical keyboard, by Keychron.", Price: 69.99, Stock: 40, CategoryID: 1, CreatedAt: time.Now(), UpdatedAt: time.Now()},
 		{Name: "Keychron K8", Slug: "keychron-k8", Description: "A compact 75% wireless mechanical keyboard, by Keychron.", Price: 79.99, Stock: 50, CategoryID: 1, CreatedAt: time.Now(), UpdatedAt: time.Now()},

@@ -97,10 +97,19 @@ func runMigrations() error {
 }
 
 func runSeeder() error {
-	if err := seeders.SeedAll(DB); err != nil {
-		return fmt.Errorf("Could not seed database: %w", err)
-	}
+	if os.Getenv("RUN_TEST_SEEDER") == "true" {
+		if err := seeders.SeedAll(DB); err != nil {
+			return fmt.Errorf("Could not seed database: %w", err)
+		}
 
-	log.Println("Database seeded successfully")
-	return nil
+		log.Println("Database seeded successfully")
+		return nil
+	} else {
+		if err := seeders.CleanTables(DB); err != nil {
+			return fmt.Errorf("Could not clean tables: %w", err)
+		}
+
+		log.Println("Database test seeding is disabled")
+		return nil
+	}
 }
