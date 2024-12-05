@@ -8,7 +8,15 @@ import LinkButton from "../../components/LinkButton"
 
 export default function Product() {
 	const { slug } = useParams()
-	const { product, loading, error } = useProduct(slug as string)
+	const {
+		product,
+		loading,
+		error,
+		quantity,
+		addProductToCart,
+		incrementQuantity,
+		decrementQuantity,
+	} = useProduct(slug as string)
 
 	if (loading) return <div>Loading...</div>
 	if (error)
@@ -62,14 +70,24 @@ export default function Product() {
 								Quantity
 							</label>
 							<div className="justify-start items-start gap-3 inline-flex w-full">
-								<div className="h-11 p-3 bg-white rounded-full border border-black justify-center items-center gap-4 flex">
-									<Minus className="w-4 h-4 relative" />
-									<div className="tracking-tight leading-tight">
-										1
+								<div className="h-11 bg-white rounded-full border border-black justify-center items-center gap-4 flex">
+									<button
+										className="p-3"
+										onClick={decrementQuantity}>
+										<Minus className="w-4 h-4 relative" />
+									</button>
+									<div className="tracking-tight leading-tight w-2 text-center -mx-3">
+										{quantity}
 									</div>
-									<Plus className="w-4 h-4 relative" />
+									<button
+										className="p-3"
+										onClick={incrementQuantity}>
+										<Plus className="w-4 h-4 relative" />
+									</button>
 								</div>
-								<button className="grow shrink basis-0 h-11 p-3 bg-white rounded-full border border-black justify-center items-center gap-2 flex">
+								<button
+									className="grow shrink basis-0 h-11 bg-white rounded-full border border-black justify-center items-center gap-2 flex"
+									onClick={addProductToCart}>
 									Add to cart
 								</button>
 							</div>
@@ -78,6 +96,7 @@ export default function Product() {
 									text="Buy now"
 									to="/cart"
 									buttonClassNames="bg-secondary-dark h-11 w-full"
+									textClassNames="p-3"
 								/>
 							</div>
 						</div>
