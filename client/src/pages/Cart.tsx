@@ -6,6 +6,7 @@ import Divider from "../components/Divider"
 import InputBox from "../components/InputBox"
 import LinkButton from "../components/LinkButton"
 import { LockKeyhole, Minus, Plus } from "lucide-react"
+import { Link } from "react-router-dom"
 
 // ToDo: Add implement cart hook
 
@@ -154,7 +155,7 @@ export default function Cart() {
 						<InputBox />
 						<div className="flex flex-col w-full">
 							<LinkButton
-								to="/cart/checkout"
+								to="/checkout"
 								buttonClassNames="px-10 py-5 bg-secondary-dark w-full mt-12"
 								text="Checkout"
 								Icon={LockKeyhole}

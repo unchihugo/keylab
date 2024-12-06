@@ -1,0 +1,2 @@
+ALTER TABLE product_reviews
+MODIFY COLUMN rating SMALLINT NOT NULL CHECK (rating BETWEEN 1 AND 5);
