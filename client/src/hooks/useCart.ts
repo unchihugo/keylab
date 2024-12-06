@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import { cartService } from "../services/cartService";
 import { CartItem } from "../types/CartItems";
+import { Cart } from "../types/Cart";
 
 export const useCart = (user: string) => {
-    const [cart, setCart] = useState<CartItem | null>(null)
+    const [cart, setCart] = useState<Cart | null>(null)
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState<string | null>(null)
 
