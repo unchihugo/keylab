@@ -14,6 +14,7 @@ export const useProduct = (slug: string) => {
 	const [product, setProduct] = useState<Product | null>(null)
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState<string | null>(null)
+	const [quantity, setQuantity] = useState(1)
 
 	useEffect(() => {
 		const fetchProduct = async () => {
@@ -57,5 +58,42 @@ export const useProduct = (slug: string) => {
 		}
 	}, [slug])
 
-	return { product, loading, error }
+	/**
+	 * Add the current product to user's cart, taking into account the quantity
+	 */
+	const addProductToCart = () => {
+		if (!product) return
+		if (quantity < 1) return
+		if (quantity > product.data.stock) return
+
+		try {
+			// Add product to cart
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	/**
+	 * Increase the quantity of the product to be added to the cart by 1
+	 */
+	const incrementQuantity = () => {
+		setQuantity((prev) => prev + 1)
+	}
+
+	/**
+	 * Descrease the quantity of the product to be added to the cart by 1 if it's not already 1
+	 */
+	const decrementQuantity = () => {
+		setQuantity((prev) => (prev > 1 ? prev - 1 : 1))
+	}
+
+	return {
+		product,
+		loading,
+		error,
+		quantity,
+		incrementQuantity,
+		decrementQuantity,
+		addProductToCart,
+	}
 }
