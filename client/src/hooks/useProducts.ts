@@ -32,30 +32,34 @@ export const useProducts = () => {
     const fetchTestProducts = () => {
       setProducts([
         {
-          id: 1,
-          name: "Test Product 1",
-          slug: "test-product-1",
-          description:
-            "Test Product 1 description: .",
-          price: 19.99,
-          stock: 50,
-          category_id: 2,
+          data: {
+            id: 1,
+            name: "Test Product 1",
+            slug: "test-product-1",
+            description: "Test Product 1 description: .",
+            price: 19.99,
+            stock: 50,
+            category_id: 2,
+          },
+          message: "Product found",
         },
         {
-          id: 2,
-          name: "Test Product 2",
-          slug: "test-product-2",
-          description:
-            "Test Product 2 description: ",
-          price: 29.99,
-          stock: 30,
-          category_id: 3,
+          data: {
+            id: 2,
+            name: "Test Product 2",
+            slug: "test-product-2",
+            description: "Test Product 2 description: ",
+            price: 29.99,
+            stock: 30,
+            category_id: 3,
+          },
+          message: "Product found",
         },
       ]);
     };
 
     // Fetch products 
-    if (process.env.NODE_ENV === "test") {
+    if (import.meta.env.MODE === "test") {
       fetchTestProducts();
     } else {
       fetchProducts();
