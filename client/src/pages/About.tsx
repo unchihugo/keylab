@@ -5,7 +5,7 @@ import Divider from "../components/Divider"
 export default function About() {
 	return (
 		<div className="flex justify-center items-center bg-secondary min-h-screen">
-			<div className="flex flex-col w-full max-w-3xl px-4 space-y-6">
+			<div className="flex flex-col w-full max-w-3xl px-4 space-y-6 my-24">
 				{/* About Us */}
 				<div className="px-6 py-8 bg-white drop-shadow-cartoon rounded-lg border border-black">
 					<div className="text-2xl font-display text-black mb-4">
