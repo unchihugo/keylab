@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
 import ProductCard from "../components/ProductCard";
+import { useProducts } from "../hooks/useProducts";
+
+
+
 
 // Define types for the product card
 interface Product {
@@ -11,16 +15,8 @@ interface Product {
 }
 
 const DisplayPage: React.FC = () => {
-  // Example products data (will be taken from a database)
-  const [products] = useState<Product[]>([
-    { id: 1, name: "Keycap Set A", price: 30, imageUrl: "" },
-    { id: 2, name: "Keycap Set B", price: 40, imageUrl: "" },
-    { id: 3, name: "Keycap Set C", price: 25, imageUrl: "" },
-    { id: 4, name: "Keycap Set D", price: 50, imageUrl: "" },
-    { id: 5, name: "Keycap Set E", price: 35, imageUrl: "" },
-    { id: 6, name: "Keycap Set F", price: 60, imageUrl: "" },
-  ]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
+  const { products, loading, error } = useProducts() // Fetch products from backend
+	const [filteredProducts, setFilteredProducts] = useState<Product[]>(products)
 
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [activeFilters, setActiveFilters] = useState<{ [key: string]: boolean }>({
@@ -33,7 +29,7 @@ const DisplayPage: React.FC = () => {
 
   // Apply all filters and sorting
   const applyFilters = () => {
-    let updatedProducts = [...products];
+    let updatedProducts = [...product];
 
     // Apply search filter
     if (searchTerm) {
@@ -65,7 +61,7 @@ const DisplayPage: React.FC = () => {
         updatedProducts.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         break;
       default:
-        break; // "new" shows original order
+        break; 
     }
 
     setFilteredProducts(updatedProducts);
@@ -74,7 +70,7 @@ const DisplayPage: React.FC = () => {
   // Reapply filters whenever related state changes
   useEffect(() => {
     applyFilters();
-  }, [searchTerm, activeFilters, priceRange, sortOption ]);
+  }, [searchTerm, activeFilters, priceRange, sortOption, products]);
 
   // Handlers
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,6 +92,10 @@ const DisplayPage: React.FC = () => {
     setPriceRange(parseInt(e.target.value, 10));
   };
 
+  if (loading) return <div>Loading products...</div>
+	if (error) return <div>Error loading products: {error}</div>
+
+
   return (
     <div className="min-h-screen bg-gray-50">
 
@@ -111,7 +111,7 @@ const DisplayPage: React.FC = () => {
 
       {/* Filters and Products Section */}
       <main className="container mx-auto flex flex-col lg:flex-row bg-primary bg-opacity-20">
-        <aside className="w-full lg:w-1/5 bg-primary-dark bg-opacity-50 p-4 shadow-lg rounded-2xl space-y-4 mb-6 lg:mb-0 h-auto border border-gray-700">
+        <aside className="w-full lg:w-1/5 bg-primary-dark bg-opacity-50 p-4 shadow-lg rounded-2xl space-y-4 mb-6 lg:mb-0 h-fit border border-gray-700">
           <h2 className="text-xl font-body text-gray-700">Filters</h2>
           <div>
             <h3 className="font-medium text-gray-600">Switches</h3>
