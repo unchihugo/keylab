@@ -55,6 +55,42 @@ export const useProducts = () => {
           },
           message: "Product found",
         },
+        {
+          data: {
+          id: 3,
+          name: "Test Product 3",
+          slug: "test-product-3",
+          description: "Test Product 3 description: ",
+          price: 29.99,
+          stock: 30,
+          category_id: 4,
+        },
+        message: "Product found",
+      },
+      {
+        data: {
+        id: 4,
+        name: "Test Product 4",
+        slug: "test-product-4",
+        description: "Test Product 4 description: ",
+        price: 29.99,
+        stock: 30,
+        category_id: 5,
+      },
+      message: "Product found",
+    },
+    { 
+      data: {
+      id: 5,
+      name: "Test Product 5",
+      slug: "test-product-5",
+      description: "Test Product 5 description: ",
+      price: 29.99,
+      stock: 30,
+      category_id: 6,
+    },
+    message: "Product found",
+  },
       ]);
     };
 
