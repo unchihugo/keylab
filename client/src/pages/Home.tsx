@@ -29,7 +29,7 @@ export default function Home() {
               <LinkButton text="Shop now" 
               buttonClassNames=" bg-white " 
               textClassNames="px-6 py-2" 
-              to="/Display-page"/>  
+              to="/shop"/>  
 
               <LinkButton text="Try our Keyboard Designer" 
               buttonClassNames="bg-primary-darker" 
