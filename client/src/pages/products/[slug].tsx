@@ -5,6 +5,7 @@ import { useProduct } from "../../hooks/useProduct"
 import NotFound from "../NotFound"
 import { Minus, Plus } from "lucide-react"
 import LinkButton from "../../components/LinkButton"
+import ZoomImage from "../../components/ZoomImage"
 
 export default function Product() {
 	const { slug } = useParams()
@@ -36,12 +37,18 @@ export default function Product() {
 				</div>
 				<div className="my-4 md:grid md:grid-cols-2 lg:grid-cols-5 gap-10 items-center w-full">
 					<div className="w-full aspect-square rounded-lg bg-white lg:col-span-3">
-						{/* TODO: we don't have images yet
-                        <img
-                            src={product.image}
-                            alt={product.name}
-                            className="w-full h-auto rounded-lg"
-                        /> */}
+						{product.data.product_images &&
+							product.data.product_images.length > 0 && (
+								<ZoomImage
+									src={
+										product.data.product_images[0].data.url
+									}
+									alt={
+										product.data.product_images[0].data
+											.image
+									}
+								/>
+							)}
 					</div>
 					<div className="lg:col-span-2 flex-col gap-5 inline-flex">
 						<div>
