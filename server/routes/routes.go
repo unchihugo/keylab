@@ -29,13 +29,16 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	productGroup := e.Group("/products")
 	productGroup.GET("", handlers.ListProducts)
 	productGroup.GET("/:slug", handlers.GetProductBySlug)
-	productGroup.GET("/category/:category", handlers.GetProductsByCategory)
+	productGroup.GET("/category/:id", handlers.GetProductsByCategory)
 	productGroup.GET("/search/:query", handlers.SearchProducts)
+	productGroup.GET("/image/:path", handlers.GetProductImage)
 
 	// TODO: Add admin middleware to the following routes
 	productGroup.POST("", handlers.CreateProduct)
 	productGroup.DELETE("/:id", handlers.DeleteProduct)
 	productGroup.PUT("/:id", handlers.UpdateProduct)
+	productGroup.POST("/:slug/image", handlers.UploadProductImages)
+	productGroup.DELETE("/:slug/image/:id", handlers.DeleteProductImage)
 
 	productReviewGroup := e.Group("/products/:product_slug/reviews")
 	productReviewGroup.GET("", handlers.GetReviewsByProduct)

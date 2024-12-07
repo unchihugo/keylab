@@ -49,5 +49,11 @@ func main() {
 
 	db.InitDB()
 
-	app.e.Start(":8080")
+	port := os.Getenv("SERVER_PORT")
+	url := os.Getenv("SERVER_URL")
+	if port == "" || url == "" {
+		e.Logger.Fatal("SERVER_PORT is not set")
+	}
+
+	app.e.Start(":" + port)
 }
