@@ -50,7 +50,7 @@ func AddCartItem(c echo.Context) error {
 		return jsonResponse(c, http.StatusBadRequest, "Invalid input for cart item")
 	}
 
-	if err := cartItem.Validate(); err != nil {
+	if err := cartItem.Validate("ProductID", "Quantity"); err != nil {
 		return jsonResponse(c, http.StatusBadRequest, err.Error())
 	}
 
