@@ -5,7 +5,7 @@ import { useAuth } from "../../AuthContext"
 import Divider from "../../components/Divider"
 import LinkButton from "../../components/LinkButton"
 import { ArrowUpRight, ChevronRight } from "lucide-react"
-import { Navigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import * as formValidation from "../../lib/formValidation"
 import ErrorBox from "../../components/ErrorBox"
 
@@ -41,12 +41,13 @@ export default function SignIn() {
 		}
 	}
 
+	const navigate = useNavigate()
 	useEffect(() => {
 		if (isAuthenticated) {
 			// redirect to home page if authenticated
-			;<Navigate to="/" />
+			navigate('/')
 		}
-	}, [isAuthenticated])
+	}, [isAuthenticated, navigate])
 
 	return (
 		<div className="flex justify-center items-center bg-secondary">
