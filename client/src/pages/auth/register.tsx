@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react"
 import { useAuth } from "../../AuthContext"
-import { Navigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import LinkButton from "../../components/LinkButton"
 import Divider from "../../components/Divider"
 import { CheckCheck, ChevronRight } from "lucide-react"
@@ -50,12 +50,13 @@ export default function Register() {
 
 	// TODO: add "Receive updates" checkbox functionality
 
+	const navigate = useNavigate()
 	useEffect(() => {
 		if (isAuthenticated) {
 			// redirect to home page if authenticated
-			;<Navigate to="/" />
+			navigate('/sign-in')
 		}
-	}, [isAuthenticated])
+	}, [isAuthenticated, navigate])
 
 	return (
 		<div className="flex justify-center items-center bg-primary">
