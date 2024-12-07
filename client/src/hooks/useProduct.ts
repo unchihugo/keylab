@@ -44,6 +44,18 @@ export const useProduct = (slug: string) => {
 					price: 10.99,
 					stock: 100,
 					category_id: 1,
+					product_images: [
+						{
+							data: {
+								id: 1,
+								product_id: 1,
+								image: "Keychron V1 Custom Mechanical Keyboard frosted black knob K-Pro red",
+								url: "https://www.keychron.uk/cdn/shop/products/Keychron-V1-Custom-Mechanical-Keyboard-frosted-black-knob-K-Pro-red.jpg",
+								primary_image: true,
+							},
+							message: "Product image found",
+						},
+					],
 				},
 				message: "Product found",
 			})
