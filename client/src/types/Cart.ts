@@ -1,12 +1,13 @@
 /** @format  */
 
-import { CartItem } from "./CartItems"
+import { CartItems } from "./CartItems"
 
 export interface Cart {
+    items: any
     data: {
-        user: string
+        
         totalPrice: number
-        itemsInBasket: CartItem[]
+        itemsInBasket: CartItems[]
 
     }
 }

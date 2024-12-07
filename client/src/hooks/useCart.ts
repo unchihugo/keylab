@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { cartService } from "../services/cartService";
-import { CartItem } from "../types/CartItems";
+import { CartItems } from "../types/CartItems";
 import { Cart } from "../types/Cart";
 
 export const useCart = (user: string) => {

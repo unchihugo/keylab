@@ -1,11 +1,9 @@
 /** @format */
 
-export interface CartItem {
-    items: never[]
-    data: {
+export interface CartItems {
         product: string
         name: string
         quantity: number 
         price: number
-    }
+    
 }
