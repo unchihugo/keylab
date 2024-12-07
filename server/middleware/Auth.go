@@ -19,12 +19,34 @@ func AuthMiddleware(sessionStore *sessions.CookieStore) echo.MiddlewareFunc {
 			}
 
 			userID := session.Values["user_id"].(int64)
+                        if !ok {
+				return c.JSON(http.StatusUnauthorized, "Invalid session data")
+			}
 			user, err := repositories.FindUserByID(userID)
 			if err != nil {
 				return c.JSON(http.StatusUnauthorized, "Unauthorized")
 			}
 
 			c.Set("user", user)
+			return next(c)
+		}
+	}
+}
+func PermissionMiddleware(requiredPermissions ...string) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			
+			user, ok := c.Get("user").(*repositories.User)
+			if !ok || user == nil {
+				return c.JSON(http.StatusUnauthorized, "Unauthorized user")
+			}
+
+			
+			hasPermission, err := repositories.CheckRolePermissions(user.RoleID, requiredPermissions)
+			if err != nil || !hasPermission {
+				return c.JSON(http.StatusForbidden, "You do not have access to this resource")
+			}
+
 			return next(c)
 		}
 	}
