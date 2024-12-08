@@ -1,6 +1,6 @@
 /** @format */
 
-const PRODUCTS_API_URL = "http://localhost:8080/products" // TODO: use env variable
+const PRODUCTS_API_URL = `${import.meta.env.SERVER_URL}/products` // TODO: use env variable
 
 /**
  * Service that handles product requests to the backend

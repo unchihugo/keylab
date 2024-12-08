@@ -1,6 +1,6 @@
 /** @format */
 
-const AUTH_API_URL = "http://localhost:8080/auth"
+const AUTH_API_URL = `${import.meta.env.SERVER_URL}/auth`
 
 /**
  * Service that handles authentication requests to the backend

@@ -25,16 +25,15 @@ export default function ZoomImage({ src, alt }: ZoomImageProps) {
 				})
 			}}>
 			<img src={src} alt={alt} className="w-full h-auto rounded-lg object-cover" />
-			{isHovered && (
-				<div
-					className="absolute inset-0 pointer-events-none"
-					style={{
-						backgroundImage: `url(${src})`,
-						backgroundPosition: `${-mousePosition.x}px ${-mousePosition.y}px`,
-						backgroundSize: "200%",
-					}}
-				/>
-			)}
+			<div
+				className="absolute inset-0 pointer-events-none transition-opacity duration-200 ease-in-out"
+				style={{
+					opacity: isHovered ? 1 : 0,
+					backgroundImage: `url(${src})`,
+					backgroundPosition: `${-mousePosition.x}px ${-mousePosition.y}px`,
+					backgroundSize: "200%",
+				}}
+			/>
 		</div>
 	)
 }
