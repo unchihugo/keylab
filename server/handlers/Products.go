@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gosimple/slug"
 	"github.com/labstack/echo/v4"
@@ -328,7 +329,12 @@ func SearchProducts(c echo.Context) error {
 // 3. Returns status 404 if the image is not found.
 
 func GetProductImage(c echo.Context) error {
-	imagePath := "public/images/product_images/" + c.Param("path")
+	imagePath := c.Param("path")
+
+	// MICHAEL TODO - DELETE AND FIX THIS AFTER PRESENTATION
+	if !strings.HasPrefix(imagePath, "public/seed/") {
+		imagePath = "public/images/" + imagePath
+	}
 
 	if _, err := os.Stat(imagePath); os.IsNotExist(err) {
 		return jsonResponse(c, http.StatusNotFound, "Image not found")
