@@ -17,8 +17,7 @@ export interface Product {
 		created_at?: string | null
 		updated_at?: string | null
 		rating?: number
-		imageUrl?: string;
+		imageUrl?: string
 	}
 	message: string
 }
-
