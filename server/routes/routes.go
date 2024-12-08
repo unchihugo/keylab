@@ -57,4 +57,6 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	cartGroup.POST("", handlers.AddCartItem)
 	cartGroup.PUT("/:id", handlers.UpdateCartItemQuantity)
 	cartGroup.DELETE("/:id", handlers.DeleteCartItem)
+
+	e.POST("/contact", handlers.ContactUs)
 }
