@@ -17,47 +17,48 @@ const DisplayPage: React.FC = () => {
   const [sortOption, setSortOption] = useState<string>("new");
 
   // Apply all filters and sorting
-  const applyFilters = () => {
-    let updatedProducts = [...products];
+  useEffect(() => {
+    const applyFilters = () => {
+      let updatedProducts = [...products];
 
     // Apply search filter
-    if (searchTerm) {
-      updatedProducts = updatedProducts.filter((product) =>
-        product.data.name.toLowerCase().includes(searchTerm.toLowerCase())
+      if (searchTerm) {
+        updatedProducts = updatedProducts.filter((product) =>
+          product.data.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
     // Apply active filters
-    const filterKeys = Object.keys(activeFilters).filter((key) => activeFilters[key]);
-    if (filterKeys.length > 0) {
-      updatedProducts = updatedProducts.filter((product) =>
-        filterKeys.some((key) => product.data.name.toLowerCase().includes(key))
+      const filterKeys = Object.keys(activeFilters).filter((key) => activeFilters[key]);
+      if (filterKeys.length > 0) {
+        updatedProducts = updatedProducts.filter((product) =>
+          filterKeys.some((key) => product.data.name.toLowerCase().includes(key))
       );
     }
 
     // Apply price filter
-    updatedProducts = updatedProducts.filter((product) => product.data.price <= priceRange);
+      updatedProducts = updatedProducts.filter((product) => product.data.price <= priceRange);
 
     // Apply sorting
-    switch (sortOption) {
-      case "price-asc":
-        updatedProducts.sort((a, b) => a.data.price - b.data.price);
-        break;
-      case "price-desc":
-        updatedProducts.sort((a, b) => b.data.price - a.data.price);
-        break;
-      case "rating": 
-        updatedProducts.sort((a, b) => (b.data.rating || 0) - (a.data.rating || 0));
-        break;
-      default:
-        break; 
+      switch (sortOption) {
+        case "price-asc":
+          updatedProducts.sort((a, b) => a.data.price - b.data.price);
+           break;
+        case "price-desc":
+          updatedProducts.sort((a, b) => b.data.price - a.data.price);
+          break;
+        case "rating": 
+          updatedProducts.sort((a, b) => (b.data.rating || 0) - (a.data.rating || 0));
+          break;
+        default:
+          break; 
     }
 
-    setFilteredProducts(updatedProducts);
+      setFilteredProducts(updatedProducts);
   };
 
   // Reapply filters whenever related state changes
-  useEffect(() => {
+ 
     applyFilters();
   }, [searchTerm, activeFilters, priceRange, sortOption, products]);
 
