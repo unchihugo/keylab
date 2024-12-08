@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gosimple/slug"
 	"github.com/labstack/echo/v4"
 )
 
@@ -112,7 +113,6 @@ func GetProductsByCategory(c echo.Context) error {
 // 6. Returns status 201 if successful.
 // 7. Returns status 400 if the input data is invalid.
 // 8. Returns status 500 if an error occurs.
-
 func CreateProduct(c echo.Context) error {
 	var product models.Product
 
@@ -123,11 +123,6 @@ func CreateProduct(c echo.Context) error {
 
 	if err := product.Validate(); err != nil {
 		return jsonResponse(c, http.StatusBadRequest, err.Error())
-	}
-
-	if _, err := repositories.GetProductBySlug(product.Slug); err == nil {
-		log.Printf("Product already exists with the same slug: %v", product.Slug)
-		return jsonResponse(c, http.StatusBadRequest, "Product already exists with the same slug")
 	}
 
 	if err := db.DB.First(&product.Category, "id = ?", product.CategoryID).Error; err != nil {
@@ -151,15 +146,30 @@ func CreateProduct(c echo.Context) error {
 		}
 	}()
 
-	uploadedImages, err := uploadImages(c, formField, destination, allowedExtensions)
-	if err != nil {
-		return jsonResponse(c, http.StatusBadRequest, err.Error())
-	}
-
 	if err := transaction.Create(&product).Error; err != nil {
 		transaction.Rollback()
 		log.Printf("Error creating product: %v", err)
 		return jsonResponse(c, http.StatusInternalServerError, "Error creating product")
+	}
+
+	baseSlug := slug.Make(c.FormValue("name"))
+	product.Slug = baseSlug
+
+	var existingProduct models.Product
+	if _, err := repositories.GetProductBySlug(product.Slug); err == nil && existingProduct.ID != product.ID {
+		product.Slug = fmt.Sprintf("%s-%d", baseSlug, product.ID)
+	}
+
+	if err := transaction.Model(&product).Update("slug", product.Slug).Error; err != nil {
+		transaction.Rollback()
+		log.Printf("Error updating product slug: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Failed to update product slug")
+	}
+
+	uploadedImages, err := uploadImages(c, formField, destination, allowedExtensions)
+	if err != nil {
+		transaction.Rollback()
+		return jsonResponse(c, http.StatusBadRequest, err.Error())
 	}
 
 	for _, img := range uploadedImages {
@@ -287,10 +297,12 @@ func UpdateProduct(c echo.Context) error {
 // 3. Returns status 500 if an error occurs.
 
 func SearchProducts(c echo.Context) error {
-	query := c.QueryParam("query")
+	query := c.Param("query")
 
 	page, perPage, offset := getPaginationParams(c)
 	order := getSortOrder(c)
+
+	fmt.Println(query)
 
 	var products []models.Product
 	if err := db.DB.Preload("Category").Preload("ProductImages").Order(order).Where("name LIKE ? OR description LIKE ?", "%"+query+"%", "%"+query+"%").Limit(perPage).Offset(offset).Find(&products).Error; err != nil {

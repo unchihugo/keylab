@@ -9,7 +9,7 @@ import (
 type Product struct {
 	ID            int64            `gorm:"primaryKey;autoIncrement" json:"id" form:"id" validate:"omitempty,numeric"`
 	Name          string           `gorm:"type:varchar(255);not null" validate:"required,max=255" json:"name" form:"name"`
-	Slug          string           `gorm:"type:varchar(255);not null;unique" validate:"required,max=255" json:"slug" form:"slug"`
+	Slug          string           `gorm:"type:varchar(255);not null;unique" validate:"-" json:"slug" form:"slug"`
 	Description   string           `gorm:"type:text;not null" validate:"required" json:"description" form:"description"`
 	Price         float64          `gorm:"type:decimal(10,2);not null" validate:"required,gte=0" json:"price" form:"price"`
 	Stock         int              `gorm:"type:int;not null" validate:"required,min=0" json:"stock" form:"stock"`
