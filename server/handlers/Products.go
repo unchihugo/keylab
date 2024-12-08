@@ -302,8 +302,6 @@ func SearchProducts(c echo.Context) error {
 	page, perPage, offset := getPaginationParams(c)
 	order := getSortOrder(c)
 
-	fmt.Println(query)
-
 	var products []models.Product
 	if err := db.DB.Preload("Category").Preload("ProductImages").Order(order).Where("name LIKE ? OR description LIKE ?", "%"+query+"%", "%"+query+"%").Limit(perPage).Offset(offset).Find(&products).Error; err != nil {
 		log.Printf("Error searching for products: %v", err)
