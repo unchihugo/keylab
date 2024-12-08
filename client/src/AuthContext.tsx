@@ -5,6 +5,7 @@ import { authService } from "./services/authService"
 
 interface AuthContextProps {
 	isAuthenticated: boolean
+	isLoading: boolean
 	login: (email: string, password: string) => Promise<void> // async function that can return a promise
 	register: (
 		forename: string,
@@ -24,6 +25,7 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined)
  */
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const [isAuthenticated, setIsAuthenticated] = useState(false)
+	const [isLoading, setIsLoading] = useState(true)
 	const [isTesting] = useState(false) // TODO: set to false when we have supporting backend
 
 	// login function for ../pages/sign-in.tsx that calls the authService.login function (seperation of concerns) and sets the auth state
@@ -77,13 +79,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 	// check if user is authenticated on page load using HttpOnly cookies
 	useEffect(() => {
-		// TODO: check if user is authenticated using cookies
+		const validateSession = async () => {
+			try {
+				setIsLoading(true)
+				const data = await authService.validateSession()
+				console.log(data.message)
+				setIsAuthenticated(true)
+			} catch {
+				setIsAuthenticated(false)
+			} finally {
+				setIsLoading(false)
+			}
+		}
+		validateSession()
 	}, [])
 
 	return (
 		// provides the auth state and functions to all components wrapped in AuthProvider
 		<AuthContext.Provider
-			value={{ isAuthenticated, login, register, logout }}>
+			value={{ isAuthenticated, isLoading, login, register, logout }}>
 			{children}
 		</AuthContext.Provider>
 	)
