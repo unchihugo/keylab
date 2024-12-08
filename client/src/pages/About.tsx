@@ -1,31 +1,51 @@
-// src/About.js
-//import React from 'react';
+/** @format */
+
+import Divider from "../components/Divider"
 
 export default function About() {
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-700 p-8">
-            <div className="bg-white rounded-lg shadow-xl p-8 max-w-3xl w-full text-center">
-                <h1 className="text-4xl font-extrabold text-indigo-700 mb-6">About Us</h1>
+	return (
+		<div className="flex justify-center items-center bg-secondary min-h-screen">
+			<div className="flex flex-col w-full max-w-3xl px-4 space-y-6 my-24">
+				{/* About Us */}
+				<div className="px-6 py-8 bg-white drop-shadow-cartoon rounded-lg border border-black">
+					<div className="text-2xl font-display text-black mb-4">
+						About Us
+					</div>
+					<Divider />
+					<div className="flex flex-col space-y-6 font-body text-gray-600">
+						{/* Vision */}
+						<section>
+							<h2 className="text-xl font-semibold text-gray-800 mb-4">
+								Our Vision
+							</h2>
+							<p>
+								At Keylab, we specialise in creating a unique
+								experience for our customers by offering a range
+								of high-quality products designed to enhance
+								both function and aesthetics. Whether it's
+								smooth switches, keycaps or the chance to
+								completely personalise your own keyboard, we
+								have it all!
+							</p>
+							<p className="mt-4">
+								Our vision is to empower creators,
+								professionals, and gamers with tools that
+								enhance performance, comfort and creativity,
+								allowing people to express themselves. Our
+								commitment to innovation drives us to give
+								everyone the chance to elevate their experince.
+							</p>
+						</section>
+					</div>
+				</div>
 
-                {/* Vision Section */}
-                <section className="text-center">
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">Our Vision</h2>
-                    <p className="text-gray-600 text-lg leading-relaxed">
-                        At <span className="font-bold text-indigo-600">KEYLAB</span>, our mission is to create personalized keyboards that reflect individuality and style. We believe that every keyboard should be as unique as the person using it, combining functionality, aesthetic appeal, and quality.
-                    </p>
-                    <p className="text-gray-600 text-lg leading-relaxed mt-4">
-                        Our vision is to empower creators, professionals, and gamers with tools that enhance their experience and allow them to express themselves. With a passion for design and innovation, we strive to build keyboards that inspire creativity and joy.
-                    </p>
-                </section>
-                
-                {/* Decorative Divider */}
-                <div className="my-8 border-b-2 border-indigo-200 w-3/4 mx-auto"></div>
-
-                {/* Inspirational Quote or Tagline */}
-                <p className="text-xl italic text-gray-700">
-                    "Your keyboard, your style. Let’s build something unique together."
-                </p>
-            </div>
-        </div>
-    );
+				{/* Slogan */}
+				<div className="px-6 py-8 bg-white drop-shadow-cartoon rounded-lg border border-black">
+					<div className="text-lg font-body italic text-gray-700 text-center">
+						"Build your perfect board!"
+					</div>
+				</div>
+			</div>
+		</div>
+	)
 }

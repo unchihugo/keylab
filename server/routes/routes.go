@@ -15,10 +15,6 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	authGroup.POST("/login", handlers.Login(sessionStore))
 	authGroup.POST("/logout", handlers.Logout(sessionStore))
 
-	// Protected related routes (example only but following the same pattern)
-	protectedRoutes := e.Group("/protected", middleware.AuthMiddleware(sessionStore))
-	protectedRoutes.GET("/", handlers.Protected)
-
 	// Category related routes
 	categoryGroup := e.Group("/categories")
 	categoryGroup.GET("", handlers.GetCategories)
@@ -33,13 +29,16 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	productGroup := e.Group("/products")
 	productGroup.GET("", handlers.ListProducts)
 	productGroup.GET("/:slug", handlers.GetProductBySlug)
-	productGroup.GET("/category/:category", handlers.GetProductsByCategory)
+	productGroup.GET("/category/:id", handlers.GetProductsByCategory)
 	productGroup.GET("/search/:query", handlers.SearchProducts)
+	productGroup.GET("/image/:path", handlers.GetProductImage)
 
 	// TODO: Add admin middleware to the following routes
 	productGroup.POST("", handlers.CreateProduct)
 	productGroup.DELETE("/:id", handlers.DeleteProduct)
 	productGroup.PUT("/:id", handlers.UpdateProduct)
+	productGroup.POST("/:slug/image", handlers.UploadProductImages)
+	productGroup.DELETE("/:slug/image/:id", handlers.DeleteProductImage)
 
 	productReviewGroup := e.Group("/products/:product_slug/reviews")
 	productReviewGroup.GET("", handlers.GetReviewsByProduct)
@@ -51,4 +50,13 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	productReviewGroup.POST("", handlers.CreateReview, middleware.AuthMiddleware(sessionStore))
 	productReviewGroup.PUT("/:id", handlers.UpdateReview, middleware.AuthMiddleware(sessionStore))
 	productReviewGroup.DELETE("/:id", handlers.DeleteReview, middleware.AuthMiddleware(sessionStore))
+
+	// Cart related routes
+	cartGroup := e.Group("/cart", middleware.AuthMiddleware(sessionStore))
+	cartGroup.GET("", handlers.ListCartItems)
+	cartGroup.POST("", handlers.AddCartItem)
+	cartGroup.PUT("/:id", handlers.UpdateCartItemQuantity)
+	cartGroup.DELETE("/:id", handlers.DeleteCartItem)
+
+	e.POST("/contact", handlers.ContactUs)
 }

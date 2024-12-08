@@ -53,8 +53,7 @@ func GetReviewsByProduct(c echo.Context) error {
 	var reviews []models.ProductReviews
 	var product models.Product
 
-	productSlug := c.Param("product_slug")
-	product, err := repositories.GetProductBySlug(productSlug)
+	product, err := repositories.GetProductBySlug(c.Param("product_slug"))
 	if err != nil {
 		return jsonResponse(c, http.StatusNotFound, "Cannot find product with that slug")
 	}
@@ -107,14 +106,13 @@ func GetReviewsByUser(c echo.Context) error {
 func GetReview(c echo.Context) error {
 	var review models.ProductReviews
 
-	productSlug := c.Param("product_slug")
 	reviewID, err := convertToInt64(c.Param("id"))
 	if err != nil {
 		log.Printf("Error converting review ID to int64: %v", err)
 		return jsonResponse(c, http.StatusBadRequest, "Invalid review ID")
 	}
 
-	product, err := repositories.GetProductBySlug(productSlug)
+	product, err := repositories.GetProductBySlug(c.Param("product_slug"))
 	if err != nil {
 		return jsonResponse(c, http.StatusNotFound, "Product not found")
 	}
@@ -159,7 +157,7 @@ func GetReviewStatistics(c echo.Context) error {
 	}
 
 	var (
-		totalReviews = len(reviews)
+		totalReviews  = len(reviews)
 		averageRating float64
 	)
 
