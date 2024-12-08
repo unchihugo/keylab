@@ -9,7 +9,7 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
 	return (
 		<Link
 			to={`/products/${product.data.slug}`}
-			className="block border border-black w-full bg-white rounded-lg hover:drop-shadow-cartoon-y duration-300 overflow-hidden">
+			className="block border border-black w-full bg-white rounded-lg hover:drop-shadow-cartoon-y hover:-translate-y-1 duration-200 overflow-hidden">
       <div className="w-full h-fit bg-gray-200 rounded-md object-fill -z-10 flex items-center justify-center">
         {product.data.product_images &&
           product.data.product_images.length > 0 && (
@@ -20,10 +20,10 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
           )}
       </div>
       <div className="p-4">
-        <h3 className="text-lg font-medium text-gray-800 relative select-none pointer-events-none">
+        <h3 className="font-medium leading-tight text-gray-800 relative select-none pointer-events-none">
           {product.data.name}
         </h3>
-              <p className="text-gray-600 relative select-none pointer-events-none">${product.data.price}</p>
+              <p className="text-gray-500 relative select-none pointer-events-none">${product.data.price}</p>
       </div>
 		</Link>
 	)

@@ -99,20 +99,39 @@ export default function DisplayPage() {
 	if (!products) return <NotFound bodyMessage="No products found" />
 
 	return (
-		<div className="min-h-screen bg-gray-50">
+		<div className="min-h-screen bg-primary/25 py-24">
 			{/* Shop Banner */}
-			<div className="text-center py-12 bg-primary bg-opacity-70 mt-20 rounded-xl shadow-xl">
-				<h1 className="text-5xl font-bold text-secondary-dark font-display drop-shadow-lg">
-					SHOP
-				</h1>
-				<p className="mt-2 text-xl font-display text-white drop-shadow-lg">
-					New Halloween keycaps in stock!
+			<div className="container mx-auto px-24 py-12 bg-white text-black rounded-2xl my-4 border border-black">
+      <div className="w-full text-black/50">
+					Home — Shop
+				</div>
+				<h1 className="text-5xl font-display">SHOP</h1>
+				<p className="mt-4 leading-5 opacity-50">
+					Christmas keycaps in stock! <br /> Browse our selection of
+					keycaps, switches, and keyboards.
 				</p>
+				<div className="mt-3 flex items-center gap-12">
+					<p>Filter:</p>
+					<select className="p-1 border-gray-300 rounded-lg font-bold">
+						<option value="">By Category</option>
+						<option value="switches">Switches</option>
+						<option value="keycaps">Keycaps</option>
+						<option value="keyboards">Keyboards</option>
+						<option value="accessories">Accessories</option>
+					</select>
+					<select className="p-1 border-gray-300 rounded-lg font-bold">
+						<option value="">By Brand</option>
+						<option value="switches">Switches</option>
+						<option value="keycaps">Keycaps</option>
+						<option value="keyboards">Keyboards</option>
+						<option value="accessories">Accessories</option>
+					</select>
+				</div>
 			</div>
 
 			{/* Filters and Products Section */}
-			<main className="container mx-auto flex flex-col lg:flex-row bg-primary bg-opacity-20">
-				<aside className="w-full lg:w-1/5 bg-primary-dark bg-opacity-50 p-4 shadow-lg rounded-2xl space-y-4 mb-6 lg:mb-0 h-fit border border-gray-700">
+			<main className="container mx-auto flex flex-col lg:flex-row">
+				<aside className="w-full lg:w-1/5 bg-primary-dark/25 p-4 rounded-2xl space-y-4 mb-6 lg:mb-0 h-fit border border-gray-700 mr-4">
 					<h2 className="text-xl font-body text-gray-700">Filters</h2>
 					<div>
 						<h3 className="font-medium text-gray-600">Switches</h3>
@@ -231,15 +250,15 @@ export default function DisplayPage() {
 				</aside>
 
 				{/* Products Section */}
-				<section className="w-full lg:w-3/4 p-4">
+				<section className="w-full lg:w-4/5">
 					{/* Search and Sorting */}
-					<div className="flex items-center justify-between bg-white p-4 rounded-full shadow-md mb-6">
+					<div className="flex items-center justify-between bg-white p-4 rounded-2xl border border-black mb-6">
 						<input
 							type="text"
 							placeholder="Search products"
 							//value={searchTerm}
 							onKeyDown={handleSearch}
-							className="border-none outline-none px-4 py-2 w-2/3 text-gray-600 placeholder-gray-400 rounded-full"
+							className="border border-black/50 outline-secondary-darker px-4 py-2 w-2/3 text-gray-600 placeholder-gray-400 rounded-xl"
 						/>
 						<div className="flex space-x-2">
 							<button
@@ -263,7 +282,7 @@ export default function DisplayPage() {
 						</div>
 					</div>
 
-					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
 						{products.map((product) => (
 							<ProductCard
 								key={product.data.id}

@@ -6,12 +6,18 @@ return (
 <footer className="bg-white py-12 px-8 border-t text-sm">
   <div className="max-w-screen-lg mx-auto flex flex-col items-center space-y-6">
     {/* Logo Section */}
-    <div>
+    <div className="flex flex-col items-center">
       <img 
-        src={keylabicon} 
-        alt="Logo"
-        className="h-10" 
+      src={keylabicon} 
+      alt="Logo"
+      className="h-10 mb-2" 
       />
+      <p>
+      © Copyright
+      </p>
+      <p>
+      Keylab, 2024
+      </p>
     </div>
 
     {/* Navigation Links Section with Dividers */}
