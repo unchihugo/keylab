@@ -29,7 +29,7 @@ func SeedAll(DB *gorm.DB) error {
 }
 
 func CleanTables(DB *gorm.DB) error {
-	tables := []string{"products", "product_categories"}
+	tables := []string{"products", "product_categories", "product_images"}
 
 	// Disable foreign key checks
 	if err := DB.Exec("SET FOREIGN_KEY_CHECKS = 0").Error; err != nil {
