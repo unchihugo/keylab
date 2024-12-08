@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	"keylab/database/seeders"
 	"log"
 	"os"
 
@@ -49,6 +50,10 @@ func InitDB() {
 	}
 
 	log.Println("Connected to the database and migrations completed")
+
+	if err := runSeeder(); err != nil {
+		log.Fatalf("Failed to seed database: %v", err)
+	}
 }
 
 /*
@@ -89,4 +94,22 @@ func runMigrations() error {
 
 	log.Println("Migrations completed successfully")
 	return nil
+}
+
+func runSeeder() error {
+	if os.Getenv("RUN_TEST_SEEDER") == "true" {
+		if err := seeders.SeedAll(DB); err != nil {
+			return fmt.Errorf("Could not seed database: %w", err)
+		}
+
+		log.Println("Database seeded successfully")
+		return nil
+	} else {
+		if err := seeders.CleanTables(DB); err != nil {
+			return fmt.Errorf("Could not clean tables: %w", err)
+		}
+
+		log.Println("Database test seeding is disabled")
+		return nil
+	}
 }
