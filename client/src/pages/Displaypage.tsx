@@ -84,8 +84,6 @@ const DisplayPage: React.FC = () => {
 
   if (loading) return <div>Loading products...</div>
 	if (error) return <div>Error loading products: {error}</div>
-
-
   return (
     <div className="min-h-screen bg-gray-50">
 
