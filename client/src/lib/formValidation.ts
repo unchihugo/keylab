@@ -115,3 +115,43 @@ export const validateMatch = (
 	}
 	return ""
 }
+
+/**
+ * Validates phone numbers based on the following criteria:
+ * - Isn't empty
+ * - Should match a phone number pattern (e.g., format like +1234567890)
+ * @param phoneNum Phone number to validate
+ * @returns Error message if phone number is invalid, otherwise an empty string
+ */
+export const validatePhoneNum = (phoneNum: string) => {
+	const regex = /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/;
+	if (!phoneNum) {
+	  return "Phone number is required";
+	}
+	if (!regex.test(phoneNum)) {
+	  return "Invalid phone number format";
+	}
+	return "";
+  }
+  
+  /**
+   * Validates messages based on the following criteria:
+   * - Is not empty
+   * - Should be at least 10 characters long
+   * @param message Message to validate
+   * @returns Error message if message is invalid, otherwise an empty string
+   */
+  export const validateMessage = (message: string) => {
+	if (!message) {
+	  return "Message is required";
+	}
+	if (message.length < 10) {
+	  return "Message must be at least 10 characters long";
+	}
+	return "";
+  }
+  
+
+
+  
+
