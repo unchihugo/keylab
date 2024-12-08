@@ -36,16 +36,15 @@ export default function Product() {
 					Name Lorem ipsum
 				</div>
 				<div className="my-4 md:grid md:grid-cols-2 lg:grid-cols-5 gap-10 items-center w-full">
-					<div className="w-full aspect-square rounded-lg bg-white lg:col-span-3">
+					<div className="w-full aspect-square rounded-lg bg-white lg:col-span-3 flex items-center">
 						{product.data.product_images &&
 							product.data.product_images.length > 0 && (
 								<ZoomImage
 									src={
-										product.data.product_images[0].data.url
+										product.data.product_images[0].url
 									}
 									alt={
-										product.data.product_images[0].data
-											.image
+										product.data.product_images[0].image
 									}
 								/>
 							)}
