@@ -14,6 +14,7 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	authGroup.POST("/register", handlers.Register)
 	authGroup.POST("/login", handlers.Login(sessionStore))
 	authGroup.POST("/logout", handlers.Logout(sessionStore))
+	authGroup.GET("/validate", handlers.ValidateSession(sessionStore), middleware.AuthMiddleware(sessionStore))
 
 	// Category related routes
 	categoryGroup := e.Group("/categories")
