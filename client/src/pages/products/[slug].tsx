@@ -32,8 +32,8 @@ export default function Product() {
 			<div className="max-w-screen-lg w-full my-32 mx-6">
 				{/* TODO: add breadcrumbs component */}
 				<div className="w-full text-black/50">
-					Home — Shop — Keycaps — Cherry Profile Keycaps — Product Name Lorem
-					ipsum
+					Home — Shop — Keycaps — Cherry Profile Keycaps — Product
+					Name Lorem ipsum
 				</div>
 				<div className="my-4 md:grid md:grid-cols-2 lg:grid-cols-5 gap-10 items-center w-full">
 					<div className="w-full aspect-square rounded-lg bg-white lg:col-span-3">

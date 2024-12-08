@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import ProductCard from "../components/ProductCard"
 import { useProducts } from "../hooks/useProducts"
 import NotFound from "./NotFound"
@@ -19,61 +19,81 @@ export default function DisplayPage() {
 		prebuilt: false,
 	})
 	const [priceRange, setPriceRange] = useState<number>(100)
-	const [sortOption, setSortOption] = useState<string>("new")
+	//const [sortOption, setSortOption] = useState<string>("new")
 
 	// Apply all filters and sorting
-	useEffect(() => {
-		const applyFilters = () => {
-			// let updatedProducts = [...products]
-			// // Apply active filters
-			// const filterKeys = Object.keys(activeFilters).filter(
-			// 	(key) => activeFilters[key],
-			// )
-			// if (filterKeys.length > 0) {
-			// 	updatedProducts = updatedProducts.filter((product) =>
-			// 		filterKeys.some((key) =>
-			// 			product.data.name.toLowerCase().includes(key),
-			// 		),
-			// 	)
-			// }
-			// // Apply price filter
-			// updatedProducts = updatedProducts.filter(
-			// 	(product) => product.data.price <= priceRange,
-			// )
-			// // Apply sorting
-			// switch (sortOption) {
-			// 	case "price-asc":
-			// 		updatedProducts.sort((a, b) => a.data.price - b.data.price)
-			// 		break
-			// 	case "price-desc":
-			// 		updatedProducts.sort((a, b) => b.data.price - a.data.price)
-			// 		break
-			// 	case "rating":
-			// 		updatedProducts.sort(
-			// 			(a, b) => (b.data.rating || 0) - (a.data.rating || 0),
-			// 		)
-			// 		break
-			// 	default:
-			// 		break
-			// }
-			// setFilteredProducts(updatedProducts)
-		}
+	// useEffect(() => {
+	// 	const applyFilters = () => {
+	// 		// let updatedProducts = [...products]
+	// 		// // Apply active filters
+	// 		// const filterKeys = Object.keys(activeFilters).filter(
+	// 		// 	(key) => activeFilters[key],
+	// 		// )
+	// 		// if (filterKeys.length > 0) {
+	// 		// 	updatedProducts = updatedProducts.filter((product) =>
+	// 		// 		filterKeys.some((key) =>
+	// 		// 			product.data.name.toLowerCase().includes(key),
+	// 		// 		),
+	// 		// 	)
+	// 		// }
+	// 		// // Apply price filter
+	// 		// updatedProducts = updatedProducts.filter(
+	// 		// 	(product) => product.data.price <= priceRange,
+	// 		// )
+	// 		// // Apply sorting
+	// 		// switch (sortOption) {
+	// 		// 	case "price-asc":
+	// 		// 		updatedProducts.sort((a, b) => a.data.price - b.data.price)
+	// 		// 		break
+	// 		// 	case "price-desc":
+	// 		// 		updatedProducts.sort((a, b) => b.data.price - a.data.price)
+	// 		// 		break
+	// 		// 	case "rating":
+	// 		// 		updatedProducts.sort(
+	// 		// 			(a, b) => (b.data.rating || 0) - (a.data.rating || 0),
+	// 		// 		)
+	// 		// 		break
+	// 		// 	default:
+	// 		// 		break
+	// 		// }
+	// 		// setFilteredProducts(updatedProducts)
+	// 	}
 
-		// Reapply filters whenever related state changes
+	// 	// Reapply filters whenever related state changes
 
-		applyFilters()
-	}, [searchTerm, activeFilters, priceRange, sortOption, products])
+	// 	applyFilters()
+	// }, [searchTerm, activeFilters, priceRange, sortOption, products])
 
 	// Handlers
-	const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
-		setSearchTerm((e.target as HTMLInputElement).value)
+	const handleSearch = async (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === "Enter") {
-			searchProducts((e.target as HTMLInputElement).value)
+			try {
+				await searchProducts(searchTerm)
+				console.log("Search results:", products)
+
+				// Check if products is an array
+				if (!Array.isArray(products)) {
+					return (
+						<NotFound bodyMessage="Invalid product data received" />
+					)
+				}
+
+				if (loading) {
+					// return (
+					// 	<NotFound
+					// 		errorMessage="Loading..."
+					// 		bodyMessage="Loading products..."
+					// 	/>
+					// )
+				}
+			} catch (err) {
+				console.error("Search error:", err)
+			}
 		}
 	}
 
 	const handleSort = (option: string) => {
-		setSortOption(option)
+		// 	setSortOption(option)
 	}
 
 	const handleFilterChange = (filterName: string) => {
@@ -102,9 +122,7 @@ export default function DisplayPage() {
 		<div className="min-h-screen bg-primary/25 py-24">
 			{/* Shop Banner */}
 			<div className="container mx-auto px-24 py-12 bg-white text-black rounded-2xl my-4 border border-black">
-      <div className="w-full text-black/50">
-					Home — Shop
-				</div>
+				<div className="w-full text-black/50">Home — Shop</div>
 				<h1 className="text-5xl font-display">SHOP</h1>
 				<p className="mt-4 leading-5 opacity-50">
 					Christmas keycaps in stock! <br /> Browse our selection of
@@ -256,7 +274,8 @@ export default function DisplayPage() {
 						<input
 							type="text"
 							placeholder="Search products"
-							//value={searchTerm}
+							value={searchTerm}
+							onChange={(e) => setSearchTerm(e.target.value)}
 							onKeyDown={handleSearch}
 							className="border border-black/50 outline-secondary-darker px-4 py-2 w-2/3 text-gray-600 placeholder-gray-400 rounded-xl"
 						/>
@@ -283,12 +302,16 @@ export default function DisplayPage() {
 					</div>
 
 					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-						{products.map((product) => (
-							<ProductCard
-								key={product.data.id}
-								product={product}
-							/>
-						))}
+						{Array.isArray(products) ? (
+							products.map((product) => (
+								<ProductCard
+									key={product.data.id}
+									product={product}
+								/>
+							))
+						) : (
+							<NotFound bodyMessage="No products found" />
+						)}
 					</div>
 				</section>
 			</main>

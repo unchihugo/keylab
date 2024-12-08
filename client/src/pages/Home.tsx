@@ -84,14 +84,14 @@ export default function Home() {
 								{name}
 							</h3>
 							<div className="w-full">
-                <LinkButton
-                  text="Shop"
-                  buttonClassNames="bg-secondary-darker w-full"
-                  to="/shop"
-                  Icon={ChevronRight}
-                  iconRight={true}
-                />
-              </div>
+								<LinkButton
+									text="Shop"
+									buttonClassNames="bg-secondary-darker w-full"
+									to="/shop"
+									Icon={ChevronRight}
+									iconRight={true}
+								/>
+							</div>
 						</div>
 					))}
 				</div>

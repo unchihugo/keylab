@@ -1,6 +1,6 @@
 /** @format */
 
-const PRODUCTS_API_URL = `${import.meta.env.SERVER_URL}/products` // TODO: use env variable
+const PRODUCTS_API_URL = "http://localhost:8080/products" // TODO: use env variable
 
 /**
  * Service that handles product requests to the backend
@@ -14,7 +14,7 @@ export const productService = {
 	 * @returns {Promise} A promise that resolves with the list of products
 	 * @throws {Error} An error from the API request
 	 */
-	
+
 	async listProducts() {
 		const response = await fetch(`${PRODUCTS_API_URL}`, {
 			method: "GET",
@@ -30,7 +30,7 @@ export const productService = {
 
 		return response.json()
 	},
-   
+
 	/**
 	 * Get a product by its slug
 	 * @param {string} slug The product's slug
@@ -95,6 +95,7 @@ export const productService = {
 				"Content-Type": "application/json",
 			},
 		})
+		console.log(response)
 
 		if (!response.ok) {
 			const errorData = await response.json()
@@ -103,5 +104,4 @@ export const productService = {
 
 		return response.json()
 	},
-
 }

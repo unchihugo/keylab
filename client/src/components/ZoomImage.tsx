@@ -24,7 +24,11 @@ export default function ZoomImage({ src, alt }: ZoomImageProps) {
 					y: e.clientY - top,
 				})
 			}}>
-			<img src={src} alt={alt} className="w-full h-auto rounded-lg object-cover" />
+			<img
+				src={src}
+				alt={alt}
+				className="w-full h-auto rounded-lg object-cover"
+			/>
 			<div
 				className="absolute inset-0 pointer-events-none transition-opacity duration-200 ease-in-out"
 				style={{
