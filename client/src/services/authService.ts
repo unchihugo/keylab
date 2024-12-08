@@ -68,4 +68,20 @@ export const authService = {
 
 		return response.json()
 	},
+
+	// validate the user's session
+	async validateSession() {
+		const response = await fetch(`${AUTH_API_URL}/validate`, {
+			method: "GET",
+			credentials: "include",
+		})
+
+		if (!response.ok) {
+			// handle errors
+			const errorData = await response.json()
+			throw new Error(errorData.message || "Session validation failed")
+		}
+
+		return response.json()
+	},
 }

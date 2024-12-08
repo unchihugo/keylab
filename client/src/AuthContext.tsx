@@ -77,7 +77,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 	// check if user is authenticated on page load using HttpOnly cookies
 	useEffect(() => {
-		// TODO: check if user is authenticated using cookies
+		const validateSession = async () => {
+			try {
+				const data = await authService.validateSession()
+				console.log(data.message)
+				setIsAuthenticated(true)
+			} catch {
+				// invalid session
+			}
+		}
+		validateSession()
 	}, [])
 
 	return (
