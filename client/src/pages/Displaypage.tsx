@@ -1,21 +1,10 @@
 import React, { useState, useEffect } from "react";
 import ProductCard from "../components/ProductCard";
 import { useProducts } from "../hooks/useProducts";
-
-
-
-
-// Define types for the product card
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  imageUrl: string;
-  rating?: number; 
-}
+import { Product } from "../types/Product";
 
 const DisplayPage: React.FC = () => {
-  const { products, loading, error } = useProducts() // Fetch products from backend
+  const { products , loading, error } = useProducts() // Fetch products from backend
 	const [filteredProducts, setFilteredProducts] = useState<Product[]>(products)
 
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -29,12 +18,12 @@ const DisplayPage: React.FC = () => {
 
   // Apply all filters and sorting
   const applyFilters = () => {
-    let updatedProducts = [...product];
+    let updatedProducts = [...products];
 
     // Apply search filter
     if (searchTerm) {
       updatedProducts = updatedProducts.filter((product) =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase())
+        product.data.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -42,23 +31,23 @@ const DisplayPage: React.FC = () => {
     const filterKeys = Object.keys(activeFilters).filter((key) => activeFilters[key]);
     if (filterKeys.length > 0) {
       updatedProducts = updatedProducts.filter((product) =>
-        filterKeys.some((key) => product.name.toLowerCase().includes(key))
+        filterKeys.some((key) => product.data.name.toLowerCase().includes(key))
       );
     }
 
     // Apply price filter
-    updatedProducts = updatedProducts.filter((product) => product.price <= priceRange);
+    updatedProducts = updatedProducts.filter((product) => product.data.price <= priceRange);
 
     // Apply sorting
     switch (sortOption) {
       case "price-asc":
-        updatedProducts.sort((a, b) => a.price - b.price);
+        updatedProducts.sort((a, b) => a.data.price - b.data.price);
         break;
       case "price-desc":
-        updatedProducts.sort((a, b) => b.price - a.price);
+        updatedProducts.sort((a, b) => b.data.price - a.data.price);
         break;
       case "rating": 
-        updatedProducts.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        updatedProducts.sort((a, b) => (b.data.rating || 0) - (a.data.rating || 0));
         break;
       default:
         break; 
@@ -232,7 +221,7 @@ const DisplayPage: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard key={product.data.id} product={product} />
               ))}
           </div>
         </section>

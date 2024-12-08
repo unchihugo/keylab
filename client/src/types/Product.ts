@@ -14,6 +14,9 @@ export interface Product {
 		category?: ProductCategory | null
 		created_at?: string | null
 		updated_at?: string | null
+		rating?: number
+		imageUrl?: string;
 	}
 	message: string
 }
+
