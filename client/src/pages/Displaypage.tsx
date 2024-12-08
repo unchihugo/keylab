@@ -3,7 +3,7 @@ import ProductCard from "../components/ProductCard";
 import { useProducts } from "../hooks/useProducts";
 import { Product } from "../types/Product";
 
-const DisplayPage: React.FC = () => {
+export default function DisplayPage() {
   const { products , loading, error } = useProducts() // Fetch products from backend
 	const [filteredProducts, setFilteredProducts] = useState<Product[]>(products)
 
@@ -228,5 +228,3 @@ const DisplayPage: React.FC = () => {
     </div>
   );
 };
-
-export default DisplayPage;

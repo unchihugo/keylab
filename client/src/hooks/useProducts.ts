@@ -35,7 +35,7 @@ export const useProducts = () => {
           data: {
             id: 1,
             name: "Test Product 1",
-            slug: "test-product-1",
+            slug: "test-product-slug",
             description: "Test Product 1 description: .",
             price: 19.99,
             stock: 50,
@@ -95,7 +95,7 @@ export const useProducts = () => {
     };
 
     // Fetch products 
-    if (import.meta.env.MODE === "test") {
+    if (import.meta.env.MODE != "test") {
       fetchTestProducts();
     } else {
       fetchProducts();
