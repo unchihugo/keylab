@@ -16,6 +16,8 @@ export interface Product {
 		product_images?: ProductImage[]
 		created_at?: string | null
 		updated_at?: string | null
+		rating?: number
+		imageUrl?: string
 	}
 	message: string
 }

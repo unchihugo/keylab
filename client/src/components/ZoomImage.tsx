@@ -12,8 +12,9 @@ export default function ZoomImage({ src, alt }: ZoomImageProps) {
 	const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
 
 	return (
+		// TODO: fix oveflow issue
 		<div
-			className="relative"
+			className="object-cover relative overflow-hidden"
 			onMouseEnter={() => setIsHovered(true)}
 			onMouseLeave={() => setIsHovered(false)}
 			onMouseMove={(e) => {
@@ -23,17 +24,20 @@ export default function ZoomImage({ src, alt }: ZoomImageProps) {
 					y: e.clientY - top,
 				})
 			}}>
-			<img src={src} alt={alt} className="w-full h-auto rounded-lg" />
-			{isHovered && (
-				<div
-					className="absolute inset-0 pointer-events-none"
-					style={{
-						backgroundImage: `url(${src})`,
-						backgroundPosition: `${-mousePosition.x}px ${-mousePosition.y}px`,
-						backgroundSize: "200%",
-					}}
-				/>
-			)}
+			<img
+				src={src}
+				alt={alt}
+				className="w-full h-auto rounded-lg object-cover"
+			/>
+			<div
+				className="absolute inset-0 pointer-events-none transition-opacity duration-200 ease-in-out"
+				style={{
+					opacity: isHovered ? 1 : 0,
+					backgroundImage: `url(${src})`,
+					backgroundPosition: `${-mousePosition.x}px ${-mousePosition.y}px`,
+					backgroundSize: "200%",
+				}}
+			/>
 		</div>
 	)
 }
