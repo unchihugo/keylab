@@ -22,3 +22,4 @@ ehthumbs.db
 *.log
 tmp/
 temp/
+/public/images/product_images/

@@ -5,10 +5,19 @@ import { useProduct } from "../../hooks/useProduct"
 import NotFound from "../NotFound"
 import { Minus, Plus } from "lucide-react"
 import LinkButton from "../../components/LinkButton"
+import ZoomImage from "../../components/ZoomImage"
 
 export default function Product() {
 	const { slug } = useParams()
-	const { product, loading, error } = useProduct(slug as string)
+	const {
+		product,
+		loading,
+		error,
+		quantity,
+		addProductToCart,
+		incrementQuantity,
+		decrementQuantity,
+	} = useProduct(slug as string)
 
 	if (loading) return <div>Loading...</div>
 	if (error)
@@ -28,12 +37,18 @@ export default function Product() {
 				</div>
 				<div className="my-4 md:grid md:grid-cols-2 lg:grid-cols-5 gap-10 items-center w-full">
 					<div className="w-full aspect-square rounded-lg bg-white lg:col-span-3">
-						{/* TODO: we don't have images yet
-                        <img
-                            src={product.image}
-                            alt={product.name}
-                            className="w-full h-auto rounded-lg"
-                        /> */}
+						{product.data.product_images &&
+							product.data.product_images.length > 0 && (
+								<ZoomImage
+									src={
+										product.data.product_images[0].data.url
+									}
+									alt={
+										product.data.product_images[0].data
+											.image
+									}
+								/>
+							)}
 					</div>
 					<div className="lg:col-span-2 flex-col gap-5 inline-flex">
 						<div>
@@ -62,14 +77,24 @@ export default function Product() {
 								Quantity
 							</label>
 							<div className="justify-start items-start gap-3 inline-flex w-full">
-								<div className="h-11 p-3 bg-white rounded-full border border-black justify-center items-center gap-4 flex">
-									<Minus className="w-4 h-4 relative" />
-									<div className="tracking-tight leading-tight">
-										1
+								<div className="h-11 bg-white rounded-full border border-black justify-center items-center gap-4 flex">
+									<button
+										className="p-3"
+										onClick={decrementQuantity}>
+										<Minus className="w-4 h-4 relative" />
+									</button>
+									<div className="tracking-tight leading-tight w-2 text-center -mx-3">
+										{quantity}
 									</div>
-									<Plus className="w-4 h-4 relative" />
+									<button
+										className="p-3"
+										onClick={incrementQuantity}>
+										<Plus className="w-4 h-4 relative" />
+									</button>
 								</div>
-								<button className="grow shrink basis-0 h-11 p-3 bg-white rounded-full border border-black justify-center items-center gap-2 flex">
+								<button
+									className="grow shrink basis-0 h-11 bg-white rounded-full border border-black justify-center items-center gap-2 flex"
+									onClick={addProductToCart}>
 									Add to cart
 								</button>
 							</div>
@@ -78,6 +103,7 @@ export default function Product() {
 									text="Buy now"
 									to="/cart"
 									buttonClassNames="bg-secondary-dark h-11 w-full"
+									textClassNames="p-3"
 								/>
 							</div>
 						</div>

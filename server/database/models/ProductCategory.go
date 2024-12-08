@@ -8,6 +8,7 @@ import (
 
 type ProductCategory struct {
 	ID          int64     `gorm:"primaryKey;autoIncrement" json:"id"`
+	ParentID    *int64    `gorm:"default:null" json:"parent_id"`
 	Name        string    `gorm:"type:varchar(255);not null" validate:"required,max=255" json:"name"`
 	Slug        string    `gorm:"type:varchar(255);not null;unique" validate:"required,max=255" json:"slug"`
 	Description string    `gorm:"type:varchar(255);not null" validate:"required,max=255" json:"description"`
