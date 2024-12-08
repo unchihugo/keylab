@@ -15,6 +15,16 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+func wrapData(products []models.Product) []map[string]interface{} {
+	result := make([]map[string]interface{}, len(products))
+	for i, product := range products {
+		result[i] = map[string]interface{}{
+			"data": product,
+		}
+	}
+	return result
+}
+
 // List Products [GET /products] or [GET /products?page=1&per_page=10]
 // 1. Fetches all products from the database.
 // 2. Returns status 200 with the products if successful.
@@ -41,7 +51,7 @@ func ListProducts(c echo.Context) error {
 	}
 
 	return jsonResponse(c, http.StatusOK, "Products fetched successfully", map[string]interface{}{
-		"products": products,
+		"products": wrapData(products),
 		"metadata": generatePaginationResponse(page, perPage, int(total)),
 	})
 }
@@ -92,7 +102,7 @@ func GetProductsByCategory(c echo.Context) error {
 	page, perPage, offset := getPaginationParams(c)
 	order := getSortOrder(c)
 
-	if err := db.DB.Preload("Category").Preload("ProductImages").Order(order).Where("category_id = ?", category).Limit(perPage).Offset(offset).Find(&products).Error; err != nil {
+	if err := db.DB.Preload("Category").Preload("Category.Parent").Preload("ProductImages").Order(order).Where("category_id = ?", category).Limit(perPage).Offset(offset).Find(&products).Error; err != nil {
 		log.Printf("Error fetching products by category: %v", err)
 		return jsonResponse(c, http.StatusInternalServerError, "Error fetching products by category")
 	}
@@ -100,7 +110,7 @@ func GetProductsByCategory(c echo.Context) error {
 	repositories.SetProductImageURLs(products, utils.GetBaseURL())
 
 	return jsonResponse(c, http.StatusOK, "Products fetched successfully", map[string]interface{}{
-		"products": products,
+		"products": wrapData(products),
 		"metadata": generatePaginationResponse(page, perPage, len(products)),
 	})
 }
@@ -304,7 +314,7 @@ func SearchProducts(c echo.Context) error {
 	order := getSortOrder(c)
 
 	var products []models.Product
-	if err := db.DB.Preload("Category").Preload("ProductImages").Order(order).Where("name LIKE ? OR description LIKE ?", "%"+query+"%", "%"+query+"%").Limit(perPage).Offset(offset).Find(&products).Error; err != nil {
+	if err := db.DB.Preload("Category").Preload("Category.Parent").Preload("ProductImages").Order(order).Where("name LIKE ? OR description LIKE ?", "%"+query+"%", "%"+query+"%").Limit(perPage).Offset(offset).Find(&products).Error; err != nil {
 		log.Printf("Error searching for products: %v", err)
 		return jsonResponse(c, http.StatusInternalServerError, "Error searching for products")
 	}
@@ -318,7 +328,7 @@ func SearchProducts(c echo.Context) error {
 	repositories.SetProductImageURLs(products, utils.GetBaseURL())
 
 	return jsonResponse(c, http.StatusOK, "Products fetched successfully", map[string]interface{}{
-		"products": products,
+		"products": wrapData(products),
 		"metadata": generatePaginationResponse(page, perPage, int(total)),
 	})
 }
