@@ -106,6 +106,12 @@ export default function DisplayPage() {
 	const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setPriceRange(parseInt(e.target.value, 10))
 	}
+	const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		const selectedCategory = e.target.value;
+		if (selectedCategory) {
+			getProductsByCategory(selectedCategory); // Fetch products for the selected category
+		}
+	};
 
 	if (loading)
 		return (
@@ -130,7 +136,9 @@ export default function DisplayPage() {
 				</p>
 				<div className="mt-3 flex items-center gap-12">
 					<p>Filter:</p>
-					<select className="p-1 border-gray-300 rounded-lg font-bold">
+					<select className="p-1 border-gray-300 rounded-lg font-bold"
+					onChange={handleCategoryChange} // Call onChange handler
+					>
 						<option value="">By Category</option>
 						<option value="switches">Switches</option>
 						<option value="keycaps">Keycaps</option>
