@@ -1,6 +1,6 @@
 /** @format */
 
-const CONTACT_API_URL = "http://localhost:8080/contact" 
+const CONTACT_API_URL = "http://localhost:8080/contact"
 
 /**
  * Service that handles contact requests to the backend
@@ -11,22 +11,22 @@ const CONTACT_API_URL = "http://localhost:8080/contact"
 export const contactService = {
 	/**
 	 * Submit a contact us request
-	 * @param {string} firstName the user's first name
-	 * @param {string} lastName the user's last name
+	 * @param {string} forename the user's first name
+	 * @param {string} surname the user's last name
 	 * @param {string} phoneNum the user's phone number
 	 * @param {string} email the user's email
 	 * @param {string} message the message from the user
 	 * @returns {Promise} a promise that resolves when contact request is submitted
 	 * @throws {Error} an error from the API request
 	 */
-	async submitContactRequest(firstName: string, lastName: string, phoneNum: string, email: string, message: string) {
-        // where we make a request to backend to submit the contact request 
+	async submitContactRequest(forename: string, surname: string, phoneNum: string, email: string, message: string) {
+		// where we make a request to backend to submit the contact request 
 		const response = await fetch(`${CONTACT_API_URL}`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({ firstName, lastName, phoneNum, email, message }),
+			body: JSON.stringify({ forename, surname, phoneNum, email, message }),
 		})
 
 		if (!response.ok) {

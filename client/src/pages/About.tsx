@@ -9,8 +9,8 @@ import { ChevronRight } from "lucide-react"
 import { contactService } from "../services/contactService"
 
 export default function About() {
-	const [firstName, setFirstName] = React.useState("")
-	const [lastName, setLastName] = React.useState("")
+	const [forename, setForename] = React.useState("")
+	const [surname, setSurname] = React.useState("")
 	const [phoneNum, setPhoneNum] = React.useState("")
 	const [email, setEmail] = React.useState("")
 	const [message, setMessage] = React.useState("")
@@ -27,8 +27,8 @@ export default function About() {
 
 		// Validate the form fields
 		const validationErrors = [
-			formValidation.validateFirstName(firstName),
-			formValidation.validateLastName(lastName),
+			formValidation.validateForename(forename),
+			formValidation.validateSurname(surname),
 			formValidation.validatePhoneNum(phoneNum),
 			formValidation.validateEmail(email),
 			formValidation.validateMessage(message),
@@ -44,8 +44,8 @@ export default function About() {
 
 		try {
 			await contactService.submitContactRequest(
-				firstName,
-				lastName,
+				forename,
+				surname,
 				phoneNum,
 				email,
 				message,
@@ -53,8 +53,8 @@ export default function About() {
 
 			// when successful, reset the form and show this message
 			setStatusMessage("Your message has been sent successfully.")
-			setFirstName("")
-			setLastName("")
+			setForename("")
+			setSurname("")
 			setPhoneNum("")
 			setEmail("")
 			setMessage("")
@@ -128,9 +128,9 @@ export default function About() {
 									<div>
 										<input
 											type="text"
-											value={firstName}
+											value={forename}
 											onChange={(e) =>
-												setFirstName(e.target.value)
+												setForename(e.target.value)
 											}
 											className="border border-gray-300 p-2 rounded-lg w-full"
 											placeholder="First name"
@@ -140,9 +140,9 @@ export default function About() {
 									<div>
 										<input
 											type="text"
-											value={lastName}
+											value={surname}
 											onChange={(e) =>
-												setLastName(e.target.value)
+												setSurname(e.target.value)
 											}
 											className="border border-gray-300 p-2 rounded-lg w-full"
 											placeholder="Last name"
