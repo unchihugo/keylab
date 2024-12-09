@@ -107,22 +107,28 @@ export default function DisplayPage() {
 		setPriceRange(parseInt(e.target.value, 10))
 	}
 	const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		const selectedCategory = e.target.value;
+		const selectedCategory = e.target.value
 		if (selectedCategory) {
-			getProductsByCategory(selectedCategory); // Fetch products for the selected category
+			getProductsByCategory(selectedCategory) // Fetch products for the selected category
 		}
-	};
+	}
 
 	if (loading)
-		return (
-			<NotFound
-				errorMessage="Loading..."
-				bodyMessage="Loading products..."
-			/>
-		)
-	if (error)
-		return <NotFound errorMessage="400 - Bad Request" bodyMessage={error} />
+		if (error)
+			// return (
+			// 	<NotFound
+			// 		errorMessage="Loading..."
+			// 		bodyMessage="Loading products..."
+			// 	/>
+			// )
+			return (
+				<NotFound
+					errorMessage="400 - Bad Request"
+					bodyMessage={error}
+				/>
+			)
 	if (!products) return <NotFound bodyMessage="No products found" />
+	console.log("Products:", products)
 
 	return (
 		<div className="min-h-screen bg-primary/25 py-24">
@@ -136,14 +142,15 @@ export default function DisplayPage() {
 				</p>
 				<div className="mt-3 flex items-center gap-12">
 					<p>Filter:</p>
-					<select className="p-1 border-gray-300 rounded-lg font-bold"
-					onChange={handleCategoryChange} // Call onChange handler
+					<select
+						className="p-1 border-gray-300 rounded-lg font-bold"
+						onChange={handleCategoryChange} // Call onChange handler
 					>
-						<option value="">By Category</option>
-						<option value="switches">Switches</option>
-						<option value="keycaps">Keycaps</option>
-						<option value="keyboards">Keyboards</option>
-						<option value="accessories">Accessories</option>
+						<option value="0">By Category</option>
+						<option value="1">Keyboards</option>
+						<option value="7">Keycaps</option>
+						<option value="8">Switches</option>
+						<option value="10">Accessories</option>
 					</select>
 					<select className="p-1 border-gray-300 rounded-lg font-bold">
 						<option value="">By Brand</option>
@@ -318,7 +325,7 @@ export default function DisplayPage() {
 								/>
 							))
 						) : (
-							<NotFound bodyMessage="No products found" />
+							<div>No products found</div>
 						)}
 					</div>
 				</section>
