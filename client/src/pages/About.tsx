@@ -6,6 +6,7 @@ import * as formValidation from "../lib/formValidation.ts"
 import Divider from "../components/Divider"
 import ErrorBox from "../components/ErrorBox"
 import { ChevronRight } from "lucide-react"
+import { contactService } from "../services/contactService"
 
 export default function About() {
 	const [firstName, setFirstName] = React.useState("")
@@ -14,50 +15,70 @@ export default function About() {
 	const [email, setEmail] = React.useState("")
 	const [message, setMessage] = React.useState("")
 	const [errors, setErrors] = React.useState<string[]>([])
+	const [statusMessage, setStatusMessage] = React.useState<string | null>(
+		null,
+	)
 
-	// Handle contact form submission
+	// handle contact form submission
 	const handleContactForm = async (
 		event: React.FormEvent<HTMLFormElement>,
 	) => {
 		event.preventDefault()
 
-		setErrors(
-			[
-				formValidation.validateFirstName(firstName),
-				formValidation.validateLastName(lastName),
-				formValidation.validatePhoneNum(phoneNum),
-				formValidation.validateEmail(email),
-				formValidation.validateMessage(message),
-			].filter(Boolean),
-		)
-		// if there are errors, log them and return
-		if (errors.length) {
-			console.error(errors)
+		// Validate the form fields
+		const validationErrors = [
+			formValidation.validateFirstName(firstName),
+			formValidation.validateLastName(lastName),
+			formValidation.validatePhoneNum(phoneNum),
+			formValidation.validateEmail(email),
+			formValidation.validateMessage(message),
+		].filter(Boolean)
+
+		setErrors(validationErrors)
+
+		// if there are errors w validation, log them n return
+		if (validationErrors.length) {
+			console.error(validationErrors)
 			return
 		}
-		// matched how the register one was but i dont have anything in the auth files
-		//so leaving this as a comment for now
 
-		// try {
-		// 	await contactForm(firstName, lastName, phoneNum, email, message)
-		// } catch (error) {
-		// 	console.error(error)
-		// }
+		try {
+			await contactService.submitContactRequest(
+				firstName,
+				lastName,
+				phoneNum,
+				email,
+				message,
+			)
+
+			// when successful, reset the form and show this message
+			setStatusMessage("Your message has been sent successfully.")
+			setFirstName("")
+			setLastName("")
+			setPhoneNum("")
+			setEmail("")
+			setMessage("")
+		} catch (error) {
+			// when failed show this error
+			console.error(error)
+			setStatusMessage(
+				"There was an error sending your message. Please try again.",
+			)
+		}
 	}
-
 	return (
 		<div className="flex justify-center items-center bg-secondary min-h-screen">
 			<div className="flex flex-col w-full max-w-5xl px-4 space-y-6 my-24">
 				{/* About Us Section */}
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-					{/* About Us Box */}
+					{/* About Us container */}
 					<div className="px-6 py-8 bg-white drop-shadow-cartoon rounded-lg border border-black">
 						<div className="text-2xl font-display text-black mb-4">
 							About Us
 						</div>
 						<Divider />
 						<div className="flex flex-col space-y-6 font-body text-gray-600">
-							{/* Vision */}
+							{/* Our vision */}
 							<section>
 								<h2 className="text-xl font-semibold text-gray-800 mb-4">
 									Our Vision
@@ -173,6 +194,11 @@ export default function About() {
 									<ChevronRight className="-m-2 duration-200 group-hover:translate-x-1" />
 								</button>
 							</form>
+							{statusMessage && (
+								<div className="mt-4 text-center">
+									{statusMessage}
+								</div>
+							)}
 						</div>
 					</div>
 				</div>
