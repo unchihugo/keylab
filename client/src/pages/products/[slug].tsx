@@ -7,11 +7,13 @@ import { Minus, Plus } from "lucide-react"
 import LinkButton from "../../components/LinkButton"
 import ZoomImage from "../../components/ZoomImage"
 import Breadcrumb from "../../components/Breadcrumb"
+import ProductCarousel from "../../components/ProductCarousel"
 
 export default function Product() {
 	const { slug } = useParams()
 	const {
 		product,
+		relatedProducts,
 		loading,
 		error,
 		quantity,
@@ -125,11 +127,10 @@ export default function Product() {
 				</div>
 
 				<div className="my-12">
-					<div className="text-2xl font-display my-4">
+					<div className="text-2xl font-display mt-4">
 						Related products
 					</div>
-					{/* TODO: component for products carousel */}
-					<div className="flex h-40 bg-black/10" />
+					<ProductCarousel products={relatedProducts} />
 				</div>
 
 				<div className="my-12">
