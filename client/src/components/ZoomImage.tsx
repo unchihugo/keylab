@@ -13,7 +13,7 @@ export default function ZoomImage({ src, alt }: ZoomImageProps) {
 
 	return (
 		<div
-			className="object-cover h-full relative overflow-hidden content-center"
+			className="relative overflow-hidden w-full h-full flex items-center justify-center"
 			onMouseEnter={() => setIsHovered(true)}
 			onMouseLeave={() => setIsHovered(false)}
 			onMouseMove={(e) => {
@@ -26,10 +26,10 @@ export default function ZoomImage({ src, alt }: ZoomImageProps) {
 			<img
 				src={src}
 				alt={alt}
-				className="w-full h-auto rounded-lg object-cover"
+				className="max-w-full max-h-full w-auto h-auto rounded-lg object-contain"
 			/>
 			<div
-				className="absolute bg-no-repeat h-full content-center inset-0 pointer-events-none transition-opacity duration-200 ease-in-out"
+				className="absolute bg-no-repeat h-full w-full rounded-lg pointer-events-none transition-opacity duration-200 ease-in-out"
 				style={{
 					opacity: isHovered ? 1 : 0,
 					backgroundImage: `url(${src})`,

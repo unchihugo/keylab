@@ -114,12 +114,12 @@ export default function DisplayPage() {
 	}
 
 	if (loading)
-		return (
-			<NotFound
-				errorMessage="Loading..."
-				bodyMessage="Loading products..."
-			/>
-		)
+		// return (
+		// 	<NotFound
+		// 		errorMessage="Loading..."
+		// 		bodyMessage="Loading products..."
+		// 	/>
+		// )
 	if (error)
 		return <NotFound errorMessage="400 - Bad Request" bodyMessage={error} />
 	if (!products) return <NotFound bodyMessage="No products found" />
@@ -141,11 +141,11 @@ export default function DisplayPage() {
 						className="p-1 border-gray-300 rounded-lg font-bold"
 						onChange={handleCategoryChange} // Call onChange handler
 					>
-						<option value="">By Category</option>
-						<option value="switches">Switches</option>
-						<option value="keycaps">Keycaps</option>
-						<option value="keyboards">Keyboards</option>
-						<option value="accessories">Accessories</option>
+						<option value="0">By Category</option>
+						<option value="1">Keyboards</option>
+						<option value="6">Keycaps</option>
+						<option value="7">Keyboards</option>
+						<option value="9">Accessories</option>
 					</select>
 					<select className="p-1 border-gray-300 rounded-lg font-bold">
 						<option value="">By Brand</option>
