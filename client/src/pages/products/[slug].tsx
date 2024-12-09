@@ -34,7 +34,8 @@ export default function Product() {
 	else
 		breadcrumbs = [
 			"Shop",
-			String(product.data.category) || "",
+			// String(product.data.category.name) || "",
+			"Keyboard",
 			product.data.name,
 		]
 
