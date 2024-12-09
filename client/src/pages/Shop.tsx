@@ -114,14 +114,19 @@ export default function DisplayPage() {
 	}
 
 	if (loading)
-		// return (
-		// 	<NotFound
-		// 		errorMessage="Loading..."
-		// 		bodyMessage="Loading products..."
-		// 	/>
-		// )
-	if (error)
-		return <NotFound errorMessage="400 - Bad Request" bodyMessage={error} />
+		if (error)
+			// return (
+			// 	<NotFound
+			// 		errorMessage="Loading..."
+			// 		bodyMessage="Loading products..."
+			// 	/>
+			// )
+			return (
+				<NotFound
+					errorMessage="400 - Bad Request"
+					bodyMessage={error}
+				/>
+			)
 	if (!products) return <NotFound bodyMessage="No products found" />
 	console.log("Products:", products)
 

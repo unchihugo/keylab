@@ -16,7 +16,7 @@ import Cart from "./pages/Cart"
 import ProtectedRoute from "./components/ProtectedRoute"
 import About from "./pages/About"
 import Checkout from "./pages/Checkout"
-import DisplayPage from "./pages/Displaypage"
+import Shop from "./pages/Shop"
 
 const router = createBrowserRouter([
 	{
@@ -41,7 +41,7 @@ const router = createBrowserRouter([
 			{ path: "/products/:slug", element: <Product /> },
 			{ path: "*", element: <NotFound /> },
 			{ path: "/about", element: <About /> },
-			{ path: "/shop", element: <DisplayPage /> },
+			{ path: "/shop", element: <Shop /> },
 		],
 	},
 ])
