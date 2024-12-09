@@ -30,7 +30,7 @@ export default function Register() {
 				formValidation.validateFirstName(firstName),
 				formValidation.validateLastName(lastName),
 				formValidation.validateEmail(email),
-				formValidation.validateMatch(password, passwordConfirm) ||
+				formValidation.validateMatch(password, passwordConfirm, "Passwords") ||
 					formValidation.validatePassword(password),
 			].filter(Boolean),
 		)
