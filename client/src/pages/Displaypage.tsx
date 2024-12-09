@@ -143,9 +143,9 @@ export default function DisplayPage() {
 					>
 						<option value="0">By Category</option>
 						<option value="1">Keyboards</option>
-						<option value="6">Keycaps</option>
-						<option value="7">Keyboards</option>
-						<option value="9">Accessories</option>
+						<option value="7">Keycaps</option>
+						<option value="8">Switches</option>
+						<option value="10">Accessories</option>
 					</select>
 					<select className="p-1 border-gray-300 rounded-lg font-bold">
 						<option value="">By Brand</option>
