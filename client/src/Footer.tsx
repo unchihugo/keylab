@@ -16,21 +16,21 @@ export default function Footer() {
 				{/* Navigation Links Section with Dividers */}
 				<div className="flex items-center space-x-6 text-gray-700">
 					<a
-						href="http://localhost:5173/shop"
+						href="/shop"
 						className="hover:text-gray-900 font-medium">
 						Shop
 					</a>
 					<span className="border-l border-gray-400 h-5"></span>{" "}
 					{/* Divider */}
 					<a
-						href="http://localhost:5173/keyboard-designer"
+						href="/keyboard-designer"
 						className="hover:text-gray-900 font-medium">
 						Keyboard Designer
 					</a>
 					<span className="border-l border-gray-400 h-5"></span>{" "}
 					{/* Divider */}
 					<a
-						href="http://localhost:5173/about"
+						href="/about"
 						className="hover:text-gray-900 font-medium">
 						About
 					</a>
