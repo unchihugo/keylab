@@ -19,19 +19,33 @@ export const contactService = {
 	 * @returns {Promise} a promise that resolves when contact request is submitted
 	 * @throws {Error} an error from the API request
 	 */
-	async submitContactRequest(forename: string, surname: string, phoneNum: string, email: string, message: string) {
-		// where we make a request to backend to submit the contact request 
+	async submitContactRequest(
+		forename: string,
+		surname: string,
+		phoneNum: string,
+		email: string,
+		message: string,
+	) {
+		// where we make a request to backend to submit the contact request
 		const response = await fetch(`${CONTACT_API_URL}`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({ forename, surname, phoneNum, email, message }),
+			body: JSON.stringify({
+				forename,
+				surname,
+				phoneNum,
+				email,
+				message,
+			}),
 		})
 
 		if (!response.ok) {
 			const errorData = await response.json()
-			throw new Error(errorData.message || "Failed to submit contact request")
+			throw new Error(
+				errorData.message || "Failed to submit contact request",
+			)
 		}
 
 		return response.json()
