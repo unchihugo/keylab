@@ -58,6 +58,12 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	cartGroup.POST("", handlers.AddCartItem)
 	cartGroup.PUT("/:id", handlers.UpdateCartItemQuantity)
 	cartGroup.DELETE("/:id", handlers.DeleteCartItem)
+	cartGroup.POST("/checkout", handlers.CheckoutCart)
+
+	// Orders related routes
+	e.GET("/user/orders/:id", handlers.GetUserOrderDetails, middleware.AuthMiddleware(sessionStore))
+	// NEEDS ADMIN MIDDLEWARE
+	e.PUT("/orders/:id/status", handlers.UpdateOrderStatus)
 
 	e.POST("/contact", handlers.ContactUs)
 }

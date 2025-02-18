@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	db "keylab/database"
 	"keylab/database/models"
 	"keylab/repositories"
@@ -138,6 +139,7 @@ func Logout(sessionStore *sessions.CookieStore) echo.HandlerFunc {
 		// Sets the session's MaxAge to -1 essentially deleting the session.
 		session.Options.MaxAge = -1
 		if err := session.Save(c.Request(), c.Response()); err != nil {
+			fmt.Println(err)
 			return jsonResponse(c, http.StatusInternalServerError, "Error saving session")
 		}
 
