@@ -12,10 +12,12 @@ import { productService } from "../services/productService"
  */
 export const useProduct = (slug: string) => {
 	const [product, setProduct] = useState<Product | null>(null)
+	const [relatedProducts, setRelatedProducts] = useState<Product[]>([])
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState<string | null>(null)
 	const [quantity, setQuantity] = useState(1)
 
+	// Fetch the product by its slug when the component mounts
 	useEffect(() => {
 		const fetchProduct = async () => {
 			try {
@@ -67,6 +69,28 @@ export const useProduct = (slug: string) => {
 		}
 	}, [slug])
 
+	// Fetch related products when the product changes
+	useEffect(() => {
+		const fetchRelatedProducts = async () => {
+			if (!product?.data.name) return
+			try {
+				// cut the product name and get the first word for query
+				const query = String(product.data.name).split(" ")[0]
+				const response = await productService.searchProducts(query)
+				setRelatedProducts(response.data.products)
+				console.log(response.data.products)
+			} catch (error) {
+				setError(
+					error instanceof Error
+						? error.message
+						: "An error occurred",
+				)
+			}
+		}
+
+		fetchRelatedProducts()
+	}, [product?.data.name])
+
 	/**
 	 * Add the current product to user's cart, taking into account the quantity
 	 */
@@ -98,6 +122,7 @@ export const useProduct = (slug: string) => {
 
 	return {
 		product,
+		relatedProducts,
 		loading,
 		error,
 		quantity,
