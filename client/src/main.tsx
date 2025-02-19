@@ -11,10 +11,12 @@ import Home from "./pages/Home"
 import NotFound from "./pages/NotFound"
 import SignIn from "./pages/auth/sign-in"
 import Register from "./pages/auth/register"
+import Shop from "./pages/Shop"
 import Product from "./pages/products/[slug]"
-import Cart from './pages/Cart'
+import Cart from "./pages/Cart"
 import ProtectedRoute from "./components/ProtectedRoute"
 import About from "./pages/About"
+import Checkout from "./pages/Checkout"
 
 const router = createBrowserRouter([
 	{
@@ -23,6 +25,7 @@ const router = createBrowserRouter([
 		children: [
 			{ path: "/", element: <Home /> },
 			{ path: "/cart", element: <Cart /> },
+			{ path: "/checkout", element: <Checkout /> },
 			{ path: "/example", element: <div>Example</div> },
 			{
 				path: "/protected",
@@ -38,6 +41,7 @@ const router = createBrowserRouter([
 			{ path: "/products/:slug", element: <Product /> },
 			{ path: "*", element: <NotFound /> },
 			{ path: "/about", element: <About /> },
+			{ path: "/shop", element: <Shop /> },
 		],
 	},
 ])

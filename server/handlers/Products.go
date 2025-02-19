@@ -1,37 +1,62 @@
 package handlers
 
 import (
+	"fmt"
 	db "keylab/database"
 	"keylab/database/models"
+	"keylab/repositories"
+	"keylab/utils"
 	"log"
 	"net/http"
+	"os"
+	"strings"
 
+	"github.com/gosimple/slug"
 	"github.com/labstack/echo/v4"
-	"gorm.io/gorm"
 )
 
-// List Products Handler [GET /products]
+func wrapData(products []models.Product) []map[string]interface{} {
+	result := make([]map[string]interface{}, len(products))
+	for i, product := range products {
+		result[i] = map[string]interface{}{
+			"data": product,
+		}
+	}
+	return result
+}
+
+// List Products [GET /products] or [GET /products?page=1&per_page=10]
 // 1. Fetches all products from the database.
 // 2. Returns status 200 with the products if successful.
-// 3. Returns status 404 if no products are found.
-// 4. Returns status 500 if an error occurs.
+// 3. Returns status 500 if an error occurs.
 
 func ListProducts(c echo.Context) error {
 	var products []models.Product
 
-	if err := db.DB.Preload("Category").Find(&products).Error; err != nil {
-		log.Fatalf("Error fetching products: %v", err)
+	page, perPage, offset := getPaginationParams(c)
+	order := getSortOrder(c)
+
+	products, err := repositories.GetProducts(order, perPage, offset)
+	if err != nil {
+		log.Printf("Error fetching products: %v", err)
 		return jsonResponse(c, http.StatusInternalServerError, "Error fetching products")
 	}
 
-	if len(products) == 0 {
-		return jsonResponse(c, http.StatusNotFound, "No products found")
+	repositories.SetProductImageURLs(products, utils.GetBaseURL())
+
+	var total int64
+	if err := db.DB.Model(&models.Product{}).Count(&total).Error; err != nil {
+		log.Printf("Error counting products: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error counting products")
 	}
 
-	return jsonResponse(c, http.StatusOK, "Products fetched successfully", products)
+	return jsonResponse(c, http.StatusOK, "Products fetched successfully", map[string]interface{}{
+		"products": wrapData(products),
+		"metadata": generatePaginationResponse(page, perPage, int(total)),
+	})
 }
 
-// Get Product By Slug Handler [GET /products/:slug]
+// Get Product By Slug [GET /products/:slug]
 // 1. Fetches slug from params and validates it.
 // 2. Fetches product by slug from the database.
 // 3. Returns status 200 with the product if successful.
@@ -43,22 +68,22 @@ func GetProductBySlug(c echo.Context) error {
 
 	slug := c.Param("slug")
 	if err := product.Validate(slug); err != nil {
+		log.Printf("Error validating product slug: %v", err)
 		return jsonResponse(c, http.StatusBadRequest, "Invalid product slug")
 	}
 
-	if err := db.DB.Preload("Category").Where("slug = ?", slug).First(&product).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return jsonResponse(c, http.StatusNotFound, "Product not found")
-		}
-
-		log.Printf("Error fetching product: %v", err)
-		return jsonResponse(c, http.StatusInternalServerError, "Error fetching product")
+	product, err := repositories.GetProductBySlug(slug)
+	if err != nil {
+		log.Printf("Error fetching product by slug: %v", err)
+		return jsonResponse(c, http.StatusNotFound, "Product not found")
 	}
+
+	repositories.SetProductImageURLs([]models.Product{product}, utils.GetBaseURL())
 
 	return jsonResponse(c, http.StatusOK, "Product found", product)
 }
 
-// Get Products By Category Handler [GET /products/category/:category]
+// Get Products By Category [GET /products/category/:id]
 // 1. Fetches category from params and validates it.
 // 2. Fetches products by category from the database.
 // 3. Returns status 200 with the products if successful.
@@ -68,85 +93,165 @@ func GetProductBySlug(c echo.Context) error {
 func GetProductsByCategory(c echo.Context) error {
 	var products []models.Product
 
-	category := c.Param("category")
-	if err := db.DB.Preload("Category").Where("category_id = ?", category).Find(&products).Error; err != nil {
-		return jsonResponse(c, http.StatusInternalServerError, "Error fetching products from database")
+	category, err := convertToInt64(c.Param("id"))
+	if err != nil {
+		log.Printf("Error converting category ID: %v", err)
+		return jsonResponse(c, http.StatusBadRequest, "Invalid category ID")
 	}
 
-	if len(products) == 0 {
-		return jsonResponse(c, http.StatusOK, "No products found in this category")
+	page, perPage, offset := getPaginationParams(c)
+	order := getSortOrder(c)
+
+	if err := db.DB.Preload("Category").Preload("Category.Parent").Preload("ProductImages").Order(order).Where("category_id = ?", category).Limit(perPage).Offset(offset).Find(&products).Error; err != nil {
+		log.Printf("Error fetching products by category: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error fetching products by category")
 	}
 
-	return jsonResponse(c, http.StatusOK, "Products fetched successfully", products)
+	repositories.SetProductImageURLs(products, utils.GetBaseURL())
 
+	return jsonResponse(c, http.StatusOK, "Products fetched successfully", map[string]interface{}{
+		"products": wrapData(products),
+		"metadata": generatePaginationResponse(page, perPage, len(products)),
+	})
 }
 
-// Create Product Handler [POST /products]
-// 1. Creates a product.
-// 2. Validates the input data.
-// 3. Checks if a product with the same slug already exists.
-// 4. Returns status 201 if successful.
-// 5. Returns status 400 if the input data is invalid.
-// 6. Returns status 500 if an error occurs.
-
+// Create Product [POST /products]
+// 1. Parses product data from the request body and validates it.
+// 2. Checks if the product already exists with the same slug.
+// 3. Fetches the category by ID.
+// 4. Creates the product in the database.
+// 5. Uploads product images to the server.
+// 6. Returns status 201 if successful.
+// 7. Returns status 400 if the input data is invalid.
+// 8. Returns status 500 if an error occurs.
 func CreateProduct(c echo.Context) error {
 	var product models.Product
 
 	if err := c.Bind(&product); err != nil {
-		log.Printf("Error binding product: %v", err)
-		return jsonResponse(c, http.StatusBadRequest, err.Error())
+		log.Printf("Error binding product data: %v", err)
+		return jsonResponse(c, http.StatusBadRequest, "Invalid input for creating product")
 	}
 
 	if err := product.Validate(); err != nil {
 		return jsonResponse(c, http.StatusBadRequest, err.Error())
 	}
 
-	if err := db.DB.Where("slug = ?", product.Slug).First(&product).Error; err == nil {
-		return jsonResponse(c, http.StatusBadRequest, "Product already exists with the same slug")
-	}
-
-	if err := db.DB.Where("id = ?", product.CategoryID).First(&product.Category).Error; err != nil {
+	if err := db.DB.First(&product.Category, "id = ?", product.CategoryID).Error; err != nil {
+		log.Printf("Error fetching category: %v", err)
 		return jsonResponse(c, http.StatusBadRequest, "Category not found")
 	}
 
-	if err := db.DB.Create(&product).Error; err != nil {
+	formField := "product_images"
+	destination := "public/images/product_images"
+	allowedExtensions := []string{".jpg", ".jpeg", ".png", ".webp"}
+
+	transaction := db.DB.Begin()
+	if transaction.Error != nil {
+		log.Printf("Error starting transaction: %v", transaction.Error)
+		return jsonResponse(c, http.StatusInternalServerError, "Failed to initiate transaction")
+	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			transaction.Rollback()
+		}
+	}()
+
+	if err := transaction.Create(&product).Error; err != nil {
+		transaction.Rollback()
 		log.Printf("Error creating product: %v", err)
 		return jsonResponse(c, http.StatusInternalServerError, "Error creating product")
 	}
 
-	return jsonResponse(c, http.StatusCreated, "Product created successfully", product)
+	baseSlug := slug.Make(c.FormValue("name"))
+	product.Slug = baseSlug
+
+	var existingProduct models.Product
+	if _, err := repositories.GetProductBySlug(product.Slug); err == nil && existingProduct.ID != product.ID {
+		product.Slug = fmt.Sprintf("%s-%d", baseSlug, product.ID)
+	}
+
+	if err := transaction.Model(&product).Update("slug", product.Slug).Error; err != nil {
+		transaction.Rollback()
+		log.Printf("Error updating product slug: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Failed to update product slug")
+	}
+
+	uploadedImages, err := uploadImages(c, formField, destination, allowedExtensions)
+	if err != nil {
+		transaction.Rollback()
+		return jsonResponse(c, http.StatusBadRequest, err.Error())
+	}
+
+	for _, img := range uploadedImages {
+		productImage := models.ProductImage{
+			ProductID: product.ID,
+			Image:     img["filename"].(string),
+		}
+
+		if err := transaction.Create(&productImage).Error; err != nil {
+			transaction.Rollback()
+			return jsonResponse(c, http.StatusInternalServerError, "Failed to save product images to database")
+		}
+	}
+
+	if err := transaction.Commit().Error; err != nil {
+		return jsonResponse(c, http.StatusInternalServerError, "Failed to commit transaction")
+	}
+
+	return jsonResponse(c, http.StatusCreated, "Product created successfully", map[string]interface{}{
+		"product":        product,
+		"product_images": uploadedImages,
+	})
 }
 
-// Delete Product Handler [DELETE /products/:id]
-// 1. Deletes a product by ID.
-// 2. Returns status 200 if successful.
-// 3. Returns status 404 if the product is not found.
-// 4. Returns status 500 if an error occurs.
+// Delete Product
+// 1. Fetches the product by ID.
+// 2. Fetches the product images by product ID.
+// 3. Deletes the product images from the server.
+// 4. Deletes the product from the database.
+// 5. Returns status 200 if successful.
+// 6. Returns status 404 if the product is not found.
+// 7. Returns status 500 if an error occurs.
 
 func DeleteProduct(c echo.Context) error {
-	var product models.Product
+	var productImages []models.ProductImage
 
-	idParam := c.Param("id")
-
-	id, err := convertToInt64(idParam)
+	id, err := convertToInt64(c.Param("id"))
 	if err != nil {
 		log.Printf("Error converting product ID: %v", err)
 		return jsonResponse(c, http.StatusBadRequest, "Invalid product ID")
 	}
-	product.ID = id
 
-	if err := db.DB.Preload("Category").First(&product, id).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return jsonResponse(c, http.StatusNotFound, "Product not found")
-		}
-
-		log.Printf("Error fetching product: %v", err)
-		return jsonResponse(c, http.StatusInternalServerError, "Error fetching producta")
+	product, err := repositories.GetProductByID(id)
+	if err != nil {
+		log.Printf("Error fetching product by ID: %v", err)
+		return jsonResponse(c, http.StatusNotFound, "Product not found")
 	}
 
-	if err := db.DB.Delete(&product).Error; err != nil {
-		log.Printf("Error deleting product: %v", err)
-		return jsonResponse(c, http.StatusInternalServerError, "Error deleting productb")
+	transaction := db.DB.Begin()
+	if err := transaction.Where("product_id = ?", product.ID).Find(&productImages).Error; err != nil {
+		transaction.Rollback()
+		return jsonResponse(c, http.StatusInternalServerError, "Error fetching product images")
+	}
+
+	for _, productImage := range productImages {
+		fmt.Println("productImage", productImage)
+		if err := deleteImage("public/images/product_images/" + productImage.Image); err != nil {
+			transaction.Rollback()
+			return jsonResponse(c, http.StatusInternalServerError, "Error deleting product images")
+		}
+
+		transaction.Delete(&productImage)
+	}
+
+	if err := transaction.Delete(&product).Error; err != nil {
+		transaction.Rollback()
+		return jsonResponse(c, http.StatusInternalServerError, "Error deleting product")
+	}
+
+	if err := transaction.Commit().Error; err != nil {
+		return jsonResponse(c, http.StatusInternalServerError, "Error finalizing product deletion")
 	}
 
 	return jsonResponse(c, http.StatusOK, "Product deleted successfully", product)
@@ -162,21 +267,16 @@ func DeleteProduct(c echo.Context) error {
 func UpdateProduct(c echo.Context) error {
 	var product models.Product
 
-	idParam := c.Param("id")
-	id, err := convertToInt64(idParam)
+	id, err := convertToInt64(c.Param("id"))
 	if err != nil {
 		log.Printf("Error converting product ID: %v", err)
 		return jsonResponse(c, http.StatusBadRequest, "Invalid product ID")
 	}
 
-	if err := db.DB.First(&product, id).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			log.Printf("Product not found: %v", err)
-			return jsonResponse(c, http.StatusNotFound, "Product not found")
-		}
-
-		log.Printf("Error fetching product: %v", err)
-		return jsonResponse(c, http.StatusInternalServerError, "Error fetching product")
+	product, err = repositories.GetProductByID(id)
+	if err != nil {
+		log.Printf("Error fetching product by ID: %v", err)
+		return jsonResponse(c, http.StatusNotFound, "Product not found")
 	}
 
 	if err := c.Bind(&product); err != nil {
@@ -185,12 +285,12 @@ func UpdateProduct(c echo.Context) error {
 	}
 
 	var existingProduct models.Product
-	if err := db.DB.Where("slug = ? AND id != ?", product.Slug, id).First(&existingProduct).Error; err == nil {
+	existingProduct, err = repositories.GetProductBySlug(product.Slug)
+	if err == nil && existingProduct.ID != product.ID {
 		return jsonResponse(c, http.StatusBadRequest, "Product already exists with the same slug")
 	}
 
 	if err := product.Validate(); err != nil {
-		log.Printf("Validation error: %v", err)
 		return jsonResponse(c, http.StatusBadRequest, err.Error())
 	}
 
@@ -208,17 +308,118 @@ func UpdateProduct(c echo.Context) error {
 // 3. Returns status 500 if an error occurs.
 
 func SearchProducts(c echo.Context) error {
-	var products []models.Product
+	query := c.Param("query")
 
-	query := c.QueryParam("query")
-	if err := db.DB.Preload("Category").Where("name LIKE ? OR description LIKE ?", "%"+query+"%", "%"+query+"%").Find(&products).Error; err != nil {
+	page, perPage, offset := getPaginationParams(c)
+	order := getSortOrder(c)
+
+	var products []models.Product
+	if err := db.DB.Preload("Category").Preload("Category.Parent").Preload("ProductImages").Order(order).Where("name LIKE ? OR description LIKE ?", "%"+query+"%", "%"+query+"%").Limit(perPage).Offset(offset).Find(&products).Error; err != nil {
 		log.Printf("Error searching for products: %v", err)
 		return jsonResponse(c, http.StatusInternalServerError, "Error searching for products")
 	}
 
-	if len(products) == 0 {
-		return jsonResponse(c, http.StatusOK, "No products found matching the query")
+	var total int64
+	if err := db.DB.Model(&models.Product{}).Where("name LIKE ? OR description LIKE ?", "%"+query+"%", "%"+query+"%").Count(&total).Error; err != nil {
+		log.Printf("Error counting products: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error counting products")
 	}
 
-	return jsonResponse(c, http.StatusOK, "Product found", products)
+	repositories.SetProductImageURLs(products, utils.GetBaseURL())
+
+	return jsonResponse(c, http.StatusOK, "Products fetched successfully", map[string]interface{}{
+		"products": wrapData(products),
+		"metadata": generatePaginationResponse(page, perPage, int(total)),
+	})
+}
+
+// Get Product Image Handler [GET /products/image/:path]
+// 1. Fetches the product image by filename.
+// 2. Returns file response if successful.
+// 3. Returns status 404 if the image is not found.
+
+func GetProductImage(c echo.Context) error {
+	imagePath := c.Param("path")
+
+	// MICHAEL TODO - DELETE AND FIX THIS AFTER PRESENTATION
+	if !strings.HasPrefix(imagePath, "public/seed/") {
+		imagePath = "public/images/" + imagePath
+	}
+
+	if _, err := os.Stat(imagePath); os.IsNotExist(err) {
+		return jsonResponse(c, http.StatusNotFound, "Image not found")
+	}
+
+	return c.File(imagePath)
+}
+
+// Upload Product Image Handler [POST /products/:slug/image]
+// 1. Validates the product exists.
+// 2. Validates the uploaded file.
+// 3. Saves the uploaded file to the server with a unique filename.
+// 4. Saves the image record to the database.
+// 5. Returns status 200 if successful.
+// 6. Returns status 400 if the file type is invalid.s
+// 7. Returns status 500 if an error occurs.
+
+func UploadProductImages(c echo.Context) error {
+	slug := c.Param("slug")
+	product, err := repositories.GetProductBySlug(slug)
+	if err != nil {
+		log.Printf("Error fetching product by slug: %v", err)
+		return jsonResponse(c, http.StatusNotFound, "Product not found")
+	}
+
+	formField := "product_images"
+	destination := "public/images/product_images"
+	allowedExtensions := []string{".jpg", ".jpeg", ".png", ".webp"}
+
+	uploadedImages, err := uploadImages(c, formField, destination, allowedExtensions)
+	if err != nil {
+		log.Printf("Error uploading images: %v", err)
+		return jsonResponse(c, http.StatusBadRequest, err.Error())
+	}
+
+	for _, img := range uploadedImages {
+		productImage := models.ProductImage{
+			ProductID: product.ID,
+			Image:     img["filename"].(string),
+		}
+
+		if err := db.DB.Create(&productImage).Error; err != nil {
+			log.Printf("Error saving image to database: %v", err)
+			return jsonResponse(c, http.StatusInternalServerError, "Failed to save image to database")
+		}
+	}
+
+	return jsonResponse(c, http.StatusOK, "Images uploaded successfully", map[string]interface{}{
+		"product": product,
+		"images":  uploadedImages,
+	})
+}
+
+// Delete Product Image Handler [DELETE /products/:slug/image/:filename]
+// 1. Deletes a product image by filename.
+// 2. Returns status 200 if successful.
+// 3. Returns status 404 if the image is not found.
+// 4. Returns status 500 if an error occurs.
+func DeleteProductImage(c echo.Context) error {
+	product, err := repositories.GetProductBySlug(c.Param("slug"))
+	if err != nil {
+		log.Printf("Error fetching product by slug: %v", err)
+		return jsonResponse(c, http.StatusNotFound, "Product not found")
+	}
+
+	var productImage models.ProductImage
+	if err := db.DB.Where("product_id = ? AND id = ?", product.ID, c.Param("id")).First(&productImage).Error; err != nil {
+		log.Printf("Error fetching product image: %v", err)
+		return jsonResponse(c, http.StatusNotFound, "Image not found for the product")
+	}
+
+	if err := deleteImage("public/images/product_images/" + productImage.Image); err != nil {
+		log.Printf("Error deleting image: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error deleting image")
+	}
+
+	return jsonResponse(c, http.StatusOK, "Image deleted successfully")
 }

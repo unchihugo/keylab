@@ -24,7 +24,7 @@ func AuthMiddleware(sessionStore *sessions.CookieStore) echo.MiddlewareFunc {
 			}
 			user, err := repositories.FindUserByID(userID)
 			if err != nil {
-				return c.JSON(http.StatusUnauthorized, "User not found")
+				return c.JSON(http.StatusUnauthorized, "Unauthorized")
 			}
 
 			c.Set("user", user)

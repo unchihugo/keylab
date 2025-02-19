@@ -145,10 +145,23 @@ func Logout(sessionStore *sessions.CookieStore) echo.HandlerFunc {
 	}
 }
 
-// Temp handler to test protected route
+// ValidateSession Handler [GET /auth/validate]
+// 1. Validates the session.
+// 2. Returns status 200 if successful.
+// 3. Returns status 401 if unsuccessful.
+// 4. Returns status 500 if an error occurs.
 
-func Protected(c echo.Context) error {
-	user := c.Get("user").(*models.User)
+func ValidateSession(sessionStore *sessions.CookieStore) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		user, ok := c.Get("user").(models.User)
+		if !ok {
+			return jsonResponse(c, http.StatusUnauthorized, "Invalid session")
+		}
 
-	return c.JSON(http.StatusOK, user)
+		if user.ID == 0 {
+			return jsonResponse(c, http.StatusUnauthorized, "Invalid session")
+		}
+
+		return jsonResponse(c, http.StatusOK, "Valid session", user)
+	}
 }

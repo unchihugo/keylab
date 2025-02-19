@@ -80,22 +80,22 @@ export const validateName = (name: string, type: string, min: number) => {
  * Validates first names based on the criteria of the `validateName` function
  * - Minimum length is 2 characters
  * @see validateName
- * @param firstName First name to validate
+ * @param forename First name to validate
  * @returns Error message if first name is invalid, otherwise an empty string
  */
-export const validateFirstName = (firstName: string) => {
-	return validateName(firstName, "First name", 2)
+export const validateForename = (forename: string) => {
+	return validateName(forename, "First name", 2)
 }
 
 /**
  * Validates last names based on the criteria of the `validateName` function
  * - Minimum length is 2 characters
  * @see validateName
- * @param lastName Last name to validate
+ * @param surname Last name to validate
  * @returns Error message if last name is invalid, otherwise an empty string
  */
-export const validateLastName = (lastName: string) => {
-	return validateName(lastName, "Last name", 2)
+export const validateSurname = (surname: string) => {
+	return validateName(surname, "Last name", 2)
 }
 
 /**
@@ -112,6 +112,41 @@ export const validateMatch = (
 ) => {
 	if (string1 !== string2) {
 		return `${type} do not match`
+	}
+	return ""
+}
+
+/**
+ * Validates phone numbers based on the following criteria:
+ * - Isn't empty
+ * - Should match a phone number pattern (e.g., format like +1234567890)
+ * @param phoneNum Phone number to validate
+ * @returns Error message if phone number is invalid, otherwise an empty string
+ */
+export const validatePhoneNum = (phoneNum: string) => {
+	const regex = /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s./0-9]*$/
+	if (!phoneNum) {
+		return "Phone number is required"
+	}
+	if (!regex.test(phoneNum)) {
+		return "Invalid phone number format"
+	}
+	return ""
+}
+
+/**
+ * Validates messages based on the following criteria:
+ * - Is not empty
+ * - Should be at least 10 characters long
+ * @param message Message to validate
+ * @returns Error message if message is invalid, otherwise an empty string
+ */
+export const validateMessage = (message: string) => {
+	if (!message) {
+		return "Message is required"
+	}
+	if (message.length < 10) {
+		return "Message must be at least 10 characters long"
 	}
 	return ""
 }
