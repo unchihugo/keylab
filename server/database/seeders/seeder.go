@@ -25,6 +25,10 @@ func SeedAll(DB *gorm.DB) error {
 		return err
 	}
 
+	if err := seedProductReviews(DB); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -179,6 +183,23 @@ func seedProductImages(DB *gorm.DB) error {
 	}
 
 	if err := DB.Create(&productImages).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func seedProductReviews(DB *gorm.DB) error {
+	productReviews := []models.ProductReviews{
+		{ProductID: 1, UserID: 1, Rating: 5, Comment: "Great keyboard, love the RGB lighting!", CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{ProductID: 1, UserID: 2, Rating: 4, Comment: "Compact and efficient, perfect for gaming.", CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{ProductID: 2, UserID: 1, Rating: 3, Comment: "The build quality is exceptional, typing feels smooth.", CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{ProductID: 2, UserID: 3, Rating: 4, Comment: "Beautiful keycaps, very comfortable to type on.", CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{ProductID: 3, UserID: 2, Rating: 5, Comment: "Simple and reliable, a pleasure to use.", CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{ProductID: 4, UserID: 3, Rating: 5, Comment: "Topre switches are amazing, great for programming.", CreatedAt: time.Now(), UpdatedAt: time.Now()},
+	}
+
+	if err := DB.Create(&productReviews).Error; err != nil {
 		return err
 	}
 
