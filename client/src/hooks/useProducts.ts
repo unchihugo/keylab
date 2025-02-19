@@ -14,23 +14,23 @@ export const useProducts = () => {
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState<string | null>(null)
 
-	useEffect(() => {
-		const fetchProducts = async () => {
-			try {
-				setLoading(true)
-				const response = await productService.listProducts()
-				setProducts(response)
-			} catch (err) {
-				setError(
-					err instanceof Error
-						? err.message
-						: "An error occurred while fetching products.",
-				)
-			} finally {
-				setLoading(false)
-			}
+	const fetchProducts = async () => {
+		try {
+			setLoading(true)
+			const response = await productService.listProducts()
+			setProducts(response.data.products)
+		} catch (err) {
+			setError(
+				err instanceof Error
+					? err.message
+					: "An error occurred while fetching products.",
+			)
+		} finally {
+			setLoading(false)
 		}
+	}
 
+	useEffect(() => {
 		const fetchTestProducts = () => {
 			setProducts([
 				{
@@ -45,14 +45,11 @@ export const useProducts = () => {
 						category_id: 1,
 						product_images: [
 							{
-								data: {
-									id: 1,
-									product_id: 1,
-									image: "Keychron V1 Custom Mechanical Keyboard frosted black knob K-Pro red",
-									url: "https://www.keychron.uk/cdn/shop/products/Keychron-V1-Custom-Mechanical-Keyboard-frosted-black-knob-K-Pro-red.jpg",
-									primary_image: true,
-								},
-								message: "Product image found",
+								id: 1,
+								product_id: 1,
+								image: "Keychron V1 Custom Mechanical Keyboard frosted black knob K-Pro red",
+								url: "https://www.keychron.uk/cdn/shop/products/Keychron-V1-Custom-Mechanical-Keyboard-frosted-black-knob-K-Pro-red.jpg",
+								primary_image: true,
 							},
 						],
 					},
@@ -110,7 +107,7 @@ export const useProducts = () => {
 		}
 
 		// Fetch products
-		if (import.meta.env.MODE != "test") {
+		if (import.meta.env.MODE == "test") {
 			fetchTestProducts()
 		} else {
 			fetchProducts()
@@ -119,10 +116,14 @@ export const useProducts = () => {
 
 	const searchProducts = async (searchTerm: string) => {
 		searchTerm = searchTerm.trim()
+		if (searchTerm.length < 1) {
+			fetchProducts()
+			return
+		}
 		try {
 			setLoading(true)
 			const response = await productService.searchProducts(searchTerm)
-			setProducts(response)
+			setProducts(response.data.products)
 		} catch (err) {
 			setError(
 				err instanceof Error
@@ -140,7 +141,7 @@ export const useProducts = () => {
 			setLoading(true)
 			const response =
 				await productService.getProductsByCategory(category)
-			setProducts(response)
+			setProducts(response.data.products)
 		} catch (err) {
 			setError(
 				err instanceof Error

@@ -6,6 +6,7 @@ import NotFound from "../NotFound"
 import { Minus, Plus } from "lucide-react"
 import LinkButton from "../../components/LinkButton"
 import ZoomImage from "../../components/ZoomImage"
+import Breadcrumb from "../../components/Breadcrumb"
 
 export default function Product() {
 	const { slug } = useParams()
@@ -27,25 +28,31 @@ export default function Product() {
 			<NotFound bodyMessage="The product you are looking for does not exist, or it may have been removed." />
 		)
 
+	console.log(product)
+	let breadcrumbs
+	if (!product.data.category) breadcrumbs = ["Shop", product.data.name]
+	else
+		breadcrumbs = [
+			"Shop",
+			// String(product.data.category.name) || "",
+			"Keyboard",
+			product.data.name,
+		]
+
 	return (
 		<div className="flex justify-center items-center bg-primary/25">
 			<div className="max-w-screen-lg w-full my-32 mx-6">
 				{/* TODO: add breadcrumbs component */}
 				<div className="w-full text-black/50">
-					Home — Shop — Keycaps — Cherry Profile Keycaps — Product
-					Name Lorem ipsum
+					<Breadcrumb breadcrumbs={breadcrumbs} />
 				</div>
 				<div className="my-4 md:grid md:grid-cols-2 lg:grid-cols-5 gap-10 items-center w-full">
 					<div className="w-full aspect-square rounded-lg bg-white lg:col-span-3 flex items-center">
 						{product.data.product_images &&
 							product.data.product_images.length > 0 && (
 								<ZoomImage
-									src={
-										product.data.product_images[0].url
-									}
-									alt={
-										product.data.product_images[0].image
-									}
+									src={product.data.product_images[0].url}
+									alt={product.data.product_images[0].image}
 								/>
 							)}
 					</div>

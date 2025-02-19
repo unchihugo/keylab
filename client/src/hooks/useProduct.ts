@@ -46,14 +46,11 @@ export const useProduct = (slug: string) => {
 					category_id: 1,
 					product_images: [
 						{
-							data: {
-								id: 1,
-								product_id: 1,
-								image: "Keychron V1 Custom Mechanical Keyboard frosted black knob K-Pro red",
-								url: "https://www.keychron.uk/cdn/shop/products/Keychron-V1-Custom-Mechanical-Keyboard-frosted-black-knob-K-Pro-red.jpg",
-								primary_image: true,
-							},
-							message: "Product image found",
+							id: 1,
+							product_id: 1,
+							image: "Keychron V1 Custom Mechanical Keyboard frosted black knob K-Pro red",
+							url: "http://localhost:8080/products/image/public/seed/ducky-one-2-mini.jpg",
+							primary_image: true,
 						},
 					],
 				},

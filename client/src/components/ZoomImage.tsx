@@ -12,29 +12,28 @@ export default function ZoomImage({ src, alt }: ZoomImageProps) {
 	const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
 
 	return (
-		// TODO: fix oveflow issue
 		<div
-			className="object-cover relative overflow-hidden"
+			className="relative overflow-hidden w-full h-full flex items-center justify-center"
 			onMouseEnter={() => setIsHovered(true)}
 			onMouseLeave={() => setIsHovered(false)}
 			onMouseMove={(e) => {
-				const { left, top } = e.currentTarget.getBoundingClientRect()
-				setMousePosition({
-					x: e.clientX - left,
-					y: e.clientY - top,
-				})
+				const { left, top, width, height } =
+					e.currentTarget.getBoundingClientRect()
+				const x = ((e.clientX - left) / width) * 100
+				const y = 100 - ((e.clientY - top) / height) * 100
+				setMousePosition({ x, y })
 			}}>
 			<img
 				src={src}
 				alt={alt}
-				className="w-full h-auto rounded-lg object-cover"
+				className="max-w-full max-h-full w-auto h-auto rounded-lg object-contain"
 			/>
 			<div
-				className="absolute inset-0 pointer-events-none transition-opacity duration-200 ease-in-out"
+				className="absolute bg-no-repeat h-full w-full rounded-lg pointer-events-none transition-opacity duration-200 ease-in-out"
 				style={{
 					opacity: isHovered ? 1 : 0,
 					backgroundImage: `url(${src})`,
-					backgroundPosition: `${-mousePosition.x}px ${-mousePosition.y}px`,
+					backgroundPosition: `${mousePosition.x}% ${mousePosition.y}%`,
 					backgroundSize: "200%",
 				}}
 			/>

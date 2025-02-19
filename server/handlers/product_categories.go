@@ -21,7 +21,7 @@ import (
 func GetCategories(c echo.Context) error {
 	var categories []models.ProductCategory
 
-	if err := db.DB.Find(&categories).Error; err != nil {
+	if err := db.DB.Preload("Parent").Find(&categories).Error; err != nil {
 		log.Printf("Error fetching categories: %v", err)
 		return jsonResponse(c, http.StatusInternalServerError, "Error fetching categories")
 	}
@@ -48,7 +48,7 @@ func GetCategoryBySlug(c echo.Context) error {
 		return jsonResponse(c, http.StatusBadRequest, "Invalid category slug")
 	}
 
-	if err := db.DB.Where("slug = ?", slug).First(&category).Error; err != nil {
+	if err := db.DB.Where("slug = ?", slug).Preload("Parent").First(&category).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return jsonResponse(c, http.StatusNotFound, "Category not found")
 		}
@@ -107,7 +107,7 @@ func DeleteCategory(c echo.Context) error {
 		return jsonResponse(c, http.StatusBadRequest, "Invalid category slug")
 	}
 
-	if err := db.DB.Where("slug = ?", slug).First(&category).Error; err != nil {
+	if err := db.DB.Where("slug = ?", slug).Preload("Parent").First(&category).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return jsonResponse(c, http.StatusNotFound, "Category not found")
 		}
