@@ -14,32 +14,35 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	authGroup.POST("/register", handlers.Register)
 	authGroup.POST("/login", handlers.Login(sessionStore))
 	authGroup.POST("/logout", handlers.Logout(sessionStore))
+	authGroup.GET("/validate", handlers.ValidateSession(sessionStore))
 
-	// Protected related routes (example only but following the same pattern)
-	protectedRoutes := e.Group("/protected", middleware.AuthMiddleware(sessionStore))
-	protectedRoutes.GET("/", handlers.Protected)
+	// TEMP TEST ROUTE - use as an example
+	e.GET("/test/permission", handlers.TestPermission(), middleware.AuthMiddleware(sessionStore), middleware.PermissionMiddleware("admin:dashboard"))
 
 	// Category related routes
 	categoryGroup := e.Group("/categories")
 	categoryGroup.GET("", handlers.GetCategories)
 	categoryGroup.GET("/:slug", handlers.GetCategoryBySlug)
 
-	// admin only for creating, updating and deleting categories
-	categoryGroup.POST("", handlers.CreateCategory, middleware.AuthMiddleware(sessionStore), middleware.PermissionMiddleware(sessionStore, "manage_categories"))
-	categoryGroup.DELETE("/:slug", handlers.DeleteCategory, middleware.AuthMiddleware(sessionStore), middleware.PermissionMiddleware(sessionStore, "manage_categories"))
-	categoryGroup.PUT("/:slug", handlers.UpdateCategory, middleware.AuthMiddleware(sessionStore), middleware.PermissionMiddleware(sessionStore, "manage_categories"))
+	// TODO: Add admin middleware to the following routes
+	categoryGroup.POST("", handlers.CreateCategory)
+	categoryGroup.DELETE("/:slug", handlers.DeleteCategory)
+	categoryGroup.PUT("/:slug", handlers.UpdateCategory)
 
 	// Product related routes
 	productGroup := e.Group("/products")
 	productGroup.GET("", handlers.ListProducts)
 	productGroup.GET("/:slug", handlers.GetProductBySlug)
-	productGroup.GET("/category/:category", handlers.GetProductsByCategory)
+	productGroup.GET("/category/:id", handlers.GetProductsByCategory)
 	productGroup.GET("/search/:query", handlers.SearchProducts)
+	productGroup.GET("/image/:path", handlers.GetProductImage)
 
-	// admin only for creating, updating and deleting categories
-	productGroup.POST("", handlers.CreateProduct, middleware.AuthMiddleware(sessionStore), middleware.PermissionMiddleware(sessionStore, "manage_products"))
-	productGroup.DELETE("/:id", handlers.DeleteProduct, middleware.AuthMiddleware(sessionStore), middleware.PermissionMiddleware(sessionStore, "manage_products"))
-	productGroup.PUT("/:id", handlers.UpdateProduct, middleware.AuthMiddleware(sessionStore), middleware.PermissionMiddleware(sessionStore, "manage_products"))
+	// TODO: Add admin middleware to the following routes
+	productGroup.POST("", handlers.CreateProduct)
+	productGroup.DELETE("/:id", handlers.DeleteProduct)
+	productGroup.PUT("/:id", handlers.UpdateProduct)
+	productGroup.POST("/:slug/image", handlers.UploadProductImages)
+	productGroup.DELETE("/:slug/image/:id", handlers.DeleteProductImage)
 
 	productReviewGroup := e.Group("/products/:product_slug/reviews")
 	productReviewGroup.GET("", handlers.GetReviewsByProduct)
@@ -51,4 +54,13 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	productReviewGroup.POST("", handlers.CreateReview, middleware.AuthMiddleware(sessionStore))
 	productReviewGroup.PUT("/:id", handlers.UpdateReview, middleware.AuthMiddleware(sessionStore))
 	productReviewGroup.DELETE("/:id", handlers.DeleteReview, middleware.AuthMiddleware(sessionStore))
+
+	// Cart related routes
+	cartGroup := e.Group("/cart", middleware.AuthMiddleware(sessionStore))
+	cartGroup.GET("", handlers.ListCartItems)
+	cartGroup.POST("", handlers.AddCartItem)
+	cartGroup.PUT("/:id", handlers.UpdateCartItemQuantity)
+	cartGroup.DELETE("/:id", handlers.DeleteCartItem)
+
+	e.POST("/contact", handlers.ContactUs)
 }
