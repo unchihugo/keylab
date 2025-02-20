@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"keylab/database/models"
 	"keylab/handlers"
 	"keylab/repositories"
 	"net/http"
@@ -18,13 +19,40 @@ func AuthMiddleware(sessionStore *sessions.CookieStore) echo.MiddlewareFunc {
 				return c.JSON(http.StatusUnauthorized, "Unauthorized")
 			}
 
-			userID := session.Values["user_id"].(int64)
+			userID, ok := session.Values["user_id"].(int64)
+			if !ok {
+				return c.JSON(http.StatusUnauthorized, "Invalid session data")
+			}
+
 			user, err := repositories.FindUserByID(userID)
 			if err != nil {
 				return c.JSON(http.StatusUnauthorized, "Unauthorized")
 			}
 
 			c.Set("user", user)
+			return next(c)
+		}
+	}
+}
+
+func PermissionMiddleware(requiredPermissions ...string) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+
+			user, ok := c.Get("user").(models.User)
+			if !ok {
+				return c.JSON(http.StatusUnauthorized, "Unauthorized user")
+			}
+
+			hasPermission, err := repositories.CheckRolePermissions(user.RoleID, requiredPermissions)
+			if err != nil {
+				return c.JSON(http.StatusInternalServerError, "A error occured! Please contact administration")
+			}
+
+			if !hasPermission {
+				return c.JSON(http.StatusForbidden, "You do not have access to this resource")
+			}
+
 			return next(c)
 		}
 	}
