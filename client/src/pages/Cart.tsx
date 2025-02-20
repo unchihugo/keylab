@@ -1,11 +1,15 @@
 /** @format */
 
 import { useState } from "react"
+import { useCart } from "../hooks/useCart"
 import Divider from "../components/Divider"
 import InputBox from "../components/InputBox"
 import LinkButton from "../components/LinkButton"
 import { LockKeyhole, Minus, Plus } from "lucide-react"
 import { Link } from "react-router-dom"
+
+// ToDo: Add implement cart hook
+
 
 export default function Cart() {
 	{
