@@ -1,0 +1,1 @@
+drop table discount_items;
