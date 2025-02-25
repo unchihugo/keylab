@@ -27,11 +27,14 @@ export default function Register() {
 		// if error is empty, filter it out
 		setErrors(
 			[
-				formValidation.validateFirstName(firstName),
-				formValidation.validateLastName(lastName),
+				formValidation.validateForename(firstName),
+				formValidation.validateSurname(lastName),
 				formValidation.validateEmail(email),
-				formValidation.validateMatch(password, passwordConfirm, "Passwords") ||
-					formValidation.validatePassword(password),
+				formValidation.validateMatch(
+					password,
+					passwordConfirm,
+					"Passwords",
+				) || formValidation.validatePassword(password),
 			].filter(Boolean),
 		)
 
@@ -54,7 +57,7 @@ export default function Register() {
 	useEffect(() => {
 		if (isAuthenticated) {
 			// redirect to home page if authenticated
-			navigate('/sign-in')
+			navigate("/sign-in")
 		}
 	}, [isAuthenticated, navigate])
 
