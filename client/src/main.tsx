@@ -15,6 +15,7 @@ import Product from "./pages/products/[slug]"
 import Cart from './pages/Cart'
 import ProtectedRoute from "./components/ProtectedRoute"
 import About from "./pages/About"
+import Inventory from "./pages/admin/Inventory"
 
 const router = createBrowserRouter([
 	{
@@ -33,6 +34,13 @@ const router = createBrowserRouter([
 					</ProtectedRoute>
 				),
 			},
+			{ 
+				path: "/Inventory",
+				element: (
+					<Inventory/>
+				),
+			},
+
 			{ path: "/sign-in", element: <SignIn /> },
 			{ path: "/register", element: <Register /> },
 			{ path: "/products/:slug", element: <Product /> },
