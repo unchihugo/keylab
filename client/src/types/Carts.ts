@@ -1,11 +1,10 @@
 /** @format */
 
 export interface Carts {
-    data: {
         id: number
-        productName: String
+        name: String
+        product: number
         quantity: number
         price: number
         totalPrice: number
-    }
 }

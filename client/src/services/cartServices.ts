@@ -1,11 +1,11 @@
 /** @format */
 
-const CART_API_URL = "http://localhost:8080/products" 
+const CART_API_URL = "http://localhost:8080/cart" 
 
 /**
- * @module services/product
+ * @module services/cart
  * @see ../../../../server/handlers/cart_items.go
- */
+*/
 
 export const cartServices = {
 
@@ -16,7 +16,7 @@ export const cartServices = {
     */
 
     async ListCartItems() {
-        const response = await fetch(`${CART_API_URL}`, {
+      const response = await fetch(`${CART_API_URL}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
