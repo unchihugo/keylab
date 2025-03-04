@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { cartServices } from "../services/cartServices";
 import { Carts } from "../types/Carts";
 
-export const useCart = (user_id: number) => {
+export const useCart = () => {
     const [carts, setCarts] = useState<Carts[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null)
@@ -13,7 +13,7 @@ export const useCart = (user_id: number) => {
         const fetchCart = async () => {
             try {
                 setLoading(true)
-                const response = await cartServices.getCartByUser(user_id)
+                const response = await cartServices.ListCartItems()
                 setCarts(response.cartItems);
             }
             catch(err) {
@@ -27,8 +27,8 @@ export const useCart = (user_id: number) => {
             } 
         }
         fetchCart(); 
-    }, [user_id]);
+    }, []);
 
-    return { carts, loading, error};
+    return { carts, loading, error };
     
 }

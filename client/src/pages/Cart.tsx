@@ -10,11 +10,8 @@ import { useCart } from "../hooks/useCarts";
 import { cartServices } from "../services/cartServices";
 import NotFound from "./NotFound"
 
-const user_id = 1;
-
 export default function Cart() {
-    const { carts, loading, error}= useCart(user_id);
-	const [update, setUpdate] = useState(false);
+    const { carts, loading, error }= useCart();
 
     // the function that displays the total amount in the order summary section
     const totalPrice = carts
@@ -32,7 +29,6 @@ export default function Cart() {
         product: number
     }) => {
 		try {
-			setUpdate(true);
 			if(item.quantity > 1) {
 				await cartServices.updateCartItemQuantity(
 					item.product, item.quantity - 1
@@ -46,15 +42,11 @@ export default function Cart() {
 		catch(error) {
 			console.error("Failed to adjust quantity", error);
 		} 
-		finally {
-			setUpdate(false)
-		}
 	};
 
     // function allowing users to increase quantity
 	const handleAdd = async (item: { quantity: number; product: number }) => {
 		try {
-			setUpdate(true);
 			if(item.quantity >= 0) {
 				await cartServices.updateCartItemQuantity(
 					item.product, item.quantity + 1
@@ -63,9 +55,6 @@ export default function Cart() {
 		}
 		catch(error) {
 			console.error("Failed to adjust quantity", error);
-		}
-		finally {
-			setUpdate(false)
 		}
 	};
 

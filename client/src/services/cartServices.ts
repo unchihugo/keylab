@@ -22,6 +22,10 @@ export const cartServices = {
             "Content-Type": "application/json",
           },
         })
+      
+      if (response.status === 401) {
+        throw new Error("Please log in to view your basket");
+      }
 
       if(!response.ok) {
           const errorData = await response.json();
@@ -47,6 +51,7 @@ export const cartServices = {
           headers: {
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({ productID: id, quantity })
         })
 
       if (!response.ok) {
@@ -96,11 +101,12 @@ export const cartServices = {
      */
 
     async updateCartItemQuantity(id: number, quantity: number) {
-      const response = await fetch(`${CART_API_URL}/${id}/${quantity}`, {
+      const response = await fetch(`${CART_API_URL}/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({ quantity }),
       })
 
       if (!response.ok) {
@@ -114,27 +120,5 @@ export const cartServices = {
       return response.json();
     },
 
-     /**
-     * gets the cart by the user 
-     * @returns {Promise}  
-     * @param {user_id} number the users id
-     * @throws {Error} throws error from API request
-     */
 
-    async getCartByUser(user_id: number) {
-      const response = await fetch(`${CART_API_URL}/${user_id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-    });
-
-      if(!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to get cart from user");
-      }
-
-      return response.json();
-
-    }
   }
