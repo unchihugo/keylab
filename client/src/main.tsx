@@ -11,6 +11,7 @@ import Home from "./pages/Home"
 import NotFound from "./pages/NotFound"
 import SignIn from "./pages/auth/sign-in"
 import Register from "./pages/auth/register"
+import AdminLogin from "./pages/auth/adminlogin"
 import Shop from "./pages/Shop"
 import Product from "./pages/products/[slug]"
 import Cart from "./pages/Cart"
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
 			},
 			{ path: "/sign-in", element: <SignIn /> },
 			{ path: "/register", element: <Register /> },
+			{ path: "/adminlogin", element: <AdminLogin/> },
 			{ path: "/products/:slug", element: <Product /> },
 			{ path: "*", element: <NotFound /> },
 			{ path: "/about", element: <About /> },
