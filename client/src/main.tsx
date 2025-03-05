@@ -15,7 +15,7 @@ import Product from "./pages/products/[slug]"
 import Cart from './pages/Cart'
 import ProtectedRoute from "./components/ProtectedRoute"
 import About from "./pages/About"
-import Inventory from "./pages/admin/Inventory"
+import Inventory from "./pages/admin/Inventory.tsx"
 
 const router = createBrowserRouter([
 	{
