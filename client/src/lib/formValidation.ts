@@ -150,3 +150,30 @@ export const validateMessage = (message: string) => {
 	}
 	return ""
 }
+
+// TODO: IMPORTANT: future implementations should follow the pattern of the following function:
+/**
+ * Validates review input based on the following criteria:
+ * - Rating is between 1 and 5 stars
+ * - Comment is at least 10 characters long
+ * - Comment is no longer than 500 characters
+ * @param review Review input to validate
+ * @returns Array of error messages if review is invalid, otherwise an empty array
+ */
+export const validateReview = (review: { rating: number; comment: string }): string[] => {
+	const errors: string[] = []
+	
+	if (!review.rating || review.rating < 1 || review.rating > 5) {
+		errors.push("Rating must be between 1 and 5 stars")
+	}
+	
+	if (!review.comment || review.comment.trim().length < 10) {
+		errors.push("Review comment must be at least 10 characters")
+	}
+	
+	if (review.comment && review.comment.trim().length > 500) {
+		errors.push("Review comment cannot exceed 500 characters")
+	}
+	
+	return errors
+}

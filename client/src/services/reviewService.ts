@@ -49,7 +49,7 @@ export const reviewService = {
 		return response.json()
 	},
 
-	// currenty getReviewsByUser and getReviewByUser are the same
+	// currenty getReviewsByUser and getReviewByUser are the same server-side
 	async getReviewsByUser(productId: number, userId: number) {
 		const response = await fetch(
 			`${PRODUCTS_API_URL}/products/${productId}/reviews/users/${userId}/reviews`,
@@ -88,25 +88,25 @@ export const reviewService = {
 		return response.json()
 	},
 
-	async getReviewStatistics(productId: number) {
-		const response = await fetch(
-			`${PRODUCTS_API_URL}/products/${productId}/reviews/statistics`,
-			{
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-				},
-			},
-		)
+	// async getReviewStatistics(productId: number) {
+	// 	const response = await fetch(
+	// 		`${PRODUCTS_API_URL}/products/${productId}/reviews/statistics`,
+	// 		{
+	// 			method: "GET",
+	// 			headers: {
+	// 				"Content-Type": "application/json",
+	// 			},
+	// 		},
+	// 	)
 
-		if (!response.ok) {
-			const errorData = await response.json()
-			throw new Error(
-				errorData.message || "Failed to get review statistics",
-			)
-		}
-		return response.json()
-	},
+	// 	if (!response.ok) {
+	// 		const errorData = await response.json()
+	// 		throw new Error(
+	// 			errorData.message || "Failed to get review statistics",
+	// 		)
+	// 	}
+	// 	return response.json()
+	// },
 
 	async createReview(
 		productId: number,

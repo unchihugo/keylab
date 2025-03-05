@@ -13,6 +13,10 @@ func SeedAll(DB *gorm.DB) error {
 		return err
 	}
 
+	if err := seedUsers(DB); err != nil {
+		return err
+	}
+
 	if err := seedProductCategories(DB); err != nil {
 		return err
 	}
@@ -33,7 +37,7 @@ func SeedAll(DB *gorm.DB) error {
 }
 
 func CleanTables(DB *gorm.DB) error {
-	tables := []string{"products", "product_categories", "product_images"}
+	tables := []string{"product_reviews", "products", "product_categories", "product_images", "users"}
 
 	// Disable foreign key checks
 	if err := DB.Exec("SET FOREIGN_KEY_CHECKS = 0").Error; err != nil {
@@ -183,6 +187,21 @@ func seedProductImages(DB *gorm.DB) error {
 	}
 
 	if err := DB.Create(&productImages).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func seedUsers(DB *gorm.DB) error {
+	// for testing reviews
+	users := []models.User{
+		{Forename: "john", Surname: "doe", Email: "john@example.com", Password: "password123", CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{Forename: "jane", Surname: "smith", Email: "jane@example.com", Password: "password123", CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{Forename: "bob", Surname: "bobby", Email: "bob@example.com", Password: "password123", CreatedAt: time.Now(), UpdatedAt: time.Now()},
+	}
+
+	if err := DB.Create(&users).Error; err != nil {
 		return err
 	}
 
