@@ -2,6 +2,7 @@
 
 import { useParams } from "react-router-dom"
 import { useProduct } from "../../hooks/useProduct"
+import { useProductReviews } from "../../hooks/useProductReviews"
 import NotFound from "../NotFound"
 import { Minus, Plus } from "lucide-react"
 import LinkButton from "../../components/LinkButton"
@@ -21,6 +22,9 @@ export default function Product() {
 		incrementQuantity,
 		decrementQuantity,
 	} = useProduct(slug as string)
+	const { reviews, statistics } = useProductReviews(
+		slug as string,
+	)
 
 	if (loading) return <div>Loading...</div>
 	if (error)
@@ -63,11 +67,17 @@ export default function Product() {
 							<div className="text-black/50">
 								Tag1 | Tag2 | Tag3
 							</div>
-							<div className="text-black">
-								⭐⭐⭐⭐⭐{" "}
-								<span className="font-bold">4.8</span> (10
-								reviews)
-							</div>
+							{statistics ? (
+								<div>
+									{"⭐".repeat(statistics.average_rating)}{" "}
+									<span className="font-bold">
+										{statistics.average_rating}{" "}
+									</span>
+									({statistics.total_reviews} reviews)
+								</div>
+							) : (
+								<div>No reviews yet</div>
+							)}
 						</div>
 						<div className="text-4xl font-display">
 							{product.data.name}
@@ -126,6 +136,7 @@ export default function Product() {
 					</div>
 				</div>
 
+				{/* product carousels section */}
 				<div className="my-12">
 					<div className="text-2xl font-display mt-4">
 						Related products
@@ -140,11 +151,60 @@ export default function Product() {
 					<div className="flex h-40 bg-black/10" />
 				</div>
 
+				{/* user reviews section */}
 				<div className="my-24">
-					<div className="text-2xl font-display w-full my-4 text-center">
+					<div className="text-2xl font-display w-full mt-4 text-center">
 						User reviews
 					</div>
-					<div className="flex h-screen bg-black/10" />
+					<div className="w-full">
+						{statistics ? (
+							<div className="flex justify-center items-center gap-4">
+								<div>
+									{"⭐".repeat(statistics.average_rating)}{" "}
+									<span className="font-bold">
+										{statistics.average_rating} average
+									</span>
+								</div>
+								<div className="text-black/50">
+									{statistics.total_reviews} reviews total
+								</div>
+							</div>
+						) : (
+							<div>No reviews yet</div>
+						)}
+
+						{reviews.length > 0 &&
+							reviews.map((review) => (
+								<div
+									key={review.id}
+									className="mt-4 border border-black w-full bg-white rounded-lg px-6 py-3">
+									<div className="text-lg">
+										{"⭐".repeat(review.rating)}
+									</div>
+									<div className="flex items-center gap-4">
+										<div className="font-bold">
+											{/* TODO: get username instead */}
+											User {review.user_id}
+										</div>
+										<div className="text-black/50 text-sm">
+											{review.updated_at
+												? new Date(
+														review.updated_at,
+													).toLocaleDateString(
+														"en-US",
+														{
+															year: "numeric",
+															month: "long",
+															day: "numeric",
+														},
+													)
+												: "No date available"}
+										</div>
+									</div>
+									<div>{review.comment}</div>
+								</div>
+							))}
+					</div>
 				</div>
 			</div>
 		</div>

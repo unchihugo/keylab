@@ -77,6 +77,7 @@ export const useProduct = (slug: string) => {
 				// cut the product name and get the first word for query
 				const query = String(product.data.name).split(" ")[0]
 				const response = await productService.searchProducts(query)
+				// remove the current product from the related products
 				setRelatedProducts(response.data.products)
 				console.log(response.data.products)
 			} catch (error) {

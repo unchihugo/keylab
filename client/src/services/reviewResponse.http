@@ -1,0 +1,13 @@
+# REST API review routes testing
+
+### Get all reviews for duck one 2 mini
+GET http://localhost:8080/products/ducky-one-2-mini/reviews
+
+### Get all reviews from user 1
+GET http://localhost:8080/products/ducky-one-2-mini/reviews/user/1
+
+### Get review id 1 for ducky one 2 mini
+GET http://localhost:8080/products/ducky-one-2-mini/reviews/1
+
+### Get review statistics for ducky one 2 mini
+GET http://localhost:8080/products/ducky-one-2-mini/reviews/statistics
