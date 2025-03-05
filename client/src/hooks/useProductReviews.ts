@@ -1,11 +1,11 @@
 /** @format */
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { ProductReview, ReviewStatistics } from "../types/ProductReview"
 import { reviewService } from "../services/reviewService"
 import { validateReview } from "../lib/formValidation"
 
-export const useProductReviews = (productId: number) => {
+export const useProductReviews = (slug: string) => {
 	const [reviews, setReviews] = useState<ProductReview[]>([])
 	const [statistics, setStatistics] = useState<ReviewStatistics | null>(null)
 	const [userReview, setUserReview] = useState<ProductReview | null>(null)
@@ -14,51 +14,45 @@ export const useProductReviews = (productId: number) => {
 	const [formErrors, setFormErrors] = useState<string[]>([])
 
 	// get all reviews for a product
-	const fetchReviews = async () => {
-		if (!productId) return
+	const fetchReviews = useCallback(async () => {
+		if (!slug) return
 
 		try {
 			setLoading(true)
 			const reviewsData =
-				await reviewService.getReviewsByProduct(productId)
-			setReviews(reviewsData)
-
-			// calculate review statistics manually (discussed, should be changed later)
-			if (reviewsData && reviewsData.length > 0) {
-				const totalReviews = reviewsData.length
-				let sum = 0
-				const distribution: { [key: number]: number } = {
-					1: 0,
-					2: 0,
-					3: 0,
-					4: 0,
-					5: 0,
-				}
-
-				reviewsData.forEach((review: ProductReview) => {
-					sum += review.rating
-					distribution[review.rating] =
-						(distribution[review.rating] || 0) + 1
-				})
-
-				const avgRating = sum / totalReviews
-
-				setStatistics({
-					average_rating: avgRating,
-					total_reviews: totalReviews,
-					rating_distribution: distribution,
-				})
-			}
+				await reviewService.getReviewsByProduct(slug)
+			setReviews(reviewsData.data)
 		} catch (error) {
 			setError(
 				error instanceof Error
 					? error.message
 					: "Failed to fetch reviews",
 			)
+			setReviews([])
 		} finally {
 			setLoading(false)
 		}
-	}
+	}, [slug]);
+
+	const fetchStatistics = useCallback(async () => {
+		if (!slug) return
+
+		try {
+			setLoading(true)
+			const statsData = await reviewService.getReviewStatistics(slug)
+			console.log(statsData)
+			setStatistics(statsData.data)
+		} catch (error) {
+			setError(
+				error instanceof Error
+					? error.message
+					: "Failed to fetch review statistics",
+			)
+			setStatistics(null)
+		} finally {
+			setLoading(false)
+		}
+	}, [slug]);
 
 	// submit a new review
 	const submitReview = async (review: {
@@ -77,7 +71,7 @@ export const useProductReviews = (productId: number) => {
 			}
 
 			const newReview = await reviewService.createReview(
-				productId,
+				slug,
 				review,
 			)
 			setUserReview(newReview)
@@ -126,12 +120,46 @@ export const useProductReviews = (productId: number) => {
 		}
 	}
 
+	// update a review
+	const updateReview = async (reviewId: number, review: { rating: number; comment: string }) => {
+		try {
+			setLoading(true)
+			setFormErrors([])
+
+			// validate review
+			const errors = validateReview(review)
+			if (errors.length > 0) {
+				setFormErrors(errors)
+				return null
+			}
+
+			const updatedReview = await reviewService.updateReview(
+				reviewId,
+				review,
+			)
+			setUserReview(updatedReview)
+
+			// refresh reviews after updating
+			await fetchReviews()
+			return updatedReview
+		} catch (error) {
+			const errorMsg =
+				error instanceof Error
+					? error.message
+					: "Failed to update review"
+			setError(errorMsg)
+			setFormErrors([errorMsg])
+			return null
+		} finally {
+			setLoading(false)
+		}
+	}
+
 	// fetch reviews on mount or when productId changes
 	useEffect(() => {
-		if (productId) {
-			fetchReviews()
-		}
-	}, [productId])
+		fetchReviews()
+		fetchStatistics()
+	}, [slug, fetchReviews, fetchStatistics])
 
 	return {
 		reviews,
@@ -143,5 +171,6 @@ export const useProductReviews = (productId: number) => {
 		fetchReviews,
 		submitReview,
 		deleteReview,
+		updateReview,
 	}
 }

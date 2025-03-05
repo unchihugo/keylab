@@ -8,9 +8,9 @@ const PRODUCTS_API_URL = "http://localhost:8080/products"
  * @see ../../../../server/handlers/Reviews.go
  */
 export const reviewService = {
-	async getReviewByUser(productId: number, userId: number) {
+	async getReviewByUser(slug: string, userId: number) {
 		const response = await fetch(
-			`${PRODUCTS_API_URL}/${productId}/reviews/user/${userId}`,
+			`${PRODUCTS_API_URL}/${slug}/reviews/user/${userId}`,
 			{
 				method: "GET",
 				headers: {
@@ -29,9 +29,9 @@ export const reviewService = {
 		return response.json()
 	},
 
-	async getReviewsByProduct(productId: number) {
+	async getReviewsByProduct(slug: string) {
 		const response = await fetch(
-			`${PRODUCTS_API_URL}/${productId}/reviews`,
+			`${PRODUCTS_API_URL}/${slug}/reviews`,
 			{
 				method: "GET",
 				headers: {
@@ -50,9 +50,9 @@ export const reviewService = {
 	},
 
 	// currenty getReviewsByUser and getReviewByUser are the same server-side
-	async getReviewsByUser(productId: number, userId: number) {
+	async getReviewsByUser(slug: string, userId: number) {
 		const response = await fetch(
-			`${PRODUCTS_API_URL}/${productId}/reviews/users/${userId}/reviews`,
+			`${PRODUCTS_API_URL}/${slug}/reviews/users/${userId}/reviews`,
 			{
 				method: "GET",
 				headers: {
@@ -70,9 +70,9 @@ export const reviewService = {
 		return response.json()
 	},
 
-	async getReview(productId: number, reviewId: number) {
+	async getReview(slug: string, reviewId: number) {
 		const response = await fetch(
-			`${PRODUCTS_API_URL}/${productId}/reviews/${reviewId}`,
+			`${PRODUCTS_API_URL}/${slug}/reviews/${reviewId}`,
 			{
 				method: "GET",
 				headers: {
@@ -88,32 +88,32 @@ export const reviewService = {
 		return response.json()
 	},
 
-	// async getReviewStatistics(productId: number) {
-	// 	const response = await fetch(
-	// 		`${PRODUCTS_API_URL}/${productId}/reviews/statistics`,
-	// 		{
-	// 			method: "GET",
-	// 			headers: {
-	// 				"Content-Type": "application/json",
-	// 			},
-	// 		},
-	// 	)
+	async getReviewStatistics(slug: string) {
+		const response = await fetch(
+			`${PRODUCTS_API_URL}/${slug}/reviews/statistics`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			},
+		)
 
-	// 	if (!response.ok) {
-	// 		const errorData = await response.json()
-	// 		throw new Error(
-	// 			errorData.message || "Failed to get review statistics",
-	// 		)
-	// 	}
-	// 	return response.json()
-	// },
+		if (!response.ok) {
+			const errorData = await response.json()
+			throw new Error(
+				errorData.message || "Failed to get review statistics",
+			)
+		}
+		return response.json()
+	},
 
 	async createReview(
-		productId: number,
+		slug: string,
 		review: { rating: number; comment: string },
 	) {
 		const response = await fetch(
-			`${PRODUCTS_API_URL}/${productId}/reviews`,
+			`${PRODUCTS_API_URL}/${slug}/reviews`,
 			{
 				method: "POST",
 				headers: {
