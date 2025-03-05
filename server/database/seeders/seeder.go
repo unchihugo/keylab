@@ -259,9 +259,9 @@ func SeedRoles(DB *gorm.DB) error {
 func seedUsers(DB *gorm.DB) error {
 	// for testing reviews
 	users := []models.User{
-		{Forename: "john", Surname: "doe", Email: "john@example.com", Password: "password123", CreatedAt: time.Now(), UpdatedAt: time.Now()},
-		{Forename: "jane", Surname: "smith", Email: "jane@example.com", Password: "password123", CreatedAt: time.Now(), UpdatedAt: time.Now()},
-		{Forename: "bob", Surname: "bobby", Email: "bob@example.com", Password: "password123", CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{Forename: "john", Surname: "doe", Email: "john@example.com", Password: "password123", RoleID: 1, CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{Forename: "jane", Surname: "smith", Email: "jane@example.com", Password: "password123", RoleID: 1, CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{Forename: "bob", Surname: "bobby", Email: "bob@example.com", Password: "password123", RoleID: 1, CreatedAt: time.Now(), UpdatedAt: time.Now()},
 	}
 
 	if err := DB.Create(&users).Error; err != nil {

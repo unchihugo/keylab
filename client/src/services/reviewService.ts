@@ -10,7 +10,7 @@ const PRODUCTS_API_URL = "http://localhost:8080/products"
 export const reviewService = {
 	async getReviewByUser(productId: number, userId: number) {
 		const response = await fetch(
-			`${PRODUCTS_API_URL}/products/${productId}/reviews/users/${userId}/reviews`,
+			`${PRODUCTS_API_URL}/${productId}/reviews/user/${userId}`,
 			{
 				method: "GET",
 				headers: {
@@ -31,7 +31,7 @@ export const reviewService = {
 
 	async getReviewsByProduct(productId: number) {
 		const response = await fetch(
-			`${PRODUCTS_API_URL}/products/${productId}/reviews`,
+			`${PRODUCTS_API_URL}/${productId}/reviews`,
 			{
 				method: "GET",
 				headers: {
@@ -52,7 +52,7 @@ export const reviewService = {
 	// currenty getReviewsByUser and getReviewByUser are the same server-side
 	async getReviewsByUser(productId: number, userId: number) {
 		const response = await fetch(
-			`${PRODUCTS_API_URL}/products/${productId}/reviews/users/${userId}/reviews`,
+			`${PRODUCTS_API_URL}/${productId}/reviews/users/${userId}/reviews`,
 			{
 				method: "GET",
 				headers: {
@@ -72,7 +72,7 @@ export const reviewService = {
 
 	async getReview(productId: number, reviewId: number) {
 		const response = await fetch(
-			`${PRODUCTS_API_URL}/products/${productId}/reviews/${reviewId}`,
+			`${PRODUCTS_API_URL}/${productId}/reviews/${reviewId}`,
 			{
 				method: "GET",
 				headers: {
@@ -90,7 +90,7 @@ export const reviewService = {
 
 	// async getReviewStatistics(productId: number) {
 	// 	const response = await fetch(
-	// 		`${PRODUCTS_API_URL}/products/${productId}/reviews/statistics`,
+	// 		`${PRODUCTS_API_URL}/${productId}/reviews/statistics`,
 	// 		{
 	// 			method: "GET",
 	// 			headers: {
@@ -113,7 +113,7 @@ export const reviewService = {
 		review: { rating: number; comment: string },
 	) {
 		const response = await fetch(
-			`${PRODUCTS_API_URL}/products/${productId}/reviews`,
+			`${PRODUCTS_API_URL}/${productId}/reviews`,
 			{
 				method: "POST",
 				headers: {

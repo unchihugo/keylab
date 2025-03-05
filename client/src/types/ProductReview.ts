@@ -13,5 +13,4 @@ export interface ProductReview {
 export interface ReviewStatistics {
 	average_rating: number
 	total_reviews: number
-	rating_distribution: { [key: number]: number }
 }
