@@ -26,7 +26,7 @@ func FindUserByEmail(email string) (*models.User, error) {
 func FindUserByID(id int64) (models.User, error) {
 	var user models.User
 
-	err := db.DB.Preload("Role").Where("id = ?", id).First(&user).Error
+	err := db.DB.Where("id = ?", id).First(&user).Error
 
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		log.Printf("Error fetching user by ID: %v", err)

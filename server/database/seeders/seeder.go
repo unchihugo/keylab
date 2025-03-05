@@ -25,10 +25,6 @@ func SeedAll(DB *gorm.DB) error {
 		return err
 	}
 
-	if err := SeedRoles(DB); err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -184,65 +180,6 @@ func seedProductImages(DB *gorm.DB) error {
 
 	if err := DB.Create(&productImages).Error; err != nil {
 		return err
-	}
-
-	return nil
-}
-
-func SeedRoles(DB *gorm.DB) error {
-	defaultRoles := []models.Role{
-		{Name: "admin", CreatedAt: time.Now(), UpdatedAt: time.Now()},
-	}
-
-	for _, role := range defaultRoles {
-		if err := DB.FirstOrCreate(&role, models.Role{Name: role.Name}).Error; err != nil {
-			return err
-		}
-	}
-
-	defaultPermissions := []models.Permission{
-		// Category related permissions
-		{Name: "categories:read", CreatedAt: time.Now()},
-		{Name: "categories:create", CreatedAt: time.Now()},
-		{Name: "categories:update", CreatedAt: time.Now()},
-		{Name: "categories:delete", CreatedAt: time.Now()},
-
-		// Product related permissions
-		{Name: "products:read", CreatedAt: time.Now()},
-		{Name: "products:create", CreatedAt: time.Now()},
-		{Name: "products:update", CreatedAt: time.Now()},
-		{Name: "products:delete", CreatedAt: time.Now()},
-		{Name: "products:upload_image", CreatedAt: time.Now()},
-		{Name: "products:delete_image", CreatedAt: time.Now()},
-
-		// Admin dashboard permission
-		{Name: "admin:dashboard", CreatedAt: time.Now()},
-	}
-
-	for _, permission := range defaultPermissions {
-		if err := DB.FirstOrCreate(&permission, models.Permission{Name: permission.Name}).Error; err != nil {
-			return err
-		}
-	}
-
-	var adminRole models.Role
-	if err := DB.Where("name = ?", "admin").First(&adminRole).Error; err != nil {
-		return err
-	}
-
-	var permissions []models.Permission
-	if err := DB.Find(&permissions).Error; err != nil {
-		return err
-	}
-
-	for _, permission := range permissions {
-		rolePermission := models.RolePermission{
-			RoleID:       adminRole.ID,
-			PermissionID: permission.ID,
-		}
-		if err := DB.FirstOrCreate(&rolePermission, models.RolePermission{RoleID: adminRole.ID, PermissionID: permission.ID}).Error; err != nil {
-			return err
-		}
 	}
 
 	return nil
