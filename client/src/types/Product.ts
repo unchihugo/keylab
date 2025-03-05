@@ -21,11 +21,3 @@ export interface Product {
 	}
 	message: string
 }
-export type UserRole = "admin" | "user" | "manager"; // Adjust based on backend roles
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: UserRole;
-}
