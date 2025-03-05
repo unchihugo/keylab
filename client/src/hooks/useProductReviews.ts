@@ -19,8 +19,7 @@ export const useProductReviews = (slug: string) => {
 
 		try {
 			setLoading(true)
-			const reviewsData =
-				await reviewService.getReviewsByProduct(slug)
+			const reviewsData = await reviewService.getReviewsByProduct(slug)
 			setReviews(reviewsData.data)
 		} catch (error) {
 			setError(
@@ -32,7 +31,7 @@ export const useProductReviews = (slug: string) => {
 		} finally {
 			setLoading(false)
 		}
-	}, [slug]);
+	}, [slug])
 
 	const fetchStatistics = useCallback(async () => {
 		if (!slug) return
@@ -52,7 +51,7 @@ export const useProductReviews = (slug: string) => {
 		} finally {
 			setLoading(false)
 		}
-	}, [slug]);
+	}, [slug])
 
 	// submit a new review
 	const submitReview = async (review: {
@@ -70,10 +69,7 @@ export const useProductReviews = (slug: string) => {
 				return null
 			}
 
-			const newReview = await reviewService.createReview(
-				slug,
-				review,
-			)
+			const newReview = await reviewService.createReview(slug, review)
 			setUserReview(newReview)
 
 			// refresh reviews after submitting
@@ -121,7 +117,10 @@ export const useProductReviews = (slug: string) => {
 	}
 
 	// update a review
-	const updateReview = async (reviewId: number, review: { rating: number; comment: string }) => {
+	const updateReview = async (
+		reviewId: number,
+		review: { rating: number; comment: string },
+	) => {
 		try {
 			setLoading(true)
 			setFormErrors([])

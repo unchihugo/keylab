@@ -30,15 +30,12 @@ export const reviewService = {
 	},
 
 	async getReviewsByProduct(slug: string) {
-		const response = await fetch(
-			`${PRODUCTS_API_URL}/${slug}/reviews`,
-			{
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-				},
+		const response = await fetch(`${PRODUCTS_API_URL}/${slug}/reviews`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
 			},
-		)
+		})
 
 		if (!response.ok) {
 			const errorData = await response.json()
@@ -112,16 +109,13 @@ export const reviewService = {
 		slug: string,
 		review: { rating: number; comment: string },
 	) {
-		const response = await fetch(
-			`${PRODUCTS_API_URL}/${slug}/reviews`,
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(review),
+		const response = await fetch(`${PRODUCTS_API_URL}/${slug}/reviews`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
 			},
-		)
+			body: JSON.stringify(review),
+		})
 
 		if (!response.ok) {
 			const errorData = await response.json()
