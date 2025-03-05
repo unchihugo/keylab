@@ -3,7 +3,7 @@
 const PRODUCTS_API_URL = "http://localhost:8080/products" // TODO: use env variable
 
 /**
- * Service that handles product requests to the backend
+ * Service that handles product and user requests to the backend
  * @module services/product
  * @see ../../../../server/handlers/Products.go
  */
@@ -14,7 +14,6 @@ export const productService = {
 	 * @returns {Promise} A promise that resolves with the list of products
 	 * @throws {Error} An error from the API request
 	 */
-
 	async listProducts() {
 		const response = await fetch(`${PRODUCTS_API_URL}`, {
 			method: "GET",
@@ -95,7 +94,6 @@ export const productService = {
 				"Content-Type": "application/json",
 			},
 		})
-		console.log(response)
 
 		if (!response.ok) {
 			const errorData = await response.json()
