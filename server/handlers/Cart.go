@@ -1,13 +1,16 @@
 package handlers
 
 import (
+	"errors"
 	db "keylab/database"
 	"keylab/database/models"
 	"keylab/repositories"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
 // List Cart Items Handler [GET /cart items]
@@ -35,7 +38,7 @@ func ListCartItems(c echo.Context) error {
 	return jsonResponse(c, http.StatusOK, "Cart items fetched successfully", cartItems)
 }
 
-// Add Item to Cart Handler [POST /cart-items]
+// Add Item to Cart Handler [POST /cart]
 // 1. Parses the cart item from the request body.
 // 2. Validates the cart item.
 // 3. Checks if the specified product exists and if it has the sufficient stock requested.
@@ -99,7 +102,7 @@ func AddCartItem(c echo.Context) error {
 	return jsonResponse(c, http.StatusCreated, "Cart item added successfully", cartItem)
 }
 
-// Delete Cart Item Handler [DELETE /cart-items/:id]
+// Delete Cart Item Handler [DELETE /cart/:id]
 // 1. Retrieves the cart item by ID from the URL parameter and validates the ID.
 // 2. If the cart item is not found, returns status 404.
 // 3. Deletes the cart item from the database if it exists.
@@ -132,7 +135,7 @@ func DeleteCartItem(c echo.Context) error {
 	return jsonResponse(c, http.StatusOK, "Cart item deleted successfully", cartItem)
 }
 
-// Update Cart Item Quantity Handler [PUT /cart-items/:id]
+// Update Cart Item Quantity Handler [PUT /cart/:id]
 // 1. Retrieves the cart item by ID from the URL parameter and validates the ID.
 // 2. Binds the request body to the cart item and validates the data.
 // 3. Checks if the product exists and if there is sufficient stock for the updated quantity.
@@ -182,4 +185,166 @@ func UpdateCartItemQuantity(c echo.Context) error {
 	}
 
 	return jsonResponse(c, http.StatusOK, "Cart item updated successfully", cartItem)
+}
+
+type CheckoutRequest struct {
+	BillingAddressID   int64           `json:"billing_address_id"`
+	ShippingAddressID  int64           `json:"shipping_address_id"`
+	NewBillingAddress  *models.Address `json:"new_billing_address"`
+	NewShippingAddress *models.Address `json:"new_shipping_address"`
+}
+
+// Checkout [POST /cart/checkout]
+// 1. Retrieves the addresses from the request and handles it as expected.
+// 2. Fetches Cart Items by the User and Calculates Total
+// 3. Creates a DB Transaction and handles creating order
+// 4. Returns order
+
+func CheckoutCart(c echo.Context) error {
+	user := c.Get("user").(models.User)
+
+	var req CheckoutRequest
+	if err := c.Bind(&req); err != nil {
+		return jsonResponse(c, http.StatusBadRequest, "Invalid request data")
+	}
+
+	billingAddress, err := repositories.HandleAddress(user.ID, req.BillingAddressID, req.NewBillingAddress, models.Billing)
+	if err != nil {
+		return jsonResponse(c, http.StatusInternalServerError, "Failed to handle billing address")
+	}
+
+	shippingAddress, err := repositories.HandleAddress(user.ID, req.ShippingAddressID, req.NewShippingAddress, models.Shipping)
+	if err != nil {
+		return jsonResponse(c, http.StatusInternalServerError, "Failed to handle shipping address")
+	}
+
+	cartItems, err := repositories.GetCartItemsByUserID(user.ID)
+	if err != nil {
+		return jsonResponse(c, http.StatusInternalServerError, "Error fetching cart items")
+	}
+	if len(cartItems) == 0 {
+		return jsonResponse(c, http.StatusNotFound, "No cart items found for the user")
+	}
+
+	total := repositories.CalculateTotal(cartItems)
+	transaction := db.DB.Begin()
+	if transaction.Error != nil {
+		return jsonResponse(c, http.StatusInternalServerError, "Failed to initiate transaction")
+	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			transaction.Rollback()
+		}
+	}()
+
+	order := models.Order{
+		UserID:            user.ID,
+		Status:            models.Pending,
+		Total:             total,
+		ShippingAddressID: shippingAddress.ID,
+		BillingAddressID:  billingAddress.ID,
+	}
+
+	if err := transaction.Create(&order).Error; err != nil {
+		transaction.Rollback()
+		return jsonResponse(c, http.StatusInternalServerError, "Error creating order")
+	}
+
+	for _, item := range cartItems {
+		if err := transaction.Model(&models.Product{}).Where("id = ?", item.ProductID).UpdateColumn("stock", gorm.Expr("stock - ?", item.Quantity)).Error; err != nil {
+			transaction.Rollback()
+			return jsonResponse(c, http.StatusInternalServerError, "Error updating product stock")
+		}
+
+		orderItem := models.OrderedItem{
+			OrderID:   order.ID,
+			ProductID: item.ProductID,
+			Quantity:  item.Quantity,
+			Price:     item.Product.Price,
+		}
+		if err := transaction.Create(&orderItem).Error; err != nil {
+			transaction.Rollback()
+			return jsonResponse(c, http.StatusInternalServerError, "Error adding item to order")
+		}
+	}
+
+	if err := transaction.Where("user_id = ?", user.ID).Delete(&models.CartItems{}).Error; err != nil {
+		transaction.Rollback()
+		return jsonResponse(c, http.StatusInternalServerError, "Error clearing cart")
+	}
+
+	if err := transaction.Commit().Error; err != nil {
+		return jsonResponse(c, http.StatusInternalServerError, "Error processing checkout")
+	}
+
+	return jsonResponse(c, http.StatusOK, "Order confirmed")
+}
+
+// Checkout [GET /users/order/:id]
+
+func GetUserOrderDetails(c echo.Context) error {
+	user := c.Get("user").(models.User)
+	orderID := c.Param("id")
+
+	var order models.Order
+	if err := db.DB.Preload("ShippingAddress").Preload("BillingAddress").Where("id = ? AND user_id = ?", orderID, user.ID).First(&order).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return jsonResponse(c, http.StatusNotFound, "Order not found!")
+		}
+		return jsonResponse(c, http.StatusInternalServerError, "Internal server error")
+	}
+
+	var orderedItems []models.OrderedItem
+	if err := db.DB.Where("order_id = ?", orderID).Find(&orderedItems).Error; err != nil {
+		return jsonResponse(c, http.StatusInternalServerError, "Failed to fetch ordered items")
+	}
+
+	response := map[string]interface{}{
+		"order":         order,
+		"ordered_items": orderedItems,
+	}
+
+	return jsonResponse(c, http.StatusOK, "Order found", response)
+}
+
+// Checkout [PUT /orders/:id/status]
+
+func UpdateOrderStatus(c echo.Context) error {
+	orderID := c.Param("id")
+
+	var requestBody struct {
+		Status string `json:"status"`
+	}
+	if err := c.Bind(&requestBody); err != nil {
+		return jsonResponse(c, http.StatusBadRequest, "Invalid request body")
+	}
+
+	validStatuses := map[string]bool{
+		"pending":   true,
+		"shipped":   true,
+		"delivered": true,
+		"cancelled": true,
+	}
+
+	status := strings.ToLower(requestBody.Status)
+	if !validStatuses[status] {
+		return jsonResponse(c, http.StatusBadRequest, "Invalid status value")
+	}
+
+	var order models.Order
+	if err := db.DB.Preload("ShippingAddress").Preload("BillingAddress").Where("id = ?", orderID).First(&order).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return jsonResponse(c, http.StatusNotFound, "Order not found")
+		}
+		return jsonResponse(c, http.StatusInternalServerError, "Internal server error")
+	}
+
+	order.Status = models.OrderStatus(status)
+
+	if err := db.DB.Save(&order).Error; err != nil {
+		return jsonResponse(c, http.StatusInternalServerError, "Error updating order status")
+	}
+
+	return jsonResponse(c, http.StatusOK, "Order status updated successfully", order)
 }
