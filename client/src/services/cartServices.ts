@@ -2,6 +2,7 @@
 
 const CART_API_URL = "http://localhost:8080/cart" 
 
+
 /**
  * @module services/cart
  * @see ../../../../server/handlers/cart_items.go
@@ -21,10 +22,11 @@ export const cartServices = {
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
         })
       
-      if (response.status === 401) {
-        throw new Error("Please log in to view your basket");
+      if (response.status === 404) {
+        return { cartItems: [] };
       }
 
       if(!response.ok) {
@@ -51,6 +53,7 @@ export const cartServices = {
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
           body: JSON.stringify({ productID: id, quantity })
         })
 
@@ -78,6 +81,7 @@ export const cartServices = {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
       })
 
       if (!response.ok) {
@@ -106,6 +110,7 @@ export const cartServices = {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({ quantity }),
       })
 

@@ -16,12 +16,13 @@ export const useCart = () => {
                 const response = await cartServices.ListCartItems()
                 setCarts(response.cartItems);
             }
-            catch(err) {
+            catch(error) {
                 setError(
-                    err instanceof Error
-						? err.message
+                    error instanceof Error
+						? error.message
 						: "An error occurred while getting cart"
                 )
+                setCarts([])
             } finally {
                 setLoading(false)
             } 

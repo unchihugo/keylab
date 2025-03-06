@@ -60,8 +60,7 @@ export default function Cart() {
 
 	if (loading) return <div>Loading...</div>
 	if (error) {
-        console.error("Cart Error:", error);
-        return <NotFound errorMessage="400 - Bad Request" bodyMessage={error || "An unexpected error occurred."} />;
+        return <NotFound errorMessage="400 - Bad Request" bodyMessage={error || "An unexpected error occurred."}/>
     }
     
                     
@@ -79,35 +78,35 @@ export default function Cart() {
                     <div className="p-6 font-display">
                         Your Items:
                         <div className="Items space-y-4 font-body">
-                            {carts.map((item) => (
+                            {carts.map((product) => (
                                 <div>
                                     <div className="opacity-25">
                                         <Divider />
                                     </div>
                                     <div className="p-3">
                                         <ul
-                                            key={item.product}
+                                            key={product.product}
                                             className="flex justify-between items-center font-medium text-lg border-black">
-                                            <li>{item.name}</li>
+                                            <li>{product.name}</li>
                                             <Divider />
                                             <li>
-                                                £{item.price * item.quantity}
+                                                £{product.price * product.quantity}
                                             </li>
                                         </ul>
                                         <div className="text-black/50 flex items-center gap-x-3">
                                             <span className="">Qty:</span>
                                             <button
                                                 onClick={() =>
-                                                    handleDelete(item)
+                                                    handleDelete(product)
                                                 }
                                                 className="p-1 border rounded-full">
                                                 <Minus size={16} />
                                             </button>
                                             <span className="">
-                                                {item.quantity}
+                                                {product.quantity}
                                             </span>
                                             <button
-                                                onClick={() => handleAdd(item)}
+                                                onClick={() => handleAdd(product)}
                                                 className="p-1 border rounded-full">
                                                 <Plus size={16} />
                                             </button>
