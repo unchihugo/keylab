@@ -44,3 +44,36 @@ func GetProductByID(productID int64) (models.Product, error) {
 
 	return product, err
 }
+
+// Calculate Card Total
+
+func CalculateTotal(cartItems []models.CartItems) float64 {
+	var total float64
+	for _, item := range cartItems {
+		total += item.Product.Price * float64(item.Quantity)
+	}
+	return total
+}
+
+// Fetch or Store Address
+
+func HandleAddress(userID int64, addressID int64, newAddress *models.Address, addressType models.AddressType) (*models.Address, error) {
+	if addressID != 0 {
+		var address models.Address
+		if err := db.DB.First(&address, addressID).Error; err != nil {
+			return nil, err
+		}
+		return &address, nil
+	}
+
+	if newAddress != nil {
+		newAddress.UserID = userID
+		newAddress.Type = addressType
+		if err := db.DB.Create(newAddress).Error; err != nil {
+			return nil, err
+		}
+		return newAddress, nil
+	}
+
+	return nil, errors.New("no address provided")
+}
