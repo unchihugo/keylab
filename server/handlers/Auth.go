@@ -166,3 +166,15 @@ func ValidateSession(sessionStore *sessions.CookieStore) echo.HandlerFunc {
 		})
 			}
 }
+
+// REMOVE LATER
+
+func TestPermission() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		user := c.Get("user").(models.User)
+
+		fmt.Println(user)
+
+		return jsonResponse(c, http.StatusOK, "Test Permission")
+	}
+}
