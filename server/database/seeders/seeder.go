@@ -13,6 +13,10 @@ func SeedAll(DB *gorm.DB) error {
 		return err
 	}
 
+	if err := seedUsers(DB); err != nil {
+		return err
+	}
+
 	if err := seedProductCategories(DB); err != nil {
 		return err
 	}
@@ -29,11 +33,15 @@ func SeedAll(DB *gorm.DB) error {
 		return err
 	}
 
+	if err := seedProductReviews(DB); err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func CleanTables(DB *gorm.DB) error {
-	tables := []string{"products", "product_categories", "product_images"}
+	tables := []string{"product_reviews", "products", "product_categories", "product_images", "users"}
 
 	// Disable foreign key checks
 	if err := DB.Exec("SET FOREIGN_KEY_CHECKS = 0").Error; err != nil {
@@ -243,6 +251,38 @@ func SeedRoles(DB *gorm.DB) error {
 		if err := DB.FirstOrCreate(&rolePermission, models.RolePermission{RoleID: adminRole.ID, PermissionID: permission.ID}).Error; err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+func seedUsers(DB *gorm.DB) error {
+	// for testing reviews
+	users := []models.User{
+		{Forename: "john", Surname: "doe", Email: "john@example.com", Password: "password123", RoleID: 1, CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{Forename: "jane", Surname: "smith", Email: "jane@example.com", Password: "password123", RoleID: 1, CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{Forename: "bob", Surname: "bobby", Email: "bob@example.com", Password: "password123", RoleID: 1, CreatedAt: time.Now(), UpdatedAt: time.Now()},
+	}
+
+	if err := DB.Create(&users).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func seedProductReviews(DB *gorm.DB) error {
+	productReviews := []models.ProductReviews{
+		{ProductID: 1, UserID: 1, Rating: 5, Comment: "Great keyboard, love the RGB lighting!", CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{ProductID: 1, UserID: 2, Rating: 4, Comment: "Compact and efficient, perfect for gaming.", CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{ProductID: 2, UserID: 1, Rating: 3, Comment: "The build quality is exceptional, typing feels smooth.", CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{ProductID: 2, UserID: 3, Rating: 4, Comment: "Beautiful keycaps, very comfortable to type on.", CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{ProductID: 3, UserID: 2, Rating: 5, Comment: "Simple and reliable, a pleasure to use.", CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{ProductID: 4, UserID: 3, Rating: 5, Comment: "Topre switches are amazing, great for programming.", CreatedAt: time.Now(), UpdatedAt: time.Now()},
+	}
+
+	if err := DB.Create(&productReviews).Error; err != nil {
+		return err
 	}
 
 	return nil
