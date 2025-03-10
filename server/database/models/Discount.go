@@ -12,7 +12,6 @@ type Discount struct {
 	Value          float64   `gorm:"type:decimal(10,2);not null" json:"value" form:"value" validate:"required,gte=0"`
 	StartDate      time.Time `gorm:"not null" json:"start_date" form:"start_date" validate:"required"`
 	EndDate        time.Time `gorm:"not null" json:"end_date" form:"end_date" validate:"required,gtfield=StartDate"`
-	ApplicableItems string   `gorm:"type:text" json:"applicable_items" form:"applicable_items" validate:"omitempty,json"` 
 	CreatedAt      time.Time `json:"created_at"`
 	UpdatedAt      time.Time `json:"updated_at"`
 }
