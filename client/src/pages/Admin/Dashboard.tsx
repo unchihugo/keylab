@@ -35,6 +35,7 @@ export default function AdminDashboard() {
       try {
         setLoading(true);
         setError(null);
+        //placeholder data
         const placeholderData: DashboardStats = {
           totalSalesToday: 1250,
           totalSalesThisWeek: 8500,
@@ -44,8 +45,8 @@ export default function AdminDashboard() {
           ordersToProcess: 30,
           newCustomers: 25,
           lowStockProducts: [
-            { id: 1, name: "Widget A", stock: 5 },
-            { id: 2, name: "Gadget B", stock: 2 },
+            { id: 1, name: "Keyboards", stock: 5 },
+            { id: 2, name: "KeyCaps", stock: 2 },
           ],
           salesTrend: [
             { date: "2024-01-01", sales: 1000 },
@@ -72,8 +73,7 @@ export default function AdminDashboard() {
         //setLoading(false);
       //}
     //};
-   // Simulate API response with placeholder data
-
+   
     fetchDashboardStats();
   }, []);
 
