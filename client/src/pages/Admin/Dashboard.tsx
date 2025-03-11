@@ -127,9 +127,9 @@ export default function AdminDashboard() {
           <section className="mb-8">
             <h2 className="text-2xl font-bold mb-4">Sales Overview</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card title="Total Sales Today" value={`$${stats.totalSalesToday.toLocaleString()}`} />
-              <Card title="Total Sales This Week" value={`$${stats.totalSalesThisWeek.toLocaleString()}`} />
-              <Card title="Total Sales This Month" value={`$${stats.totalSalesThisMonth.toLocaleString()}`} />
+              <Card title="Total Sales Today" value={`£${stats.totalSalesToday.toLocaleString()}`} />
+              <Card title="Total Sales This Week" value={`£${stats.totalSalesThisWeek.toLocaleString()}`} />
+              <Card title="Total Sales This Month" value={`£${stats.totalSalesThisMonth.toLocaleString()}`} />
             </div>
             <div className="mt-4">
               <Card title="New Orders" value={stats.newOrders.toLocaleString()} />
