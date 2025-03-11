@@ -12,7 +12,7 @@ import Card from "../../components/Card";
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-// Interface for the dashboard stats (adjust as needed)
+// Interface for the dashboard stats 
 interface DashboardStats {
   totalSalesToday: number;
   totalSalesThisWeek: number;
@@ -35,16 +35,44 @@ export default function AdminDashboard() {
       try {
         setLoading(true);
         setError(null);
+        const placeholderData: DashboardStats = {
+          totalSalesToday: 1250,
+          totalSalesThisWeek: 8500,
+          totalSalesThisMonth: 35000,
+          newOrders: 50,
+          incomingOrders: 75,
+          ordersToProcess: 30,
+          newCustomers: 25,
+          lowStockProducts: [
+            { id: 1, name: "Widget A", stock: 5 },
+            { id: 2, name: "Gadget B", stock: 2 },
+          ],
+          salesTrend: [
+            { date: "2024-01-01", sales: 1000 },
+            { date: "2024-01-02", sales: 1200 },
+            { date: "2024-01-03", sales: 1500 },
+            { date: "2024-01-04", sales: 1100 },
+            { date: "2024-01-05", sales: 1300 },
+          ],
+        };
+        setStats(placeholderData);
+            } catch (err) {
+              setError((err as Error).message);
+            } finally {
+              setLoading(false);
+            }
+          };
         //const res = await fetch("");
-        if (!res.ok) throw new Error("Failed to fetch dashboard data");
-        const data = await res.json();
-        setStats(data);
-      } catch (err) {
-        setError((err as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
+        //if (!res.ok) throw new Error("Failed to fetch dashboard data");
+        //const data = await res.json();
+        //setStats(data);
+      //} catch (err) {
+        //setError((err as Error).message);
+      //} finally {
+        //setLoading(false);
+      //}
+    //};
+   // Simulate API response with placeholder data
 
     fetchDashboardStats();
   }, []);
@@ -55,7 +83,7 @@ export default function AdminDashboard() {
       {
         label: "Sales",
         data: stats?.salesTrend.map((item) => item.sales) || [],
-        backgroundColor: "bg-secondary-dark",
+        backgroundColor: "#6392ff",
       },
     ],
   };
@@ -80,17 +108,18 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-primary/25 py-6">
       <div className="container mx-auto px-6 flex flex-col md:flex-row gap-6">
         {/* Sidebar Navigation */}
-        <aside className="w-full md:w-1/5 bg-white rounded-xl shadow border p-4">
-          <h2 className="text-xl font-bold mb-4">Admin Panel</h2>
-          <LinkButton to="/admin/dashboard" text="Dashboard" buttonClassNames=" border-black bg-secondary-dark text-black transition-all duration-200 ease-in-out hover:bg-secondary-darker hover:shadow-[4px_4px_0px_black]" />
-          <LinkButton to="/admin/orders" text="Orders" buttonClassNames=" border-black bg-secondary-dark text-black transition-all duration-200 ease-in-out hover:bg-secondary-darker hover:shadow-[4px_4px_0px_black]" />
-          <LinkButton to="/admin/inventory" text="Inventory" buttonClassNames=" border-black bg-secondary-dark text-black transition-all duration-200 ease-in-out hover:bg-secondary-darker hover:shadow-[4px_4px_0px_black]" />
-          <LinkButton to="/admin/reports" text="Reports" buttonClassNames=" border-black bg-secondary-dark text-black transition-all duration-200 ease-in-out hover:bg-secondary-darker hover:shadow-[4px_4px_0px_black]" />
-          <LinkButton to="/admin/settings" text="Settings" buttonClassNames=" border-black bg-secondary-dark text-black transition-all duration-200 ease-in-out hover:bg-secondary-darker hover:shadow-[4px_4px_0px_black]" />
+        <aside className="w-full lg:w-1/5 bg-primary-dark/25 p-4 rounded-2xl space-y-4 mb-6 lg:mb-0 h-fit border border-gray-700 mr-4">
+        <h2 className="text-xl font-bold mb-4">Admin Panel</h2>
+        <div className="flex flex-col space-y-2">  
+        <LinkButton to="/admin/dashboard" text="Dashboard" buttonClassNames=" border-black bg-primary text-black transition-all duration-200 ease-in-out hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]" />
+        <LinkButton to="/admin/orders" text="Orders" buttonClassNames=" border-black bg-primary text-black transition-all duration-200 ease-in-out hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]" />
+        <LinkButton to="/admin/inventory" text="Inventory" buttonClassNames=" border-black bg-primary text-black transition-all duration-200 ease-in-out hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]" />
+        <LinkButton to="/admin/reports" text="Reports" buttonClassNames=" border-black bg-primary text-black transition-all duration-200 ease-in-out hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]" />
+        <LinkButton to="/admin/settings" text="Settings" buttonClassNames=" border-black bg-primary text-black transition-all duration-200 ease-in-out hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]" />
+        </div>
         </aside>
-
         {/* Main Dashboard Content */}
-        <main className="flex-1 bg-white rounded-2xl p-6 shadow border">
+        <main className="flex-1 bg-primary-dark/25 rounded-2xl p-6 shadow border">
           <Breadcrumb breadcrumbs={["Admin Dashboard", "Overview"]} />
           <Divider />
 
@@ -115,6 +144,7 @@ export default function AdminDashboard() {
                     responsive: true,
                     plugins: { legend: { display: false } },
                     scales: { y: { beginAtZero: true } },
+                  
                   }}
                 />
               </div>
