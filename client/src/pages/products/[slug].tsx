@@ -212,7 +212,9 @@ export default function Product() {
 						{/* user's review */}
 						{userReview ? (
 							<div className="mt-4 border border-black w-full bg-white rounded-lg px-6 py-3">
-								<div className="font-medium text-2xl">Your review</div>
+								<div className="font-medium text-2xl">
+									Your review
+								</div>
 								<div className="text-lg">
 									{Array.from(
 										{ length: userReview.rating },
@@ -227,7 +229,9 @@ export default function Product() {
 									)}
 								</div>
 								<div className="flex items-center gap-4">
-									<div className="font-bold">{userReview.user_id}</div>
+									<div className="font-bold">
+										{userReview.user_id}
+									</div>
 									<div className="text-black/50 text-sm">
 										{userReview.updated_at
 											? new Date(
