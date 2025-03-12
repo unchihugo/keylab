@@ -27,8 +27,8 @@ export default function Register() {
 		// if error is empty, filter it out
 		setErrors(
 			[
-				formValidation.validateFirstName(firstName),
-				formValidation.validateLastName(lastName),
+				formValidation.validateForename(firstName),
+				formValidation.validateSurname(lastName),
 				formValidation.validateEmail(email),
 				formValidation.validateMatch(password, passwordConfirm, "Passwords") ||
 					formValidation.validatePassword(password),

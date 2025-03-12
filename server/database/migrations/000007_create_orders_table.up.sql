@@ -8,9 +8,7 @@ CREATE TABLE orders(
     billing_address BIGINT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
-        FOREIGN KEY(shipping_address) REFERENCES addresses(id),
-        FOREIGN KEY(billing_address) REFERENCES addresses(id),
-        FOREIGN KEY(user_id) REFERENCES users(id)
-
+    FOREIGN KEY(shipping_address) REFERENCES addresses(id),
+    FOREIGN KEY(billing_address) REFERENCES addresses(id),
+    FOREIGN KEY(user_id) REFERENCES users(id)
 );

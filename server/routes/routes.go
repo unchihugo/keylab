@@ -14,7 +14,10 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	authGroup.POST("/register", handlers.Register)
 	authGroup.POST("/login", handlers.Login(sessionStore))
 	authGroup.POST("/logout", handlers.Logout(sessionStore))
-	authGroup.GET("/validate", handlers.ValidateSession(sessionStore), middleware.AuthMiddleware(sessionStore))
+	authGroup.GET("/validate", handlers.ValidateSession(sessionStore))
+
+	// TEMP TEST ROUTE - use as an example
+	e.GET("/test/permission", handlers.TestPermission(), middleware.AuthMiddleware(sessionStore), middleware.PermissionMiddleware("admin:dashboard"))
 
 	// Category related routes
 	categoryGroup := e.Group("/categories")
@@ -58,6 +61,12 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	cartGroup.POST("", handlers.AddCartItem)
 	cartGroup.PUT("/:id", handlers.UpdateCartItemQuantity)
 	cartGroup.DELETE("/:id", handlers.DeleteCartItem)
+	cartGroup.POST("/checkout", handlers.CheckoutCart)
+
+	// Orders related routes
+	e.GET("/user/orders/:id", handlers.GetUserOrderDetails, middleware.AuthMiddleware(sessionStore))
+	// NEEDS ADMIN MIDDLEWARE
+	e.PUT("/orders/:id/status", handlers.UpdateOrderStatus)
 
 	e.POST("/contact", handlers.ContactUs)
 }
