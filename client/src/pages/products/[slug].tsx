@@ -79,7 +79,7 @@ export default function Product() {
 								Tag1 | Tag2 | Tag3
 							</div>
 							{statistics ? (
-								<div className="flex justify-center items-center">
+								<div className="flex">
 									{Array.from(
 										{ length: statistics.average_rating },
 										(_, i) => (
@@ -91,7 +91,7 @@ export default function Product() {
 											/>
 										),
 									)}
-									<span className="font-bold">
+									<span className="font-bold me-1">
 										{statistics.average_rating}{" "}
 									</span>
 									({statistics.total_reviews} reviews)
@@ -227,7 +227,7 @@ export default function Product() {
 									)}
 								</div>
 								<div className="flex items-center gap-4">
-									<div className="font-bold">Your review</div>
+									<div className="font-bold">{userReview.user_id}</div>
 									<div className="text-black/50 text-sm">
 										{userReview.updated_at
 											? new Date(
