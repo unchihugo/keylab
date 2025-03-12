@@ -4,11 +4,14 @@ import { useParams } from "react-router-dom"
 import { useProduct } from "../../hooks/useProduct"
 import { useProductReviews } from "../../hooks/useProductReviews"
 import NotFound from "../NotFound"
-import { Minus, Plus } from "lucide-react"
+import { Minus, Plus, Star } from "lucide-react"
 import LinkButton from "../../components/LinkButton"
 import ZoomImage from "../../components/ZoomImage"
 import Breadcrumb from "../../components/Breadcrumb"
 import ProductCarousel from "../../components/ProductCarousel"
+import { useState } from "react"
+import { useAuth } from "../../AuthContext"
+import Divider from "../../components/Divider"
 
 export default function Product() {
 	const { slug } = useParams()
@@ -22,9 +25,17 @@ export default function Product() {
 		incrementQuantity,
 		decrementQuantity,
 	} = useProduct(slug as string)
-	const { reviews, statistics } = useProductReviews(
-		slug as string,
-	)
+	const {
+		reviews,
+		statistics,
+		userReview,
+		submitReview,
+		deleteReview,
+		updateReview,
+	} = useProductReviews(slug as string)
+	const [newReviewRating, setNewReviewRating] = useState(0)
+	const [newReviewComment, setNewReviewComment] = useState("")
+	const { isAuthenticated } = useAuth()
 
 	if (loading) return <div>Loading...</div>
 	if (error)
@@ -68,8 +79,18 @@ export default function Product() {
 								Tag1 | Tag2 | Tag3
 							</div>
 							{statistics ? (
-								<div>
-									{"⭐".repeat(statistics.average_rating)}{" "}
+								<div className="flex justify-center items-center">
+									{Array.from(
+										{ length: statistics.average_rating },
+										(_, i) => (
+											<Star
+												key={i}
+												fill="#ffd063"
+												strokeWidth={0}
+												className="inline-block"
+											/>
+										),
+									)}
 									<span className="font-bold">
 										{statistics.average_rating}{" "}
 									</span>
@@ -159,8 +180,18 @@ export default function Product() {
 					<div className="w-full">
 						{statistics ? (
 							<div className="flex justify-center items-center gap-4">
-								<div>
-									{"⭐".repeat(statistics.average_rating)}{" "}
+								<div className="flex justify-center items-center">
+									{Array.from(
+										{ length: statistics.average_rating },
+										(_, i) => (
+											<Star
+												key={i}
+												fill="#ffd063"
+												strokeWidth={0}
+												className="inline-block"
+											/>
+										),
+									)}
 									<span className="font-bold">
 										{statistics.average_rating} average
 									</span>
@@ -170,8 +201,177 @@ export default function Product() {
 								</div>
 							</div>
 						) : (
-							<div>No reviews yet</div>
+							<div className="flex justify-center items-center gap-4">
+								<div>No reviews yet</div>
+								<div className="text-black/50">
+									Be the first to review this product
+								</div>
+							</div>
 						)}
+
+						{/* user's review */}
+						{userReview ? (
+							<div className="mt-4 border border-black w-full bg-white rounded-lg px-6 py-3">
+								<div className="font-medium text-2xl">Your review</div>
+								<div className="text-lg">
+									{Array.from(
+										{ length: userReview.rating },
+										(_, i) => (
+											<Star
+												key={i}
+												fill="#ffd063"
+												strokeWidth={0}
+												className="inline-block"
+											/>
+										),
+									)}
+								</div>
+								<div className="flex items-center gap-4">
+									<div className="font-bold">Your review</div>
+									<div className="text-black/50 text-sm">
+										{userReview.updated_at
+											? new Date(
+													userReview.updated_at,
+												).toLocaleDateString("en-US", {
+													year: "numeric",
+													month: "long",
+													day: "numeric",
+												})
+											: "No date available"}
+									</div>
+								</div>
+								<Divider />
+								<div>{userReview.comment}</div>
+								<div className="flex gap-2 justify-end">
+									<button
+										className="bg-white text-black p-2 px-4 rounded-full border
+										h-11 border-black justify-center items-center"
+										onClick={() => {
+											console.log(
+												"Edit review",
+												userReview,
+											)
+											deleteReview(userReview.id)
+										}}>
+										Delete review
+									</button>
+									<button
+										className="bg-primary text-black p-2 px-4 rounded-full border
+										h-11 border-black justify-center items-center"
+										onClick={() =>
+											updateReview(userReview.id, {
+												rating: 5,
+												comment: "Updated review",
+											})
+										}>
+										Update review
+									</button>
+								</div>
+							</div>
+						) : isAuthenticated ? (
+							<div className="mt-4 border border-black w-full bg-white rounded-lg px-6 py-3">
+								<div className="font-medium text-2xl mb-2">
+									Write a review
+								</div>
+
+								{/* Star Rating Input */}
+								<div className="mb-4">
+									<label className="block text-sm font-medium mb-2">
+										Rating
+									</label>
+									<div className="flex items-center gap-1">
+										{[1, 2, 3, 4, 5].map((star) => (
+											<button
+												key={star}
+												type="button"
+												onClick={() =>
+													setNewReviewRating(star)
+												}
+												className="text-lg focus:outline-none"
+												aria-label={`Rate ${star} stars`}>
+												{star <= newReviewRating ? (
+													<Star
+														fill="#ffd063"
+														strokeWidth={1}
+													/>
+												) : (
+													<Star
+														color="#111"
+														strokeWidth={1}
+													/>
+												)}
+											</button>
+										))}
+										<span className="ml-2 text-sm text-gray-500">
+											{newReviewRating > 0
+												? `${newReviewRating} stars`
+												: "Select a rating"}
+										</span>
+									</div>
+								</div>
+
+								{/* Review Comment Input */}
+								<div className="mb-4">
+									<label
+										htmlFor="reviewComment"
+										className="block text-sm font-medium mb-2">
+										Your Review
+									</label>
+									<textarea
+										id="reviewComment"
+										rows={4}
+										placeholder="Share your experience with this product..."
+										value={newReviewComment}
+										onChange={(e) =>
+											setNewReviewComment(e.target.value)
+										}
+										className="w-full p-2 border border-black rounded-md"
+									/>
+								</div>
+
+								{/* Submit Button */}
+								<div className="flex justify-end">
+									<button
+										onClick={() => {
+											if (newReviewRating > 0) {
+												submitReview({
+													rating: newReviewRating,
+													comment: newReviewComment,
+												})
+												console.log(
+													"Submit review",
+													userReview,
+												)
+											}
+										}}
+										disabled={newReviewRating === 0}
+										className={`p-2 px-4 rounded-full border
+										h-11 border-black justify-center items-center ${
+											newReviewRating > 0
+												? "bg-primary text-black"
+												: "bg-gray-300 text-gray-500 cursor-not-allowed"
+										}`}>
+										Submit Review
+									</button>
+								</div>
+							</div>
+						) : (
+							<div className="mt-4 border border-black w-full bg-white rounded-lg px-6 py-3">
+								<div className="text-lg font-medium">
+									Sign in to leave a review
+								</div>
+								<div className="flex justify-end">
+									<LinkButton
+										to="/sign-in"
+										text="Sign in"
+										buttonClassNames="bg-primary text-white"
+										textClassNames="p-2"
+									/>
+								</div>
+							</div>
+						)}
+
+						{/* other user reviews */}
 
 						{reviews.length > 0 &&
 							reviews.map((review) => (
@@ -179,7 +379,17 @@ export default function Product() {
 									key={review.id}
 									className="mt-4 border border-black w-full bg-white rounded-lg px-6 py-3">
 									<div className="text-lg">
-										{"⭐".repeat(review.rating)}
+										{Array.from(
+											{ length: review.rating },
+											(_, i) => (
+												<Star
+													key={i}
+													fill="#ffd063"
+													strokeWidth={0}
+													className="inline-block"
+												/>
+											),
+										)}
 									</div>
 									<div className="flex items-center gap-4">
 										<div className="font-bold">
@@ -201,6 +411,7 @@ export default function Product() {
 												: "No date available"}
 										</div>
 									</div>
+									<Divider />
 									<div>{review.comment}</div>
 								</div>
 							))}
