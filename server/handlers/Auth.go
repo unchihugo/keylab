@@ -155,16 +155,17 @@ func Logout(sessionStore *sessions.CookieStore) echo.HandlerFunc {
 
 func ValidateSession(sessionStore *sessions.CookieStore) echo.HandlerFunc {
     return func(c echo.Context) error {
-        user, ok := c.Get("user").(models.User)
-        if !ok || user.ID == 0 {
-            return jsonResponse(c, http.StatusUnauthorized, "Invalid session")
-        }
+		user, ok := c.Get("user").(models.User)
+		if !ok {
+			return jsonResponse(c, http.StatusUnauthorized, "Invalid session")
+		}
 
-		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message": "Valid session",
-			"user": user,
-		})
-			}
+		if user.ID == 0 {
+			return jsonResponse(c, http.StatusUnauthorized, "Invalid session")
+		}
+
+		return jsonResponse(c, http.StatusOK, "Valid session", user)
+	}
 }
 
 // REMOVE LATER
