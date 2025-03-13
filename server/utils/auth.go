@@ -21,12 +21,9 @@ func ComparePasswordHash(password string, hashedPassword string) error {
 }
 
 func ValidatePassword(password string) (bool, error) {
-	passwordRegex := `^.*[a-z].*[A-Z].*\d.*$`
-	matched, err := regexp.MatchString(passwordRegex, password)
+	lowerCase := regexp.MustCompile("[a-z]")
+	upperCase := regexp.MustCompile("[A-Z]")
+	digit := regexp.MustCompile("[0-9]")
 
-	if err != nil {
-		return false, err
-	}
-
-	return matched, nil
+	return lowerCase.MatchString(password) && upperCase.MatchString(password) && digit.MatchString(password), nil
 }

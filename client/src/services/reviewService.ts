@@ -8,14 +8,16 @@ const PRODUCTS_API_URL = "http://localhost:8080/products"
  * @see ../../../../server/handlers/Reviews.go
  */
 export const reviewService = {
-	async getReviewByUser(slug: string, userId: number) {
+	// gets user's review for a product
+	async getReviewByUser(slug: string) {
 		const response = await fetch(
-			`${PRODUCTS_API_URL}/${slug}/reviews/user/${userId}`,
+			`${PRODUCTS_API_URL}/${slug}/reviews/user`,
 			{
 				method: "GET",
 				headers: {
 					"Content-Type": "application/json",
 				},
+				credentials: "include",
 			},
 		)
 
@@ -115,6 +117,7 @@ export const reviewService = {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify(review),
+			credentials: "include",
 		})
 
 		if (!response.ok) {
@@ -125,17 +128,19 @@ export const reviewService = {
 	},
 
 	async updateReview(
+		slug: string,
 		reviewId: number,
 		review: { rating: number; comment: string },
 	) {
 		const response = await fetch(
-			`${PRODUCTS_API_URL}/reviews/${reviewId}`,
+			`${PRODUCTS_API_URL}/${slug}/reviews/${reviewId}`,
 			{
 				method: "PUT",
 				headers: {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify(review),
+				credentials: "include",
 			},
 		)
 
@@ -146,14 +151,15 @@ export const reviewService = {
 		return response.json()
 	},
 
-	async deleteReview(reviewId: number) {
+	async deleteReview(slug: string, reviewId: number) {
 		const response = await fetch(
-			`${PRODUCTS_API_URL}/reviews/${reviewId}`,
+			`${PRODUCTS_API_URL}/${slug}/reviews/${reviewId}`,
 			{
 				method: "DELETE",
 				headers: {
 					"Content-Type": "application/json",
 				},
+				credentials: "include",
 			},
 		)
 

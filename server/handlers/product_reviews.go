@@ -306,3 +306,25 @@ func DeleteReview(c echo.Context) error {
 
 	return jsonResponse(c, http.StatusOK, "Review deleted successfully", review)
 }
+
+// Get User Review Handler [GET /products/:product_slug/reviews/user]
+// 1. Fetches current user's review from the database.
+// 2. Returns status 200 with the review if successful.
+// 3. Returns status 404 if the review is not found.
+// 4. Returns status 500 if an error occurs.
+func GetUserReview(c echo.Context) error {
+	var review []models.ProductReviews
+
+	productSlug := c.Param("product_slug")
+	product, err := repositories.GetProductBySlug(productSlug)
+	if err != nil {
+		return jsonResponse(c, http.StatusNotFound, "Product not found")
+	}
+
+	user := c.Get("user").(models.User)
+	if err := db.DB.Where("product_id = ? AND user_id = ?", product.ID, user.ID).First(&review).Error; err != nil {
+		return jsonResponse(c, http.StatusNotFound, "Review not found")
+	}
+
+	return jsonResponse(c, http.StatusOK, "Review found", review)
+}
