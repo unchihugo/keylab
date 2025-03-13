@@ -1,12 +1,11 @@
 /** @format */
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import ProductCard from "../components/ProductCard"
 import { useProducts } from "../hooks/useProducts"
 import NotFound from "./NotFound"
 
 export default function DisplayPage() {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { products, loading, error, searchProducts, getProductsByCategory } =
 		useProducts() // Fetch products from backend
 
@@ -18,9 +17,66 @@ export default function DisplayPage() {
 		artisan: false,
 		prebuilt: false,
 	})
-	const [priceRange, setPriceRange] = useState<number>(100)
-	//const [sortOption, setSortOption] = useState<string>("new")
 
+	const [priceRange, setPriceRange] = useState<number>(100)
+	const [filteredProducts, setFilteredProducts] = useState(products); 
+
+	const [activeColors, setActiveColors] = useState<string[]>([]);
+	const [activeSizes, setActiveSizes] = useState<string[]>([]);
+
+	const [activeBrands, setActiveBrands] = useState<string[]>([]);
+
+	useEffect(() => {
+        const applyFilters = () => {
+            let updatedProducts = products; // Start with all products
+
+            if (products && Array.isArray(products) && products.length > 0){
+                // Filter by active filters (mechanical, artisan, prebuilt)
+                const filterKeys = Object.keys(activeFilters).filter(
+                    (key) => activeFilters[key]
+                );
+                if (filterKeys.length > 0) {
+                    updatedProducts = updatedProducts.filter((product) =>
+                        filterKeys.some((key) => {
+                            const productName = product.data.name.toLowerCase();
+                            return productName.includes(key);
+                        })
+                    );
+                }
+                // Filter by price range
+                updatedProducts = updatedProducts.filter(
+                    (product) => product.data.price <= priceRange
+                );
+            }
+			// Filter by color
+            if (activeColors.length > 0) {
+                updatedProducts = updatedProducts.filter((product) =>
+                    activeColors.some((color) => product.data.color === color)
+                );
+            }
+
+            // Filter by size
+            if (activeSizes.length > 0) {
+                updatedProducts = updatedProducts.filter((product) =>
+                    activeSizes.some((size) => product.data.size === size)
+                );
+            }
+			// Filter by brand
+            if (activeBrands.length > 0) {
+                updatedProducts = updatedProducts.filter((product) =>
+                    activeBrands.some((brand) => product.data.brand === brand)
+                );
+            }
+            setFilteredProducts(updatedProducts); 
+        };
+
+        applyFilters(); 
+    }, [products, activeFilters, priceRange, activeColors, activeSizes, activeBrands ]); 
+
+	
+
+	//const [sortOption, setSortOption] = useState<string>("new")
+	
 	// Apply all filters and sorting
 	// useEffect(() => {
 	// 	const applyFilters = () => {
@@ -64,11 +120,11 @@ export default function DisplayPage() {
 	// 	applyFilters()
 	// }, [searchTerm, activeFilters, priceRange, sortOption, products])
 
-	// Handlers
 	const handleSearch = async (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === "Enter") {
 			try {
 				await searchProducts(searchTerm)
+				setFilteredProducts(products);
 				console.log("Search results:", products)
 
 				// Check if products is an array
@@ -93,8 +149,28 @@ export default function DisplayPage() {
 	}
 
 	const handleSort = (option: string) => {
-		// 	setSortOption(option)
-	}
+		const sortedProducts = [...filteredProducts]; 
+
+		switch (option) {
+			case "new":
+				sortedProducts.sort((a, b) => b.data.id - a.data.id);
+				break;
+			case "price-asc":
+				sortedProducts.sort((a, b) => a.data.price - b.data.price);
+				break;
+			case "price-desc":
+				sortedProducts.sort((a, b) => b.data.price - a.data.price);
+				break;
+			case "rating":
+				sortedProducts.sort((a, b) => (b.data.rating || 0) - (a.data.rating || 0));
+				break;
+			default:
+				break;
+		}
+	
+		setFilteredProducts(sortedProducts);
+	};
+
 
 	const handleFilterChange = (filterName: string) => {
 		setActiveFilters((prev) => ({
@@ -109,9 +185,38 @@ export default function DisplayPage() {
 	const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const selectedCategory = e.target.value
 		if (selectedCategory) {
-			getProductsByCategory(selectedCategory) // Fetch products for the selected category
+			getProductsByCategory(selectedCategory).then(() => {
+				setFilteredProducts(products); // Update filtered products after category change.
+            }); // Fetch products for the selected category
+        } else {
+            setFilteredProducts(products); // Reset if no category is selected.
+        }
+    }
+
+	const handleColorChange = (color: string) => {
+		if (activeColors.includes(color)) {
+			setActiveColors(activeColors.filter((c) => c !== color));
+		} else {
+			setActiveColors([...activeColors, color]);
 		}
-	}
+	};
+	
+	const handleSizeChange = (size: string) => {
+		if (activeSizes.includes(size)) {
+			setActiveSizes(activeSizes.filter((s) => s !== size));
+		} else {
+			setActiveSizes([...activeSizes, size]);
+		}
+	};
+
+	const handleBrandChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		const selectedBrand = e.target.value;
+		if (selectedBrand) {
+			setActiveBrands([selectedBrand]); 
+		} else {
+			setActiveBrands([]); 
+		}
+	};
 
 	if (loading)
 		if (error)
@@ -152,7 +257,9 @@ export default function DisplayPage() {
 						<option value="8">Switches</option>
 						<option value="10">Accessories</option>
 					</select>
-					<select className="p-1 border-gray-300 rounded-lg font-bold">
+					<select className="p-1 border-gray-300 rounded-lg font-bold"
+					    onChange={handleBrandChange}
+					>
 						<option value="">By Brand</option>
 						<option value="switches">Switches</option>
 						<option value="keycaps">Keycaps</option>
@@ -235,6 +342,8 @@ export default function DisplayPage() {
 								<input
 									type="checkbox"
 									className="w-4 h-4 text-primary rounded"
+									checked={activeColors.includes("Red")}
+									onChange={() => handleColorChange("Red")}
 								/>
 								<span className="text-gray-600">Red</span>
 							</label>
@@ -242,6 +351,8 @@ export default function DisplayPage() {
 								<input
 									type="checkbox"
 									className="w-4 h-4 text-primary rounded"
+									checked={activeColors.includes("Blue")}
+									onChange={() => handleColorChange("Blue")}
 								/>
 								<span className="text-gray-600">Blue</span>
 							</label>
@@ -249,6 +360,8 @@ export default function DisplayPage() {
 								<input
 									type="checkbox"
 									className="w-4 h-4 text-primary rounded"
+									checked={activeColors.includes("Green")}
+									onChange={() => handleColorChange("Green")}
 								/>
 								<span className="text-gray-600">Green</span>
 							</label>
@@ -261,6 +374,8 @@ export default function DisplayPage() {
 								<input
 									type="checkbox"
 									className="w-4 h-4 text-primary rounded"
+									checked={activeSizes.includes("Small")}
+									onChange={() => handleSizeChange("Small")}
 								/>
 								<span className="text-gray-600">Small</span>
 							</label>
@@ -268,6 +383,8 @@ export default function DisplayPage() {
 								<input
 									type="checkbox"
 									className="w-4 h-4 text-primary rounded"
+									checked={activeSizes.includes("Medium")}
+									onChange={() => handleSizeChange("Medium")}
 								/>
 								<span className="text-gray-600">Medium</span>
 							</label>
@@ -275,6 +392,8 @@ export default function DisplayPage() {
 								<input
 									type="checkbox"
 									className="w-4 h-4 text-primary rounded"
+									checked={activeSizes.includes("Large")}
+									onChange={() => handleSizeChange("Large")}
 								/>
 								<span className="text-gray-600">Large</span>
 							</label>
@@ -282,8 +401,8 @@ export default function DisplayPage() {
 					</div>
 				</aside>
 
-				{/* Products Section */}
-				<section className="w-full lg:w-4/5">
+			{/* Products Section */}
+			<section className="w-full lg:w-4/5">
 					{/* Search and Sorting */}
 					<div className="flex items-center justify-between bg-white p-4 rounded-2xl border border-black mb-6">
 						<input
@@ -294,31 +413,33 @@ export default function DisplayPage() {
 							onKeyDown={handleSearch}
 							className="border border-black/50 outline-secondary-darker px-4 py-2 w-2/3 text-gray-600 placeholder-gray-400 rounded-xl"
 						/>
-						<div className="flex space-x-2">
+						<div className="flex justify-start space-x-4 mt-6 ml-2">
 							<button
 								onClick={() => handleSort("new")}
-								className="px-4 py-2 bg-primary-dark text-white rounded-full hover:bg-primary-darker">
+								className="px-6 py-2 rounded-full border-1 border-black bg-secondary-dark text-black transition-all duration-200 ease-in-out hover:bg-secondary-darker hover:shadow-[4px_4px_0px_black]">
 								New
 							</button>
 							<button
 								onClick={() => handleSort("price-asc")}
-								className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300">
+								className="px-6 py-2 rounded-full border-1 border-black bg-secondary-dark text-black transition-all duration-200 ease-in-out hover:bg-secondary-darker hover:shadow-[4px_4px_0px_black]">
 								Price ↑
 							</button>
 							<button
 								onClick={() => handleSort("price-desc")}
-								className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300">
+								className="px-6 py-2 rounded-full border-1 border-black bg-secondary-dark text-black transition-all duration-200 ease-in-out hover:bg-secondary-darker hover:shadow-[4px_4px_0px_black]">
 								Price ↓
 							</button>
-							<button className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300">
+							<button 
+							    onClick={() => handleSort("rating")}
+							    className="px-6 py-2 rounded-full border-1 border-black bg-secondary-dark text-black transition-all duration-200 ease-in-out hover:bg-secondary-darker hover:shadow-[4px_4px_0px_black]">
 								Rating
 							</button>
 						</div>
 					</div>
 
 					<div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
-						{Array.isArray(products) ? (
-							products.map((product) => (
+						{Array.isArray(filteredProducts) ? (
+							filteredProducts.map((product) => (
 								<ProductCard
 									key={product.data.id}
 									product={product}
