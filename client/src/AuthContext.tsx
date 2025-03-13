@@ -38,6 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			setIsAuthenticated(true)
 		} catch (error) {
 			console.error(error)
+			throw error
 		}
 	}
 
@@ -61,6 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 			setIsAuthenticated(true)
 		} catch (error) {
 			console.error(error)
+			throw error
 		}
 	}
 
