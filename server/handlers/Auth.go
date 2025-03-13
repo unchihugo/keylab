@@ -32,7 +32,7 @@ func Login(sessionStore *sessions.CookieStore) echo.HandlerFunc {
 			return jsonResponse(c, http.StatusBadRequest, "Invalid input")
 		}
 
-		if err := user.Validate("Email"); err != nil {
+		if err := user.Validate("Email", "Password"); err != nil {
 			return jsonResponse(c, http.StatusBadRequest, err.Error())
 		}
 
