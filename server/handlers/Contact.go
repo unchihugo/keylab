@@ -1,26 +1,19 @@
 package handlers
 
-import (
-	db "keylab/database"
-	"keylab/database/models"
+// func ContactUs(c echo.Context) error {
+// 	var ContactUsRequest models.ContactUsRequest
 
-	"github.com/labstack/echo/v4"
-)
+// 	if err := c.Bind(&ContactUsRequest); err != nil {
+// 		return jsonResponse(c, 400, "Invalid contact us request")
+// 	}
 
-func ContactUs(c echo.Context) error {
-	var ContactUsRequest models.ContactUsRequest
+// 	if err := ContactUsRequest.Validate(); err != nil {
+// 		return jsonResponse(c, 400, err.Error())
+// 	}
 
-	if err := c.Bind(&ContactUsRequest); err != nil {
-		return jsonResponse(c, 400, "Invalid contact us request")
-	}
+// 	if err := db.DB.Create(&ContactUsRequest).Error; err != nil {
+// 		return jsonResponse(c, 500, "Failed to save contact us request")
+// 	}
 
-	if err := ContactUsRequest.Validate(); err != nil {
-		return jsonResponse(c, 400, err.Error())
-	}
-
-	if err := db.DB.Create(&ContactUsRequest).Error; err != nil {
-		return jsonResponse(c, 500, "Failed to save contact us request")
-	}
-
-	return jsonResponse(c, 200, "Contact us request saved successfully", ContactUsRequest)
-}
+// 	return jsonResponse(c, 200, "Contact us request saved successfully", ContactUsRequest)
+// }

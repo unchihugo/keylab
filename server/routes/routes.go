@@ -1,18 +1,24 @@
 package routes
 
 import (
+	"keylab/handlers"
+
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
 func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore, db *gorm.DB) {
+	h := &handlers.Handlers{
+		DB: db,
+	}
+
 	// // Auth related routes
-	// authGroup := e.Group("/auth")
-	// authGroup.POST("/register", handlers.Register)
-	// authGroup.POST("/login", handlers.Login(sessionStore))
-	// authGroup.POST("/logout", handlers.Logout(sessionStore))
-	// authGroup.GET("/validate", handlers.ValidateSession(sessionStore))
+	authGroup := e.Group("/auth")
+	authGroup.POST("/register", h.Register)
+	authGroup.POST("/login", h.Login(sessionStore))
+	authGroup.POST("/logout", h.Logout(sessionStore))
+	authGroup.GET("/validate", h.ValidateSession(sessionStore))
 
 	// // TEMP TEST ROUTE - use as an example
 	// e.GET("/test/permission", handlers.TestPermission(), middleware.AuthMiddleware(sessionStore), middleware.PermissionMiddleware("admin:dashboard"))

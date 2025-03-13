@@ -6,8 +6,6 @@ import (
 	"keylab/database/seeders"
 	"log"
 	"os"
-	"path/filepath"
-	"runtime"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
@@ -49,12 +47,12 @@ func InitDB() *gorm.DB {
 func runMigrations(db *gorm.DB) error {
 	sqlDB, err := db.DB()
 	if err != nil {
-		return fmt.Errorf("Could not get SQL DB: %w", err)
+		return fmt.Errorf("could not get SQL DB: %w", err)
 	}
 
 	driver, err := migrateDriver.WithInstance(sqlDB, &migrateDriver.Config{})
 	if err != nil {
-		return fmt.Errorf("Could not create driver: %w", err)
+		return fmt.Errorf("could not create driver: %w", err)
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(
@@ -63,7 +61,7 @@ func runMigrations(db *gorm.DB) error {
 		driver,
 	)
 	if err != nil {
-		return fmt.Errorf("Could not create migrate instance: %w", err)
+		return fmt.Errorf("could not create migrate instance: %w", err)
 	}
 
 	if err := m.Up(); err != nil {
@@ -72,7 +70,7 @@ func runMigrations(db *gorm.DB) error {
 			return nil
 		}
 
-		return fmt.Errorf("Could not run migrations: %w", err)
+		return fmt.Errorf("could not run migrations: %w", err)
 	}
 
 	log.Println("Migrations completed successfully")
@@ -82,28 +80,17 @@ func runMigrations(db *gorm.DB) error {
 func runSeeder(db *gorm.DB) error {
 	if os.Getenv("RUN_TEST_SEEDER") == "true" {
 		if err := seeders.SeedAll(db); err != nil {
-			return fmt.Errorf("Could not seed database: %w", err)
+			return fmt.Errorf("could not seed database: %w", err)
 		}
 
 		log.Println("Database seeded successfully")
 		return nil
 	} else {
 		if err := seeders.CleanTables(db); err != nil {
-			return fmt.Errorf("Could not clean tables: %w", err)
+			return fmt.Errorf("could not clean tables: %w", err)
 		}
 
 		log.Println("Database test seeding is disabled")
 		return nil
 	}
-}
-
-func GetProjectRoot() string {
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		log.Fatal("Unable to get the current file path")
-	}
-
-	projectRoot := filepath.Dir(filepath.Dir(filename))
-
-	return projectRoot
 }

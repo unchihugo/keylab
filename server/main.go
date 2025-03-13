@@ -13,14 +13,6 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-// type App struct {
-// 	Config   *config.Config
-// 	Database *gorm.DB
-// 	// DB
-// 	// Echo
-// 	// Session Cookie STore
-// }
-
 func main() {
 	config := config.Initialize()
 	fmt.Println("Starting KeyLab server...")

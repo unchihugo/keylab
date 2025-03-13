@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	db "keylab/database"
 	"keylab/database/models"
 	"keylab/repositories"
 	"keylab/utils"
@@ -23,7 +22,7 @@ const SessionName = "keylab"
 // 5. Initiates the session with the user's ID.
 // 6. Returns status 200 if successful.
 
-func Login(sessionStore *sessions.CookieStore) echo.HandlerFunc {
+func (h *Handlers) Login(sessionStore *sessions.CookieStore) echo.HandlerFunc {
 	return func(c echo.Context) error {
 
 		// Parsing user input from the request body, and validating it.
@@ -37,7 +36,7 @@ func Login(sessionStore *sessions.CookieStore) echo.HandlerFunc {
 		}
 
 		// Checks if user exists, returns status 401 if not.
-		validUser, err := repositories.FindUserByEmail(user.Email)
+		validUser, err := repositories.FindUserByEmail(user.Email, h.DB)
 		if err != nil {
 			log.Printf("Error in database while finding user by email: %v", err)
 			return jsonResponse(c, http.StatusInternalServerError, "Error checking existing user")
@@ -72,7 +71,7 @@ func Login(sessionStore *sessions.CookieStore) echo.HandlerFunc {
 // 4. Creates the user in the database.
 // 5. Returns status 200 if successful.
 
-func Register(c echo.Context) error {
+func (h *Handlers) Register(c echo.Context) error {
 
 	// Parsing user input from the request body, and validating it.
 	var user models.User
@@ -85,7 +84,7 @@ func Register(c echo.Context) error {
 	}
 
 	// Checks if user exists, returns status 401 if not.
-	validUser, err := repositories.FindUserByEmail(user.Email)
+	validUser, err := repositories.FindUserByEmail(user.Email, h.DB)
 	if err != nil {
 		// If error occurs while checking for existing user, return 500 and output error message to terminal.
 		log.Printf("Error checking existing user: %v", err)
@@ -114,7 +113,7 @@ func Register(c echo.Context) error {
 	user.Password = hashedPassword
 
 	// Creates the user in the database.
-	if err := db.DB.Create(&user).Error; err != nil {
+	if err := h.DB.Create(&user).Error; err != nil {
 		return jsonResponse(c, http.StatusInternalServerError, "Error creating user")
 	}
 
@@ -127,7 +126,7 @@ func Register(c echo.Context) error {
 // 3. Saves the session.
 // 4. Returns status 200 if successful.
 
-func Logout(sessionStore *sessions.CookieStore) echo.HandlerFunc {
+func (h *Handlers) Logout(sessionStore *sessions.CookieStore) echo.HandlerFunc {
 	return func(c echo.Context) error {
 
 		// Gets the session for the user.
@@ -153,7 +152,7 @@ func Logout(sessionStore *sessions.CookieStore) echo.HandlerFunc {
 // 3. Returns status 401 if unsuccessful.
 // 4. Returns status 500 if an error occurs.
 
-func ValidateSession(sessionStore *sessions.CookieStore) echo.HandlerFunc {
+func (h *Handlers) ValidateSession(sessionStore *sessions.CookieStore) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		user, ok := c.Get("user").(models.User)
 		if !ok {
@@ -170,7 +169,7 @@ func ValidateSession(sessionStore *sessions.CookieStore) echo.HandlerFunc {
 
 // REMOVE LATER
 
-func TestPermission() echo.HandlerFunc {
+func (h *Handlers) TestPermission() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		user := c.Get("user").(models.User)
 
