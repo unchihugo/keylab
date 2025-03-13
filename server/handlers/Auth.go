@@ -154,7 +154,7 @@ func Logout(sessionStore *sessions.CookieStore) echo.HandlerFunc {
 // 4. Returns status 500 if an error occurs.
 
 func ValidateSession(sessionStore *sessions.CookieStore) echo.HandlerFunc {
-	return func(c echo.Context) error {
+    return func(c echo.Context) error {
 		user, ok := c.Get("user").(models.User)
 		if !ok {
 			return jsonResponse(c, http.StatusUnauthorized, "Invalid session")
