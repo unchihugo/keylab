@@ -1,22 +1,28 @@
 package repositories
 
-// func CheckRolePermissions(roleID int64, requiredPermissions []string) (bool, error) {
-// 	var count int64
+import (
+	"log"
 
-// 	err := db.DB.Table("role_permissions").
-// 		Joins("JOIN permissions ON role_permissions.permission_id = permissions.id").
-// 		Where("role_permissions.role_id = ?", roleID).
-// 		Where("permissions.name IN ?", requiredPermissions).
-// 		Count(&count).Error
+	"gorm.io/gorm"
+)
 
-// 	if err != nil {
-// 		log.Printf("Error checking role permissions: %v", err)
-// 		return false, err
-// 	}
+func CheckRolePermissions(roleID int64, requiredPermissions []string, db *gorm.DB) (bool, error) {
+	var count int64
 
-// 	if count == int64(len(requiredPermissions)) {
-// 		return true, nil
-// 	}
+	err := db.Table("role_permissions").
+		Joins("JOIN permissions ON role_permissions.permission_id = permissions.id").
+		Where("role_permissions.role_id = ?", roleID).
+		Where("permissions.name IN ?", requiredPermissions).
+		Count(&count).Error
 
-// 	return false, nil
-// }
+	if err != nil {
+		log.Printf("Error checking role permissions: %v", err)
+		return false, err
+	}
+
+	if count == int64(len(requiredPermissions)) {
+		return true, nil
+	}
+
+	return false, nil
+}

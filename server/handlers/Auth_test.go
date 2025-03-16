@@ -154,3 +154,203 @@ func TestLogin(t *testing.T) {
 		})
 	}
 }
+
+func TestRegister(t *testing.T) {
+	e := echo.New()
+
+	config := config.Initialize()
+
+	sessionStore := sessions.NewCookieStore([]byte(config.SESSIONS_KEY), []byte(config.HASH_KEY))
+	sessionStore.Options.HttpOnly = true
+	sessionStore.Options.Secure = true
+
+	testDB := db.SetupTestDB(t)
+	defer db.CleanupTestDB(t, testDB)
+
+	existingUser := models.User{
+		Forename:    "Existing",
+		Surname:     "User",
+		Email:       "existing@example.com",
+		Password:    "hashedpassword",
+		PhoneNumber: "+12345678901",
+		RoleID:      1,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+
+	if err := testDB.DB.Create(&existingUser).Error; err != nil {
+		t.Fatalf("Failed to create existing test user: %v", err)
+	}
+
+	h := &Handlers{
+		DB:           testDB.DB,
+		SessionStore: sessionStore,
+	}
+
+	tests := []struct {
+		name  string
+		input models.User
+		want  int
+	}{
+		{
+			name: "Empty Required Fields",
+			input: models.User{
+				Email:    "",
+				Password: "",
+				Forename: "",
+				Surname:  "",
+			},
+			want: http.StatusBadRequest,
+		},
+		{
+			name: "Invalid Email Format",
+			input: models.User{
+				Email:       "invalid-email",
+				Password:    "ValidP@ssw0rd!",
+				Forename:    "Test",
+				Surname:     "User",
+				PhoneNumber: "+12345678901",
+			},
+			want: http.StatusBadRequest,
+		},
+		{
+			name: "Password Too Weak",
+			input: models.User{
+				Email:       "valid@example.com",
+				Password:    "weak",
+				Forename:    "Test",
+				Surname:     "User",
+				PhoneNumber: "+12345678901",
+			},
+			want: http.StatusBadRequest,
+		},
+		{
+			name: "Email Already Exists",
+			input: models.User{
+				Email:       "existing@example.com",
+				Password:    "ValidP@ssw0rd!",
+				Forename:    "Test",
+				Surname:     "User",
+				PhoneNumber: "+12345678901",
+			},
+			want: http.StatusBadRequest,
+		},
+		{
+			name: "Successful Registration",
+			input: models.User{
+				Email:       "new@example.com",
+				Password:    "ValidP@ssw0rd!",
+				Forename:    "New",
+				Surname:     "User",
+				PhoneNumber: "+12345678901",
+			},
+			want: http.StatusOK,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			payloadBytes, err := json.Marshal(test.input)
+			if err != nil {
+				t.Fatalf("Failed to marshal payload: %v", err)
+			}
+
+			req := httptest.NewRequest(http.MethodPost, "/auth/register", bytes.NewReader(payloadBytes))
+			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+
+			rec := httptest.NewRecorder()
+			c := e.NewContext(req, rec)
+
+			err = h.Register(c)
+
+			if err != nil {
+				t.Errorf("Handler returned an error: %v", err)
+			}
+
+			assert.Equal(t, test.want, rec.Code, "Expected status code %d, got %d", test.want, rec.Code)
+
+			if test.want == http.StatusOK && rec.Code == http.StatusOK {
+				var createdUser models.User
+				result := testDB.DB.Where("email = ?", test.input.Email).First(&createdUser)
+				assert.Nil(t, result.Error, "User should exist in database after successful registration")
+				assert.Equal(t, test.input.Email, createdUser.Email)
+				assert.Equal(t, test.input.Forename, createdUser.Forename)
+				assert.Equal(t, test.input.Surname, createdUser.Surname)
+			}
+		})
+	}
+}
+
+func TestLogout(t *testing.T) {
+	e := echo.New()
+
+	config := config.Initialize()
+
+	sessionStore := sessions.NewCookieStore([]byte(config.SESSIONS_KEY), []byte(config.HASH_KEY))
+	sessionStore.Options.HttpOnly = true
+	sessionStore.Options.Secure = true
+
+	testDB := db.SetupTestDB(t)
+	defer db.CleanupTestDB(t, testDB)
+
+	h := &Handlers{
+		DB:           testDB.DB,
+		SessionStore: sessionStore,
+	}
+
+	t.Run("Successful Logout", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodPost, "/auth/logout", nil)
+		rec := httptest.NewRecorder()
+		c := e.NewContext(req, rec)
+
+		session, err := sessionStore.New(req, SessionName)
+		if err != nil {
+			t.Fatalf("Failed to create session: %v", err)
+		}
+
+		session.Values["user_id"] = int64(1)
+		err = session.Save(req, rec)
+		if err != nil {
+			t.Fatalf("Failed to save session: %v", err)
+		}
+
+		cookies := rec.Result().Cookies()
+		for _, cookie := range cookies {
+			req.AddCookie(cookie)
+		}
+
+		rec = httptest.NewRecorder()
+		c = e.NewContext(req, rec)
+
+		err = h.Logout(c)
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusOK, rec.Code)
+
+		cookies = rec.Result().Cookies()
+		foundSessionCookie := false
+		for _, cookie := range cookies {
+			if cookie.Name == SessionName {
+				foundSessionCookie = true
+
+				assert.True(t, cookie.MaxAge < 0, "Session cookie should be invalidated with negative MaxAge")
+			}
+		}
+		assert.True(t, foundSessionCookie, "Session cookie should be found in response")
+	})
+
+	t.Run("No Existing Session", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodPost, "/auth/logout", nil)
+		rec := httptest.NewRecorder()
+		c := e.NewContext(req, rec)
+
+		err := h.Logout(c)
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusOK, rec.Code)
+
+		var response map[string]interface{}
+		if err := json.Unmarshal(rec.Body.Bytes(), &response); err != nil {
+			t.Fatalf("Failed to unmarshal response: %v", err)
+		}
+		assert.Equal(t, "Logged out successfully!", response["message"])
+	})
+}
