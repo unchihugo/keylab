@@ -10,18 +10,19 @@ import (
 
 func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore, db *gorm.DB) {
 	h := &handlers.Handlers{
-		DB: db,
+		DB:           db,
+		SessionStore: sessionStore,
 	}
 
-	// // Auth related routes
+	// Auth related routes
 	authGroup := e.Group("/auth")
 	authGroup.POST("/register", h.Register)
-	authGroup.POST("/login", h.Login(sessionStore))
-	authGroup.POST("/logout", h.Logout(sessionStore))
-	authGroup.GET("/validate", h.ValidateSession(sessionStore))
+	authGroup.POST("/login", h.Login)
+	authGroup.POST("/logout", h.Logout)
+	authGroup.GET("/validate", h.ValidateSession)
 
-	// // TEMP TEST ROUTE - use as an example
-	// e.GET("/test/permission", handlers.TestPermission(), middleware.AuthMiddleware(sessionStore), middleware.PermissionMiddleware("admin:dashboard"))
+	// TEMP TEST ROUTE - use as an example
+	// e.GET("/test/permission", h.TestPermission(), middleware.AuthMiddleware(sessionStore), middleware.PermissionMiddleware("admin:dashboard"))
 
 	// // Category related routes
 	// categoryGroup := e.Group("/categories")

@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"github.com/gorilla/sessions"
 	"gorm.io/gorm"
 )
 
 type Handlers struct {
-	DB *gorm.DB
+	DB           *gorm.DB
+	SessionStore *sessions.CookieStore
 }

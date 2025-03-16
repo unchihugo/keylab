@@ -13,6 +13,10 @@ func SeedAll(DB *gorm.DB) error {
 		return err
 	}
 
+	if err := SeedRoles(DB); err != nil {
+		return err
+	}
+
 	if err := seedUsers(DB); err != nil {
 		return err
 	}
@@ -26,10 +30,6 @@ func SeedAll(DB *gorm.DB) error {
 	}
 
 	if err := seedProductImages(DB); err != nil {
-		return err
-	}
-
-	if err := SeedRoles(DB); err != nil {
 		return err
 	}
 
