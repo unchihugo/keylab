@@ -58,16 +58,19 @@ export default function Home() {
 						{
 							name: "Keycaps",
 							img: "https://via.placeholder.com/600x400?text=Product+Image",
+							category: "keycaps",
 						} /* TODO: replace placeholder with actual product images */,
 						{
 							name: "Switches",
 							img: "https://via.placeholder.com/600x400?text=Product+Image",
+							category: "switches",
 						} /* TODO: replace placeholder with actual product images */,
 						{
 							name: "Keyboard Bases",
 							img: "https://via.placeholder.com/600x400?text=Product+Image",
+							category: "keyboards",
 						} /* TODO: replace placeholder with actual product images */,
-					].map(({ name, img }, index) => (
+					].map(({ name, img, category }, index) => (
 						<div
 							key={index}
 							className="bg-secondary rounded-lg p-3 flex flex-col items-center border border-black">
@@ -87,7 +90,7 @@ export default function Home() {
 								<LinkButton
 									text="Shop"
 									buttonClassNames="bg-secondary-darker w-full"
-									to="/shop"
+									to={`/shop?category=${category}`}
 									Icon={ChevronRight}
 									iconRight={true}
 								/>

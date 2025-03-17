@@ -1,11 +1,14 @@
 /** @format */
 
 import React, { useState, useEffect } from "react"
+import { useLocation } from 'react-router-dom';
 import ProductCard from "../components/ProductCard"
 import { useProducts } from "../hooks/useProducts"
 import NotFound from "./NotFound"
 
 export default function DisplayPage() {
+	const location = useLocation(); 
+    const searchParams = new URLSearchParams(location.search);
 	const { products, loading, error, searchProducts, getProductsByCategory } =
 		useProducts() // Fetch products from backend
 
@@ -27,6 +30,26 @@ export default function DisplayPage() {
 	const [activeBrands, setActiveBrands] = useState<string[]>([]);
 
 	useEffect(() => {
+		const categoryParam = searchParams.get('category');
+        if (categoryParam) {
+            if (categoryParam === 'keyboards') {
+                getProductsByCategory("keyboards").then(() => {
+                    setFilteredProducts(products);
+                })
+            } else if (categoryParam === 'keycaps') {
+                getProductsByCategory("keycaps").then(() => {
+                    setFilteredProducts(products);
+                })
+            } else if (categoryParam === 'switches'){
+                getProductsByCategory("switches").then(() => {
+                    setFilteredProducts(products);
+                })
+            } else if (categoryParam === 'accessories'){
+                getProductsByCategory("accessories").then(() => {
+                    setFilteredProducts(products);
+                })
+            }
+        }
         const applyFilters = () => {
             let updatedProducts = products; // Start with all products
 
@@ -71,7 +94,7 @@ export default function DisplayPage() {
         };
 
         applyFilters(); 
-    }, [products, activeFilters, priceRange, activeColors, activeSizes, activeBrands ]); 
+    }, [products, activeFilters, priceRange, activeColors, activeSizes, activeBrands, location.search, getProductsByCategory]);
 
 	
 

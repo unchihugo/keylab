@@ -9,6 +9,7 @@ import ErrorBox from "../../components/ErrorBox";
 import LinkButton from "../../components/LinkButton";
 import Card from "../../components/Card";
 
+
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
