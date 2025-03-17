@@ -47,6 +47,7 @@ const router = createBrowserRouter([
 			{ path: "*", element: <NotFound /> },
 			{ path: "/about", element: <About /> },
 			{ path: "/shop", element: <Shop /> },
+			{ path: "/keyboard-designer", element: <KeyboardDesigner />},
 		],
 	},
 ])
