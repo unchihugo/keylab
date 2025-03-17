@@ -7,8 +7,13 @@ export type UserRole = "admin" | "user" | "manager" // Adjust based on backend r
 
 // Defining the User interface with the properties that match the backend model
 export interface User {
-	id: string
+  forename: ReactNode;
+	id: number;
 	name: string
 	email: string
 	role: UserRole // This refers to the UserRole type
-}
+    roleId: number;
+	surname: string;
+
+
+};

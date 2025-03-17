@@ -1,5 +1,9 @@
 /** @format */
 
+//import { userService } from "../../services/userService";
+
+//const { setUserRole } = userService; // ✅ Use the correct function name
+
 import { User, UserRole } from "../types/User"
 const USERS_API_URL = "http://localhost:8080/users" // Adjust based on your backend URL
 /**
@@ -52,4 +56,5 @@ async function setUserRole(userId: string, role: UserRole): Promise<User> {
 export const userService = {
 	getUserRole,
 	setUserRole,
+	
 }
