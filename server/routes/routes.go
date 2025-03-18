@@ -11,7 +11,7 @@ import (
 func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	// Auth related routes
 	authGroup := e.Group("/auth")
-	authGroup.POST("/register", handlers.Register)
+	authGroup.POST("/register", handlers.Register(sessionStore))
 	authGroup.POST("/login", handlers.Login(sessionStore))
 	authGroup.POST("/logout", handlers.Logout(sessionStore))
 	authGroup.GET("/validate", handlers.ValidateSession(sessionStore))
