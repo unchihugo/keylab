@@ -4,7 +4,6 @@
 import React, { useEffect } from "react"
 import { useAuth } from "../../AuthContext"
 import Divider from "../../components/Divider"
-import LinkButton from "../../components/LinkButton"
 import { ArrowUpRight, ChevronRight } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import * as formValidation from "../../lib/formValidation"
@@ -36,7 +35,16 @@ export default function AdminLogin() {
 		}
 
 		try {
-			await login(email, password)
+			const role = await login(email, password)
+			if (!role) {
+				setErrors(['Login failed, please try again'])
+				return
+			}
+			if (role === 'admin') {
+				navigate('/admin/dashboard');
+			} else {
+				console.error('Access denied, not an admin')
+			}
 		} catch (error) {
 			console.error(error)
 		}

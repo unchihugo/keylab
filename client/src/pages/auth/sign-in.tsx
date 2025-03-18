@@ -35,7 +35,16 @@ export default function SignIn() {
 		}
 
 		try {
-			await login(email, password)
+			const role = await login(email, password)
+			if (!role) {
+				setErrors(['Login failed, please try again'])
+				return
+			}
+			if (role !== 'admin') {
+				navigate('/')
+			} else {
+				setErrors(['Admins must log in using the admin page'])
+			}
 		} catch (error) {
 			console.error(error)
 		}

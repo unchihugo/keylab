@@ -6,7 +6,7 @@ import { authService } from "./services/authService"
 interface AuthContextProps {
 	isAuthenticated: boolean
 	isLoading: boolean
-	login: (email: string, password: string) => Promise<void> // async function that can return a promise
+	login: (email: string, password: string) => Promise<string | undefined> // async function that can return a promise
 	register: (
 		forename: string,
 		surname: string,
@@ -29,11 +29,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const [isTesting] = useState(false) // TODO: set to false when we have supporting backend
 
 	// login function for ../pages/sign-in.tsx that calls the authService.login function (seperation of concerns) and sets the auth state
-	const login = async (email: string, password: string) => {
+	// Promise added so func waits for data to come back b4 carrying on
+	const login = async (email: string, password: string): Promise<string | undefined> => {
 		try {
 			if (!isTesting) {
 				const data = await authService.login(email, password)
+				const { token,role } = data;
 				console.log(data.message)
+				// token used to check if user authenticated
+				localStorage.setItem('token', token)
+				//role to check if user admin or not
+				localStorage.setItem('role', role)
+
+				setIsAuthenticated(true)
+				// return role so know where to redirect user/admin
+				return role
 			}
 			setIsAuthenticated(true)
 		} catch (error) {
