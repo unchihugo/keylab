@@ -5,6 +5,7 @@ import ProductCard from "../components/ProductCard"
 import { useProducts } from "../hooks/useProducts"
 import { useSearchParams, useNavigate } from "react-router-dom";
 import NotFound from "./NotFound"
+import { Search } from "lucide-react";
 
 export default function DisplayPage() {
 	const { products, loading, error, searchProducts, getProductsByCategory } =
@@ -32,6 +33,21 @@ export default function DisplayPage() {
 
 	// gets the specific category 
 	const category = searchParams.get("category") ?? "";
+	const search = searchParams.get("search") ?? "";
+
+	setSearchTerm(search);
+	setFilteredProducts(products);
+
+	useEffect(() => {
+		setSearchTerm(search || "")
+		if(category) {
+			getProductsByCategory(category).then(() => {
+				setFilteredProducts(products);
+			});
+		} else {
+			setFilteredProducts(products);
+		}
+	}, [category, search, products, getProductsByCategory]);
 
 	useEffect(() => {
         const applyFilters = () => {
@@ -192,14 +208,14 @@ export default function DisplayPage() {
 	}
 	const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const selectedCategory = e.target.value
+		setSearchParams({ category: selectedCategory, search: searchTerm });
 		if (selectedCategory) {
-			setSearchParams({ category: selectedCategory, search: searchTerm });
 			getProductsByCategory(selectedCategory).then(() => {
 				setFilteredProducts(products); // Update filtered products after category change.
             }); // Fetch products for the selected category
         } else {
             setFilteredProducts(products); // Reset if no category is selected.
-			setSearchParams({ search: searchTerm })
+			// setSearchParams({ search: searchTerm })
         }
     }
 
