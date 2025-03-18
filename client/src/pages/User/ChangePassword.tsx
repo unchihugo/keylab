@@ -44,7 +44,7 @@ const ChangePassword: React.FC<{ userId: number }> = ({ userId }) => {
 				new_password: newPassword,
 			})
 
-			if (response?.message === "Password updated successfully") {
+			if (response?.message === "Password changed successfully") {
 				setSuccessMessage(
 					"Your password has been updated successfully!",
 				)
@@ -107,13 +107,15 @@ const ChangePassword: React.FC<{ userId: number }> = ({ userId }) => {
 						required
 					/>
 				</div>
-				<button
-					type="submit"
-					className="mt-5 group h-9 p-2 rounded-full border border-black justify-center items-center gap-2 inline-flex duration-200 
+				<div className="mt-10 flex justify-center">
+					<button
+						type="submit"
+						className="group h-9 p-2 rounded-full border border-black justify-center items-center gap-2 inline-flex duration-200 
                         hover:-translate-y-1 hover:drop-shadow-cartoon-y active:translate-y-0 active:drop-shadow-none active:shadow-inner-cartoon-y
                         bg-secondary px-6 text-black font-body leading-tight tracking-tight">
-					Save Changes
-				</button>
+						Save Changes
+					</button>
+				</div>
 			</form>
 		</div>
 	)

@@ -75,12 +75,12 @@ const AccountDetails: React.FC<AccountDetailsProps> = ({
 	}
 
 	return (
-		<div>
-			<h2 className="text-xl font-semibold mb-4">Account Details</h2>
-
+		<div className="flex flex-col items-center justify-center">
+			<h2 className="text-xl font-semibold mb-10">Account Details</h2>
 			{errors.length > 0 && <ErrorBox>{errors}</ErrorBox>}
-
-			<form className="space-y-6" onSubmit={handleUpdateUser}>
+			<form
+				className="w-full max-w-md space-y-4"
+				onSubmit={handleUpdateUser}>
 				<div>
 					<label className="block text-sm font-medium">
 						First Name
@@ -138,7 +138,7 @@ const AccountDetails: React.FC<AccountDetailsProps> = ({
 						}
 					/>
 				</div>
-				<div className="mt-8">
+				<div className="mt-10 flex justify-center">
 					<button
 						type="submit"
 						className="group h-9 p-2 rounded-full border border-black justify-center items-center gap-2 inline-flex duration-200 

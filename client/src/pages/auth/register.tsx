@@ -60,7 +60,7 @@ export default function Register() {
 	useEffect(() => {
 		if (isAuthenticated) {
 			// redirect to home page if authenticated
-			navigate("/sign-in")
+			navigate("/")
 		}
 	}, [isAuthenticated, navigate])
 

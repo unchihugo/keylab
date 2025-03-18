@@ -72,8 +72,8 @@ func Login(sessionStore *sessions.CookieStore) echo.HandlerFunc {
 // 4. Creates the user in the database.
 // 5. Returns status 200 if successful.
 
-func Register(c echo.Context) error {
-
+func Register(sessionStore *sessions.CookieStore) echo.HandlerFunc {
+    return func(c echo.Context) error {
 	// Parsing user input from the request body, and validating it.
 	var user models.User
 	if err := c.Bind(&user); err != nil {
@@ -117,8 +117,17 @@ func Register(c echo.Context) error {
 	if err := db.DB.Create(&user).Error; err != nil {
 		return jsonResponse(c, http.StatusInternalServerError, "Error creating user")
 	}
-
+    session, err := sessionStore.Get(c.Request(), SessionName)
+    if err != nil {
+        log.Printf("Error creating session: %v", err)
+        return jsonResponse(c, http.StatusInternalServerError, "Error creating session")
+    }
+    initiateSession(session, user.ID)
+    if err := session.Save(c.Request(), c.Response()); err != nil {
+        return jsonResponse(c, http.StatusInternalServerError, "Error saving session")
+    }
 	return jsonResponse(c, http.StatusOK, "User created successfully!")
+}
 }
 
 // Logout Handler [POST /auth/logout]
@@ -155,17 +164,20 @@ func Logout(sessionStore *sessions.CookieStore) echo.HandlerFunc {
 
 func ValidateSession(sessionStore *sessions.CookieStore) echo.HandlerFunc {
     return func(c echo.Context) error {
-		user, ok := c.Get("user").(models.User)
-		if !ok {
-			return jsonResponse(c, http.StatusUnauthorized, "Invalid session")
-		}
-
-		if user.ID == 0 {
-			return jsonResponse(c, http.StatusUnauthorized, "Invalid session")
-		}
-
-		return jsonResponse(c, http.StatusOK, "Valid session", user)
-	}
+        session, err := sessionStore.Get(c.Request(), SessionName)
+        if err != nil || session.Values["user_id"] == nil {
+            return jsonResponse(c, http.StatusUnauthorized, "Unauthorized")
+        }
+        userID, ok := session.Values["user_id"].(int64)
+        if !ok || userID == 0 {
+            return jsonResponse(c, http.StatusUnauthorized, "Invalid session data")
+        }
+        user, err := repositories.FindUserByID(userID)
+        if err != nil {
+            return jsonResponse(c, http.StatusUnauthorized, "User not found")
+        }
+        return jsonResponse(c, http.StatusOK, "Valid session", user)
+    }
 }
 
 // REMOVE LATER
