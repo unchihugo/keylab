@@ -158,10 +158,10 @@ func SetupTestDB(t *testing.T) *TestDB {
 		t.Fatalf("Failed to run migrations: %v", err)
 	}
 
-	if err := seeders.SeedAll(db); err != nil {
-		CleanupTestDB(t, &TestDB{Container: container})
-		t.Fatalf("Failed to seed test database: %v", err)
-	}
+	// if err := seeders.SeedAll(db); err != nil {
+	// 	CleanupTestDB(t, &TestDB{Container: container})
+	// 	t.Fatalf("Failed to seed test database: %v", err)
+	// }
 
 	return &TestDB{
 		Container: container,

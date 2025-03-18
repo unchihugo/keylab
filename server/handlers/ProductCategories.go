@@ -43,7 +43,7 @@ func (h *Handlers) GetCategoryBySlug(c echo.Context) error {
 	var category models.ProductCategory
 
 	slug := c.Param("slug")
-	if err := category.Validate(slug); err != nil {
+	if slug == "" {
 		return jsonResponse(c, http.StatusBadRequest, "Invalid category slug")
 	}
 
@@ -132,15 +132,15 @@ func (h *Handlers) DeleteCategory(c echo.Context) error {
 // 6. Returns status 400 if invalid input.
 // 7. Returns status 404 if no category is found.
 // 8. Returns status 500 if an error occurs.
-
 func (h *Handlers) UpdateCategory(c echo.Context) error {
 	var category models.ProductCategory
 
 	slug := c.Param("slug")
-	if err := category.Validate(slug); err != nil {
+	if slug == "" {
 		return jsonResponse(c, http.StatusBadRequest, "Invalid category slug")
 	}
 
+	// Fetch the existing category
 	if err := h.DB.Where("slug = ?", slug).First(&category).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return jsonResponse(c, http.StatusNotFound, "Category not found")

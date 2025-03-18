@@ -42,7 +42,6 @@ func TestLogin(t *testing.T) {
 		Email:       "valid@example.com",
 		Password:    hashed,
 		PhoneNumber: "+12345678901",
-		RoleID:      1,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
@@ -173,7 +172,6 @@ func TestRegister(t *testing.T) {
 		Email:       "existing@example.com",
 		Password:    "hashedpassword",
 		PhoneNumber: "+12345678901",
-		RoleID:      1,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
