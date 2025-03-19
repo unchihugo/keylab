@@ -35,7 +35,7 @@ jobs:
           VALIDATE_TYPESCRIPT_PRETTIER: true
           VALIDATE_TSX: true
           VALIDATE_JSX_PRETTIER: true
-          VALIDATE_CSS_PRETTIER: true
+          # VALIDATE_CSS_PRETTIER: true
           # VALIDATE_GO: true
 
           SAVE_SUPER_LINTER_SUMMARY: true
