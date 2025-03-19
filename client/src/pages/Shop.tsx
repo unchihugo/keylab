@@ -8,9 +8,7 @@ import NotFound from "./NotFound"
 
 export default function DisplayPage() {
 	const location = useLocation(); 
-    const searchParams = new URLSearchParams(location.search);
-	const { products, loading, error, searchProducts, getProductsByCategory } =
-		useProducts() // Fetch products from backend
+	const { products, loading, error, searchProducts, getProductsByCategory } = useProducts(""); // Fetch products from backend
 
 	const [searchTerm, setSearchTerm] = useState<string>("")
 	const [activeFilters, setActiveFilters] = useState<{
@@ -30,6 +28,7 @@ export default function DisplayPage() {
 	const [activeBrands, setActiveBrands] = useState<string[]>([]);
 
 	useEffect(() => {
+		const searchParams = new URLSearchParams(location.search);
 		const categoryParam = searchParams.get('category');
         if (categoryParam) {
             if (categoryParam === 'keyboards') {
@@ -95,7 +94,6 @@ export default function DisplayPage() {
 
         applyFilters(); 
     }, [products, activeFilters, priceRange, activeColors, activeSizes, activeBrands, location.search, getProductsByCategory]);
-
 	
 
 	//const [sortOption, setSortOption] = useState<string>("new")

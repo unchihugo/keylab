@@ -1,10 +1,21 @@
 /** @format */
 
 import React, { useState } from "react"
+import { useNavigate } from "react-router-dom";
 import Divider from "../components/Divider"
-import LinkButton from "../components/LinkButton"
+import { validateForename, validateMessage } from "../lib/formValidation";
 
+interface FormErrors {
+	firstName?: string;
+	lastName?: string;
+	address1?: string;
+	address2?: string;
+	cardnumber?: string;
+	expirydate?: string;
+	cvv?: string;
+}
 export default function Checkout() {
+	const navigate = useNavigate();
 	const [firstName, setFirstName] = useState("")
 	const [lastName, setLastName] = useState("")
 	const [address1, setAddress1] = useState("")
@@ -16,6 +27,32 @@ export default function Checkout() {
 	const [cardnumber, setCardNumber] = useState("")
 	const [expirydate, setExpiryDate] = useState("")
 	const [cvv, setCvv] = useState("")
+	const [isProcessing, setIsProcessing] = useState(false);
+
+	const [errors, setErrors] = useState<FormErrors>({});
+    const validateForm = () => {
+		const newErrors: FormErrors = {};
+		newErrors.firstName = validateForename(firstName) || "";
+		newErrors.lastName = validateForename(lastName) || "";
+        newErrors.address1 = validateMessage(address1) || "";
+		newErrors.address2 = validateMessage(address2) || "";
+        newErrors.cardnumber = cardnumber.match(/^\d{13,19}$/) ? "" : "Invalid card number";
+        newErrors.expirydate = expirydate.match(/^(0[1-9]|1[0-2])\/(\d{2})$/) ? "" : "Invalid expiry date";
+        newErrors.cvv = cvv.match(/^\d{3,4}$/) ? "" : "Invalid CVV";
+
+        setErrors(newErrors);
+        return Object.values(newErrors).every((error) => error === "");
+    };
+
+    const handlePayment = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+    setIsProcessing(true);
+
+    setTimeout(() => {
+        navigate("../components/Thankyou.tsx");
+    }, 2000);
+};
 
 	return (
 		<div className="flex justify-center items-center bg-primary">
@@ -45,7 +82,9 @@ export default function Checkout() {
 										onChange={(e) =>
 											setFirstName(e.target.value)
 										}
+										onBlur={validateForm}
 									/>
+									{errors.firstName && <p className="text-red-500 text-sm">{errors.firstName}</p>}
 								</div>
 								<div>
 									<label
@@ -62,7 +101,9 @@ export default function Checkout() {
 										onChange={(e) =>
 											setLastName(e.target.value)
 										}
+										onBlur={validateForm}
 									/>
+									{errors.lastName && <p className="text-red-500 text-sm">{errors.lastName}</p>}
 								</div>
 							</div>
 							<div>
@@ -80,7 +121,9 @@ export default function Checkout() {
 									onChange={(e) =>
 										setAddress1(e.target.value)
 									}
+									onBlur={validateForm}
 								/>
+								 {errors.address1 && <p className="text-red-500 text-sm">{errors.address1}</p>}
 							</div>
 							<div>
 								<label
@@ -97,7 +140,9 @@ export default function Checkout() {
 									onChange={(e) =>
 										setAddress2(e.target.value)
 									}
+									onBlur={validateForm}
 								/>
+								{errors.address2 && <p className="text-red-500 text-sm">{errors.address2} </p>}
 							</div>
 							<div className="grid grid-cols-2 gap-6">
 								<div>
@@ -115,6 +160,7 @@ export default function Checkout() {
 										onChange={(e) =>
 											setCountry(e.target.value)
 										}
+										onBlur={validateForm}
 									/>
 								</div>
 								<div>
@@ -132,6 +178,7 @@ export default function Checkout() {
 										onChange={(e) =>
 											setCity(e.target.value)
 										}
+										onBlur={validateForm}
 									/>
 								</div>
 							</div>
@@ -150,6 +197,7 @@ export default function Checkout() {
 									onChange={(e) =>
 										setPostcode(e.target.value)
 									}
+									onBlur={validateForm}
 								/>
 							</div>
 						</form>
@@ -181,7 +229,7 @@ export default function Checkout() {
 								Payment
 							</h2>
 							<Divider />
-							<form className="space-y-4 font-body">
+							<form className="space-y-4 font-body"onSubmit={handlePayment}>
 								<div>
 									<label
 										className="text-sm font-medium block mb-1"
@@ -214,7 +262,9 @@ export default function Checkout() {
 										onChange={(e) =>
 											setCardNumber(e.target.value)
 										}
+										onBlur={validateForm}
 									/>
+									{errors.cardnumber && <p className="text-red-500 text-sm">{errors.cardnumber}</p>}
 								</div>
 								<div className="grid grid-cols-2 gap-4">
 									<div>
@@ -232,7 +282,9 @@ export default function Checkout() {
 											onChange={(e) =>
 												setExpiryDate(e.target.value)
 											}
+											onBlur={validateForm}
 										/>
+										{errors.expirydate && <p className="text-red-500 text-sm">{errors.expirydate}</p>}
 									</div>
 									<div>
 										<label
@@ -249,17 +301,21 @@ export default function Checkout() {
 											onChange={(e) =>
 												setCvv(e.target.value)
 											}
+											onBlur={validateForm}
 										/>
+										{errors.cvv && <p className="text-red-500 text-sm">{errors.cvv}</p>}
 									</div>
 								</div>
 							</form>
 							{/* Pay Now Button */}
 							<div className="mt-6">
-								<LinkButton
-									to="/payment"
-									text="Pay Now"
-									buttonClassNames="mt-3 px-6 bg-secondary-dark"
-								/>
+								<button 
+									type="submit" 
+									disabled={isProcessing}
+									className="mt-3 px-6 bg-secondary-dark text-white p-3 rounded-lg w-full">
+									${isProcessing ? "opacity-50 cursor-not-allowed" : ""}
+									{isProcessing ? "Processing Payment..." : "Pay Now"}
+								</button>
 							</div>
 						</div>
 					</div>
