@@ -43,8 +43,8 @@ export default function NavBar() {
 						text="Keyboard Designer"
 						className="hidden lg:block"
 					/>
-					<NavLink to="/shop/switches" text="Switches" />
-					<NavLink to="/shop/keyboards" text="Keyboards" />
+					<NavLink to="/switches" text="Switches" />
+					<NavLink to="/keyboards" text="Keyboards" />
 				</div>
 				<div className="w-1/3">
 					<Link
