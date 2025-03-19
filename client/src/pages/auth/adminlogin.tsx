@@ -1,15 +1,15 @@
+//same as sign in just slight changes for admin login
 /** @format */
 
 import React, { useEffect } from "react"
 import { useAuth } from "../../AuthContext"
 import Divider from "../../components/Divider"
-import LinkButton from "../../components/LinkButton"
 import { ArrowUpRight, ChevronRight } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import * as formValidation from "../../lib/formValidation"
 import ErrorBox from "../../components/ErrorBox"
 
-export default function SignIn() {
+export default function AdminLogin() {
 	const { login, isAuthenticated } = useAuth()
 	const [email, setEmail] = React.useState("")
 	const [password, setPassword] = React.useState("")
@@ -21,15 +21,16 @@ export default function SignIn() {
 
 		// validate email and password
 		// if error is empty, filter it out
-		const validationErrors = [
-			formValidation.validateEmail(email),
-			formValidation.validatePassword(password),
-		].filter(Boolean)
-	
-		setErrors(validationErrors)
+		setErrors(
+			[
+				formValidation.validateEmail(email),
+				formValidation.validatePassword(password),
+			].filter(Boolean),
+		)
 
-		// if there are errors, return
-		if (validationErrors.length > 0) {
+		// if there are errors, log them and return
+		if (errors.length) {
+			console.error(errors)
 			return
 		}
 
@@ -39,17 +40,13 @@ export default function SignIn() {
 				setErrors(['Login failed, please try again'])
 				return
 			}
-			if (role !== 'admin') {
-				navigate('/')
+			if (role === 'admin') {
+				navigate('/admin/dashboard');
 			} else {
-				setErrors(['Admins must log in using the admin page'])
+				console.error('Access denied, not an admin')
 			}
 		} catch (error) {
-			if (error instanceof Error) {
-				setErrors([error.message])
-			} else {
-				setErrors(["An unexpected error occurred"])
-			}
+			console.error(error)
 		}
 	}
 
@@ -57,17 +54,15 @@ export default function SignIn() {
 	useEffect(() => {
 		if (isAuthenticated) {
 			// redirect to home page if authenticated
-			navigate("/")
+			navigate('/')
 		}
 	}, [isAuthenticated, navigate])
 
 	return (
-		<div className="flex justify-center items-center bg-secondary">
-			<div className="flex h-screen max-w-screen-lg w-full">
-				<div className="px-4 my-24 md:grid md:grid-cols-2 gap-10 lg:gap-16 items-center w-full">
-					<form onSubmit={handleLogin}>
-						<div className="px-8 py-8 bg-white drop-shadow-cartoon rounded-lg border border-black mb-4 md:mb-0">
-							<div className="text-2xl font-display">Sign in</div>
+		<div className="flex justify-center items-center h-screen bg-primary">	
+					<form onSubmit={handleLogin} className="flex flex col space-y-4">
+						<div className="px-20 py-20 bg-white drop-shadow-cartoon rounded-lg border border-black mb-4 md:mb-0">
+							<div className="text-2xl font-display">Admin Sign in</div>
 							<Divider />
 							<div className="flex flex-col space-y-6">
 								<div>
@@ -116,23 +111,10 @@ export default function SignIn() {
 						</div>
 					</form>
 					<div>
-						<div className="px-8 py-8 bg-white drop-shadow-cartoon rounded-lg border border-black">
-							<ArrowUpRight className="w-8 h-8 -m-1" />
-							<div className="mt-4 text-2xl font-display">
-								New here?
-							</div>
-							<div className="mt-2 font-body">
-								Create an account to get started.
-							</div>
-							<LinkButton
-								to="/register"
-								text="Register"
-								buttonClassNames="mt-3 px-6 bg-white"
-							/>
-						</div>
+
+
 					</div>
 				</div>
-			</div>
-		</div>
+		
 	)
 }
