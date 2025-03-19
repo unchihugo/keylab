@@ -12,6 +12,7 @@ import ProductCarousel from "../../components/ProductCarousel"
 import { useState } from "react"
 import { useAuth } from "../../AuthContext"
 import Divider from "../../components/Divider"
+import UserReviewForm from "../../components/UserReviewForm"
 
 export default function Product() {
 	const { slug } = useParams()
@@ -33,8 +34,7 @@ export default function Product() {
 		deleteReview,
 		updateReview,
 	} = useProductReviews(slug as string)
-	const [newReviewRating, setNewReviewRating] = useState(0)
-	const [newReviewComment, setNewReviewComment] = useState("")
+	const [isEditingReview, setIsEditingReview] = useState(false)
 	const { isAuthenticated } = useAuth()
 
 	if (loading) return <div>Loading...</div>
@@ -212,152 +212,86 @@ export default function Product() {
 						{/* user's review */}
 						{userReview ? (
 							<div className="mt-4 border border-black w-full bg-white rounded-lg px-6 py-3">
-								<div className="font-medium text-2xl">
-									Your review
-								</div>
-								<div className="text-lg">
-									{Array.from(
-										{ length: userReview.rating },
-										(_, i) => (
-											<Star
-												key={i}
-												fill="#ffd063"
-												strokeWidth={0}
-												className="inline-block"
-											/>
-										),
-									)}
-								</div>
-								<div className="flex items-center gap-4">
-									<div className="font-bold">
-										{userReview.user_id}
-									</div>
-									<div className="text-black/50 text-sm">
-										{userReview.updated_at
-											? new Date(
-													userReview.updated_at,
-												).toLocaleDateString("en-US", {
-													year: "numeric",
-													month: "long",
-													day: "numeric",
-												})
-											: "No date available"}
-									</div>
-								</div>
-								<Divider />
-								<div>{userReview.comment}</div>
-								<div className="flex gap-2 justify-end">
-									<button
-										className="bg-white text-black p-2 px-4 rounded-full border
-										h-11 border-black justify-center items-center"
-										onClick={() => {
-											console.log(
-												"Edit review",
-												userReview,
-											)
-											deleteReview(userReview.id)
-										}}>
-										Delete review
-									</button>
-									<button
-										className="bg-primary text-black p-2 px-4 rounded-full border
-										h-11 border-black justify-center items-center"
-										onClick={() =>
-											updateReview(userReview.id, {
-												rating: 5,
-												comment: "Updated review",
-											})
-										}>
-										Update review
-									</button>
-								</div>
+								{isEditingReview ? (
+									<>
+										<div className="font-medium text-2xl mb-2">
+											Edit your review
+										</div>
+										<UserReviewForm 
+											initialRating={userReview.rating}
+											initialComment={userReview.comment}
+											onSubmit={(data) => {
+												updateReview(userReview.id, data);
+												setIsEditingReview(false);
+											}}
+											buttonText="Update Review"
+										/>
+									</>
+								) : (
+									<>
+										<div className="font-medium text-2xl">
+											Your review
+										</div>
+										<div className="text-lg">
+											{Array.from(
+												{ length: userReview.rating },
+												(_, i) => (
+													<Star
+														key={i}
+														fill="#ffd063"
+														strokeWidth={0}
+														className="inline-block"
+													/>
+												),
+											)}
+										</div>
+										<div className="flex items-center gap-4">
+											<div className="font-bold">
+												{userReview.user_id}
+											</div>
+											<div className="text-black/50 text-sm">
+												{userReview.updated_at
+													? new Date(
+															userReview.updated_at,
+														).toLocaleDateString("en-US", {
+															year: "numeric",
+															month: "long",
+															day: "numeric",
+														})
+													: "No date available"}
+											</div>
+										</div>
+										<Divider />
+										<div>{userReview.comment}</div>
+										<div className="flex gap-2 justify-end">
+											<button
+												className="bg-white text-black p-2 px-4 rounded-full border
+												h-11 border-black justify-center items-center"
+												onClick={() => {
+													deleteReview(userReview.id)
+												}}>
+												Delete review
+											</button>
+											<button
+												className="bg-primary text-black p-2 px-4 rounded-full border
+												h-11 border-black justify-center items-center"
+												onClick={() => setIsEditingReview(true)}>
+												Edit review
+											</button>
+										</div>
+									</>
+								)}
 							</div>
 						) : isAuthenticated ? (
 							<div className="mt-4 border border-black w-full bg-white rounded-lg px-6 py-3">
 								<div className="font-medium text-2xl mb-2">
 									Write a review
 								</div>
-
-								{/* Star Rating Input */}
-								<div className="mb-4">
-									<label className="block text-sm font-medium mb-2">
-										Rating
-									</label>
-									<div className="flex items-center gap-1">
-										{[1, 2, 3, 4, 5].map((star) => (
-											<button
-												key={star}
-												type="button"
-												onClick={() =>
-													setNewReviewRating(star)
-												}
-												className="text-lg focus:outline-none"
-												aria-label={`Rate ${star} stars`}>
-												{star <= newReviewRating ? (
-													<Star
-														fill="#ffd063"
-														strokeWidth={1}
-													/>
-												) : (
-													<Star
-														color="#111"
-														strokeWidth={1}
-													/>
-												)}
-											</button>
-										))}
-										<span className="ml-2 text-sm text-gray-500">
-											{newReviewRating > 0
-												? `${newReviewRating} stars`
-												: "Select a rating"}
-										</span>
-									</div>
-								</div>
-
-								{/* Review Comment Input */}
-								<div className="mb-4">
-									<label
-										htmlFor="reviewComment"
-										className="block text-sm font-medium mb-2">
-										Your Review
-									</label>
-									<textarea
-										id="reviewComment"
-										rows={4}
-										placeholder="Share your experience with this product..."
-										value={newReviewComment}
-										onChange={(e) =>
-											setNewReviewComment(e.target.value)
-										}
-										className="w-full p-2 border border-black rounded-md"
-									/>
-								</div>
-
-								{/* Submit Button */}
-								<div className="flex justify-end">
-									<button
-										onClick={() => {
-											if (newReviewRating > 0) {
-												submitReview({
-													rating: newReviewRating,
-													comment: newReviewComment,
-												})
-												console.log(
-													"Submit review",
-													userReview,
-												)
-											}
-										}}
-										disabled={newReviewRating === 0}
-										className={`p-2 px-4 rounded-full border
-										h-11 border-black justify-center items-center ${
-											newReviewRating > 0
-												? "bg-primary text-black"
-												: "bg-gray-300 text-gray-500 cursor-not-allowed"
-										}`}>
-										Submit Review
-									</button>
-								</div>
+								<UserReviewForm 
+									onSubmit={(data) => {
+										submitReview(data);
+									}}
+								/>
 							</div>
 						) : (
 							<div className="mt-4 border border-black w-full bg-white rounded-lg px-6 py-3">

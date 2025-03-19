@@ -25,11 +25,10 @@ export default function Home() {
 						{/* First main column - takes up 1/2 of the space */}
 						<Link
 							to={"/shop"}
-							className="md:w-1/2 bg-white rounded-lg p-6 h-56 md:h-96 flex flex-col justify-between bg-cover bg-right bg-no-repeat"
+							className="md:w-1/2 bg-white rounded-lg p-6 h-56 md:h-96 flex flex-col justify-between bg-right bg-no-repeat bg-[length:85%] transition-all duration-300 hover:bg-[length:90%]"
 							style={{
 								backgroundImage:
-									"url('./public/home/keyboards-lined-up.png')",
-								backgroundSize: "75%",
+									"url('./home/keyboards-lined-up.png')",
 							}}>
 							<h3 className="text-2xl font-display mb-4">
 								Prebuilt Keyboards
@@ -45,11 +44,10 @@ export default function Home() {
 								{/* First sub-column of second main column */}
 								<Link
 									to={"/shop"}
-									className="md:w-1/2 bg-[#DDDCED] rounded-lg p-6 h-full flex flex-col justify-between bg-cover bg-center bg-no-repeat"
+									className="md:w-1/2 bg-[#DDDCED] rounded-lg p-6 h-full flex flex-col justify-between bg-center bg-no-repeat bg-[length:90%] transition-all duration-300 hover:bg-[length:95%]"
 									style={{
 										backgroundImage:
-											"url('./public/home/CreatorboardXL.webp')",
-										backgroundSize: "90%",
+											"url('./home/CreatorboardXL.webp')",
 									}}>
 									<h3 className="text-xl font-display mb-4">
 										Keyboard Designer
@@ -64,10 +62,10 @@ export default function Home() {
 									{/* First row of second sub-column */}
 									<Link
 										to={"/shop"}
-										className="h-1/2 bg-[#E0E1CE] rounded-lg p-6 flex flex-col justify-between bg-contain bg-center bg-no-repeat"
+										className="h-1/2 bg-[#E0E1CE] rounded-lg p-6 flex flex-col justify-between bg-center bg-no-repeat bg-[length:55%] transition-all duration-300 hover:bg-[length:60%]"
 										style={{
 											backgroundImage:
-												"url('./public/home/keycap-pile.png')",
+												"url('./home/keycap-pile.png')",
 										}}>
 										<h3 className="text-xl font-display mb-2">
 											Keycaps
@@ -80,10 +78,10 @@ export default function Home() {
 									{/* Second row of second sub-column */}
 									<Link
 										to={"/shop"}
-										className="h-1/2 bg-[#E5CCD0] rounded-lg p-6 flex flex-col justify-between bg-cover bg-center bg-no-repeat"
+										className="h-1/2 bg-[#E5CCD0] rounded-lg p-6 flex flex-col justify-between bg-center bg-no-repeat bg-[length:80%] transition-all duration-300 hover:bg-[length:85%]"
 										style={{
 											backgroundImage:
-												"url('./public/home/kailh-switches.webp')",
+												"url('./home/kailh-switches.webp')",
 										}}>
 										<h3 className="text-xl font-display mb-2">
 											Switches
