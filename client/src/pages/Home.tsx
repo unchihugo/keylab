@@ -102,14 +102,20 @@ export default function Home() {
 						<div className="text-xl font-display my-4">
 							Popular Keycaps
 						</div>
-						<ProductCarousel products={popularKeycaps} hideOverflow={true} />
+						<ProductCarousel
+							products={popularKeycaps}
+							hideOverflow={true}
+						/>
 					</div>
 
 					<div className="mb-8">
 						<div className="text-xl font-display mb-4">
 							Popular Keyboards
 						</div>
-						<ProductCarousel products={popularKeyboards} hideOverflow={true} />
+						<ProductCarousel
+							products={popularKeyboards}
+							hideOverflow={true}
+						/>
 					</div>
 				</div>
 

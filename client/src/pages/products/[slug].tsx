@@ -217,12 +217,15 @@ export default function Product() {
 										<div className="font-medium text-2xl mb-2">
 											Edit your review
 										</div>
-										<UserReviewForm 
+										<UserReviewForm
 											initialRating={userReview.rating}
 											initialComment={userReview.comment}
 											onSubmit={(data) => {
-												updateReview(userReview.id, data);
-												setIsEditingReview(false);
+												updateReview(
+													userReview.id,
+													data,
+												)
+												setIsEditingReview(false)
 											}}
 											buttonText="Update Review"
 										/>
@@ -253,11 +256,14 @@ export default function Product() {
 												{userReview.updated_at
 													? new Date(
 															userReview.updated_at,
-														).toLocaleDateString("en-US", {
-															year: "numeric",
-															month: "long",
-															day: "numeric",
-														})
+														).toLocaleDateString(
+															"en-US",
+															{
+																year: "numeric",
+																month: "long",
+																day: "numeric",
+															},
+														)
 													: "No date available"}
 											</div>
 										</div>
@@ -275,7 +281,9 @@ export default function Product() {
 											<button
 												className="bg-primary text-black p-2 px-4 rounded-full border
 												h-11 border-black justify-center items-center"
-												onClick={() => setIsEditingReview(true)}>
+												onClick={() =>
+													setIsEditingReview(true)
+												}>
 												Edit review
 											</button>
 										</div>
@@ -287,9 +295,9 @@ export default function Product() {
 								<div className="font-medium text-2xl mb-2">
 									Write a review
 								</div>
-								<UserReviewForm 
+								<UserReviewForm
 									onSubmit={(data) => {
-										submitReview(data);
+										submitReview(data)
 									}}
 								/>
 							</div>
