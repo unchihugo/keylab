@@ -268,7 +268,7 @@ export default function Product() {
 											</div>
 										</div>
 										<Divider />
-										<div>{userReview.comment}</div>
+										<div className="text-pretty">{userReview.comment}</div>
 										<div className="flex gap-2 justify-end">
 											<button
 												className="bg-white text-black p-2 px-4 rounded-full border
@@ -358,7 +358,7 @@ export default function Product() {
 										</div>
 									</div>
 									<Divider />
-									<div>{review.comment}</div>
+									<div className="text-pretty">{review.comment}</div>
 								</div>
 							))}
 					</div>

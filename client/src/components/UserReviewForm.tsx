@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { Star } from "lucide-react"
+import { validateReview } from "../lib/formValidation"
+import ErrorBox from "./ErrorBox"
 
 interface UserReviewFormProps {
 	initialRating?: number
@@ -20,6 +22,7 @@ export default function UserReviewForm({
 }: UserReviewFormProps) {
 	const [rating, setRating] = useState(initialRating)
 	const [comment, setComment] = useState(initialComment)
+	const [errors, setErrors] = useState<string[]>([])
 
 	// Update state if props change (useful for edit mode)
 	useEffect(() => {
@@ -28,9 +31,15 @@ export default function UserReviewForm({
 	}, [initialRating, initialComment])
 
 	const handleSubmit = () => {
-		if (rating > 0) {
-			onSubmit({ rating, comment })
+		// Validate review input
+		setErrors([])
+		setErrors(validateReview({ rating, comment }))
+
+		if (errors.length > 0) {
+			return
 		}
+
+		onSubmit({ rating, comment })
 	}
 
 	return (
@@ -72,8 +81,9 @@ export default function UserReviewForm({
 					placeholder="Share your experience with this product..."
 					value={comment}
 					onChange={(e) => setComment(e.target.value)}
-					className="w-full p-2 border border-black rounded-md"
+					className="w-full p-2 border border-black rounded-md mb-2"
 				/>
+				<ErrorBox>{errors}</ErrorBox>
 			</div>
 
 			{/* Submit Button */}
@@ -81,7 +91,7 @@ export default function UserReviewForm({
 				<button
 					onClick={handleSubmit}
 					disabled={rating === 0 || isSubmitting}
-					className={`p-2 px-4 rounded-full border
+					className={`p-2 mt-2 mb-4 rounded-full border
           h-11 border-black justify-center items-center ${
 				rating > 0 && !isSubmitting
 					? "bg-primary text-black"
