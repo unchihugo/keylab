@@ -174,8 +174,8 @@ export const validateReview = (review: {
 		errors.push("Review comment must be at least 10 characters")
 	}
 
-	if (review.comment && review.comment.trim().length > 500) {
-		errors.push("Review comment cannot exceed 500 characters")
+	if (review.comment && review.comment.trim().length > 255) {
+		errors.push("Review comment cannot exceed 255 characters")
 	}
 
 	return errors
