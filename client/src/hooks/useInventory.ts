@@ -66,5 +66,4 @@ export function useInventory() {
   };
 
   return { products, loading, error, addProduct, updateProduct, deleteProduct };
-}
-
+} 

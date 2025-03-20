@@ -1,7 +1,16 @@
 const API_URL = "https://your-api-url.com/products";
 
+interface Product {
+  id: string;
+  name: string;
+  stock: number;
+  price: number;
+  image: string;
+  description: string;
+}
+
 export const inventoryService = {
-  async getProducts() {
+  async getProducts(): Promise<Product[]> {
     try {
       const response = await fetch(API_URL, {
         method: "GET",
@@ -15,7 +24,7 @@ export const inventoryService = {
     }
   },
 
-  async createProduct(product: any) {
+  async createProduct(product: Product): Promise<Product | null> {
     try {
       const response = await fetch(API_URL, {
         method: "POST",
@@ -31,7 +40,7 @@ export const inventoryService = {
     }
   },
 
-  async updateProduct(id: string, updatedProduct: any) {
+  async updateProduct(id: string, updatedProduct: Product): Promise<Product | null> {
     try {
       const response = await fetch(`${API_URL}/${id}`, {
         method: "PUT",
@@ -47,8 +56,7 @@ export const inventoryService = {
     }
   },
 
-
-  async deleteProduct(id: string) {
+  async deleteProduct(id: string): Promise<boolean> {
     try {
       const response = await fetch(`${API_URL}/${id}`, {
         method: "DELETE",
