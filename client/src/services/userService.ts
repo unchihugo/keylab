@@ -47,7 +47,11 @@ export const userService = {
 	// request to backend to change users password
 	async changePassword(
 		userId: number,
-		passwordData: { current_password: string; new_password: string },
+		passwordData: {
+			current_password: string
+			new_password: string
+			password_confirmation: string
+		},
 	) {
 		const response = await fetch(
 			`${USERS_API_URL}/${userId}/change-password`,
