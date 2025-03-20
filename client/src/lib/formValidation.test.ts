@@ -78,7 +78,9 @@ test("validateMatch", () => {
 			"Email addresses",
 		),
 	).toBe("Email addresses do not match")
-	expect(validateMatch("email@example.com", "email@example.com", "Passwords")).toBe("")
+	expect(
+		validateMatch("email@example.com", "email@example.com", "Passwords"),
+	).toBe("")
 })
 
 test("validatePhoneNum", () => {
