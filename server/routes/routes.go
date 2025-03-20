@@ -74,5 +74,5 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	e.GET("/users/:id", handlers.GetUserProfile,middleware.AuthMiddleware(sessionStore))
 	e.PUT("/users/:id", handlers.UpdateUserProfile,middleware.AuthMiddleware(sessionStore))
 	e.POST("/users/:id/change-password", handlers.ChangeUserPassword,middleware.AuthMiddleware(sessionStore))
-	//e.GET("/users/:id/orders", handlers.GetUserOrders,middleware.AuthMiddleware(sessionStore))
+	e.GET("/users/:id/orders", handlers.GetUserOrders,middleware.AuthMiddleware(sessionStore))
 }

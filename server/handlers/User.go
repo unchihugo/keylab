@@ -87,7 +87,12 @@ func UpdateUserProfile(c echo.Context) error {
         return jsonResponse(c, http.StatusInternalServerError, "Could not update user")
     }
 
-    return jsonResponse(c, http.StatusOK, "User profile updated successfully", updatedUser)
+	fullUser, err := repositories.FindUserByID(userID)
+	if err != nil {
+	    return jsonResponse(c, http.StatusInternalServerError, "Failed to retrieve updated user")
+	}
+
+return jsonResponse(c, http.StatusOK, "User profile updated successfully", fullUser) 
 }
 
 // ChangeUserPassword [POST /users/:id/change-password]
@@ -114,11 +119,16 @@ func ChangeUserPassword(c echo.Context) error {
 	var body struct {
 		CurrentPassword string `json:"current_password"`
 		NewPassword     string `json:"new_password"`
+		PasswordConfirmation string `json:"password_confirmation"`
 	}
 
 	if err := c.Bind(&body); err != nil {
 		log.Printf("Error binding password data: %v", err)
 		return jsonResponse(c, http.StatusBadRequest, "Invalid request body")
+	}
+
+	if body.NewPassword != body.PasswordConfirmation {
+		return jsonResponse(c, http.StatusBadRequest, "New password and confirmation do not match")
 	}
 
 	user, err := repositories.FindUserByID(userID)
@@ -148,3 +158,34 @@ func ChangeUserPassword(c echo.Context) error {
 }
 
 // GetUserOrders [GET /users/:id/orders]
+// 1. Ensures the user is authenticated
+// 2. Fetches user ID from the request and validates it
+// 3. Checks if the authenticated user matches the requested user ID
+// 4. Retrieves orders from the database associated with the user
+// 5. Returns status 200 with the orders if successful
+// 6. Returns status 400 if user ID is invalid
+// 7. Returns status 401 if the user is not authenticated
+// 8. Returns status 404 if user has no orders
+func GetUserOrders(c echo.Context) error {
+
+    userID, err := convertToInt64(c.Param("id"))
+    if err != nil {
+        return jsonResponse(c, http.StatusBadRequest, "Invalid user ID")
+    }
+
+    authenticatedUser, ok := c.Get("user").(models.User)
+    if !ok || authenticatedUser.ID != userID {
+        return jsonResponse(c, http.StatusUnauthorized, "Unauthorized to view orders")
+    }
+
+    var orders []models.Order
+    if err := db.DB.Where("user_id = ?", userID).Preload("OrderedItems").Find(&orders).Error; err != nil {
+        return jsonResponse(c, http.StatusInternalServerError, "Error fetching orders")
+    }
+
+    if len(orders) == 0 {
+        return jsonResponse(c, http.StatusNotFound, "No orders found for this user")
+    }
+
+    return jsonResponse(c, http.StatusOK, "User orders retrieved successfully", orders)
+}
