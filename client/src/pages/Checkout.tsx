@@ -1,9 +1,9 @@
 /** @format */
 
 import React, { useState } from "react"
-import { useNavigate } from "react-router-dom";
 import Divider from "../components/Divider"
 import { validateForename, validateMessage } from "../lib/formValidation";
+
 
 interface FormErrors {
 	firstName?: string;
@@ -15,7 +15,6 @@ interface FormErrors {
 	cvv?: string;
 }
 export default function Checkout() {
-	const navigate = useNavigate();
 	const [firstName, setFirstName] = useState("")
 	const [lastName, setLastName] = useState("")
 	const [address1, setAddress1] = useState("")
@@ -45,14 +44,18 @@ export default function Checkout() {
     };
 
     const handlePayment = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-    setIsProcessing(true);
-
-    setTimeout(() => {
-        navigate("../components/Thankyou.tsx");
-    }, 2000);
-};
+		e.preventDefault();
+		console.log("Form submitted");
+	
+		if (!validateForm()) return; 
+		console.log("Validation failed:", errors);
+	
+		setIsProcessing(true); 
+	
+		setTimeout(() => {
+			window.location.href = "/thankyou";
+		}, 2000);
+	};
 
 	return (
 		<div className="flex justify-center items-center bg-primary">
@@ -140,9 +143,7 @@ export default function Checkout() {
 									onChange={(e) =>
 										setAddress2(e.target.value)
 									}
-									onBlur={validateForm}
 								/>
-								{errors.address2 && <p className="text-red-500 text-sm">{errors.address2} </p>}
 							</div>
 							<div className="grid grid-cols-2 gap-6">
 								<div>
@@ -306,17 +307,14 @@ export default function Checkout() {
 										{errors.cvv && <p className="text-red-500 text-sm">{errors.cvv}</p>}
 									</div>
 								</div>
-							</form>
 							{/* Pay Now Button */}
-							<div className="mt-6">
-								<button 
-									type="submit" 
-									disabled={isProcessing}
-									className="mt-3 px-6 bg-secondary-dark text-white p-3 rounded-lg w-full">
-									${isProcessing ? "opacity-50 cursor-not-allowed" : ""}
-									{isProcessing ? "Processing Payment..." : "Pay Now"}
-								</button>
-							</div>
+							<button
+								type="submit"
+								className="w-full bg-secondary-dark text-white p-3 rounded-lg font-semibold"
+								disabled={isProcessing}>
+								{isProcessing ? "Processing..." : "Pay Now"}
+							</button>
+							</form>
 						</div>
 					</div>
 				</div>
