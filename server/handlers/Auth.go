@@ -2,14 +2,12 @@ package handlers
 
 import (
 	"fmt"
-	db "keylab/database"
 	"keylab/database/models"
 	"keylab/repositories"
 	"keylab/utils"
 	"log"
 	"net/http"
 
-	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
 )
 
@@ -23,46 +21,46 @@ const SessionName = "keylab"
 // 5. Initiates the session with the user's ID.
 // 6. Returns status 200 if successful.
 
-func Login(sessionStore *sessions.CookieStore) echo.HandlerFunc {
-	return func(c echo.Context) error {
-
-		// Parsing user input from the request body, and validating it.
-		var user models.User
-		if err := c.Bind(&user); err != nil {
-			return jsonResponse(c, http.StatusBadRequest, "Invalid input")
-		}
-
-		if err := user.Validate("Email"); err != nil {
-			return jsonResponse(c, http.StatusBadRequest, err.Error())
-		}
-
-		// Checks if user exists, returns status 401 if not.
-		validUser, err := repositories.FindUserByEmail(user.Email)
-		if err != nil {
-			log.Printf("Error in database while finding user by email: %v", err)
-			return jsonResponse(c, http.StatusInternalServerError, "Error checking existing user")
-		}
-
-		// Compares the password hash against the user's password hash.
-		if validUser == nil || utils.ComparePasswordHash(user.Password, validUser.Password) != nil {
-			return jsonResponse(c, http.StatusUnauthorized, "Invalid email or password")
-		}
-
-		// Creates or gets session for the user.
-		session, err := sessionStore.Get(c.Request(), SessionName)
-		if err != nil {
-			log.Printf("Error creating session: %v", err)
-			return jsonResponse(c, http.StatusInternalServerError, "Error creating session")
-		}
-
-		// Initiates the session with the user's ID.
-		initiateSession(session, validUser.ID)
-		if err := session.Save(c.Request(), c.Response()); err != nil {
-			return jsonResponse(c, http.StatusInternalServerError, "Error saving session")
-		}
-
-		return jsonResponse(c, http.StatusOK, "Logged in successfully!")
+func (h *Handlers) Login(c echo.Context) error {
+	// Parsing user input from the request body, and validating it.
+	var user models.User
+	if err := c.Bind(&user); err != nil {
+		return jsonResponse(c, http.StatusBadRequest, "Invalid input")
 	}
+
+	if err := user.Validate("Email", "Password"); err != nil {
+		return jsonResponse(c, http.StatusBadRequest, err.Error())
+	}
+
+	// Checks if user exists, returns status 401 if not.
+	validUser, err := repositories.FindUserByEmail(user.Email, h.DB)
+	if err != nil {
+		log.Printf("Error in database while finding user by email: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error checking existing user")
+	}
+
+	// Compares the password hash against the user's password hash.
+	if validUser == nil || utils.ComparePasswordHash(user.Password, validUser.Password) != nil {
+		return jsonResponse(c, http.StatusUnauthorized, "Invalid email or password")
+	}
+
+	// Creates or gets session for the user.
+	session, err := h.SessionStore.Get(c.Request(), SessionName)
+	if err != nil {
+		log.Printf("Error creating session: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error creating session")
+	}
+
+	// Initiates the session with the user's ID.
+	initiateSession(session, validUser.ID)
+	if err := session.Save(c.Request(), c.Response()); err != nil {
+		return jsonResponse(c, http.StatusInternalServerError, "Error saving session")
+	}
+
+	fmt.Println(session)
+
+	return jsonResponse(c, http.StatusOK, "Logged in successfully!")
+
 }
 
 // Register Handler [POST /auth/register]
@@ -72,7 +70,7 @@ func Login(sessionStore *sessions.CookieStore) echo.HandlerFunc {
 // 4. Creates the user in the database.
 // 5. Returns status 200 if successful.
 
-func Register(c echo.Context) error {
+func (h *Handlers) Register(c echo.Context) error {
 
 	// Parsing user input from the request body, and validating it.
 	var user models.User
@@ -85,7 +83,7 @@ func Register(c echo.Context) error {
 	}
 
 	// Checks if user exists, returns status 401 if not.
-	validUser, err := repositories.FindUserByEmail(user.Email)
+	validUser, err := repositories.FindUserByEmail(user.Email, h.DB)
 	if err != nil {
 		// If error occurs while checking for existing user, return 500 and output error message to terminal.
 		log.Printf("Error checking existing user: %v", err)
@@ -114,7 +112,7 @@ func Register(c echo.Context) error {
 	user.Password = hashedPassword
 
 	// Creates the user in the database.
-	if err := db.DB.Create(&user).Error; err != nil {
+	if err := h.DB.Create(&user).Error; err != nil {
 		return jsonResponse(c, http.StatusInternalServerError, "Error creating user")
 	}
 
@@ -127,24 +125,22 @@ func Register(c echo.Context) error {
 // 3. Saves the session.
 // 4. Returns status 200 if successful.
 
-func Logout(sessionStore *sessions.CookieStore) echo.HandlerFunc {
-	return func(c echo.Context) error {
+func (h *Handlers) Logout(c echo.Context) error {
 
-		// Gets the session for the user.
-		session, err := sessionStore.Get(c.Request(), SessionName)
-		if err != nil {
-			return jsonResponse(c, http.StatusInternalServerError, "Error retrieving session")
-		}
-
-		// Sets the session's MaxAge to -1 essentially deleting the session.
-		session.Options.MaxAge = -1
-		if err := session.Save(c.Request(), c.Response()); err != nil {
-			fmt.Println(err)
-			return jsonResponse(c, http.StatusInternalServerError, "Error saving session")
-		}
-
-		return jsonResponse(c, http.StatusOK, "Logged out successfully!")
+	// Gets the session for the user.
+	session, err := h.SessionStore.Get(c.Request(), SessionName)
+	if err != nil {
+		return jsonResponse(c, http.StatusInternalServerError, "Error retrieving session")
 	}
+
+	// Sets the session's MaxAge to -1 essentially deleting the session.
+	session.Options.MaxAge = -1
+	if err := session.Save(c.Request(), c.Response()); err != nil {
+		fmt.Println(err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error saving session")
+	}
+
+	return jsonResponse(c, http.StatusOK, "Logged out successfully!")
 }
 
 // ValidateSession Handler [GET /auth/validate]
@@ -153,29 +149,33 @@ func Logout(sessionStore *sessions.CookieStore) echo.HandlerFunc {
 // 3. Returns status 401 if unsuccessful.
 // 4. Returns status 500 if an error occurs.
 
-func ValidateSession(sessionStore *sessions.CookieStore) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		user, ok := c.Get("user").(models.User)
-		if !ok {
-			return jsonResponse(c, http.StatusUnauthorized, "Invalid session")
-		}
+func (h *Handlers) ValidateSession(c echo.Context) error {
+	session, err := h.SessionStore.Get(c.Request(), SessionName)
 
-		if user.ID == 0 {
-			return jsonResponse(c, http.StatusUnauthorized, "Invalid session")
-		}
-
-		return jsonResponse(c, http.StatusOK, "Valid session", user)
+	if err != nil || session.Values["user_id"] == nil {
+		return jsonResponse(c, http.StatusUnauthorized, "Unauthorized")
 	}
+
+	userID, ok := session.Values["user_id"].(int64)
+	if !ok {
+		return jsonResponse(c, http.StatusUnauthorized, "Invalid session data")
+	}
+
+	user, err := repositories.FindUserByID(userID, h.DB)
+	if err != nil {
+		return jsonResponse(c, http.StatusUnauthorized, "Unauthorized")
+	}
+
+	// Return success with user data
+	return jsonResponse(c, http.StatusOK, "Valid session", user)
 }
 
 // REMOVE LATER
 
-func TestPermission() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		user := c.Get("user").(models.User)
+func (h *Handlers) TestPermission(c echo.Context) error {
+	user := c.Get("user").(models.User)
 
-		fmt.Println(user)
+	fmt.Println(user)
 
-		return jsonResponse(c, http.StatusOK, "Test Permission")
-	}
+	return jsonResponse(c, http.StatusOK, "Test Permission")
 }
