@@ -1,0 +1,10 @@
+CREATE TABLE contact_us_requests (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    forename VARCHAR(100) NOT NULL,
+    surname VARCHAR(100) NOT NULL,  
+    email VARCHAR(320) NOT NULL,
+    phone_number VARCHAR(15),                
+    message TEXT NOT NULL, 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);

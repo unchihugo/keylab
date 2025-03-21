@@ -5,6 +5,7 @@ import Divider from "../components/Divider"
 import InputBox from "../components/InputBox"
 import LinkButton from "../components/LinkButton"
 import { LockKeyhole, Minus, Plus } from "lucide-react"
+import { Link } from "react-router-dom"
 
 export default function Cart() {
 	{
@@ -83,9 +84,9 @@ export default function Cart() {
 		/* product section of the cart page where users can see their products and add/remove */
 	}
 	return (
-		<div className="flex bg-primary/50 justify-center items-start">
-			<div className="flex flex-col w-full lg:flex-row max-w-screen-lg">
-				<div className="w-full lg:w-1/2 bg-white mt-40 drop-shadow-cartoon rounded-lg border border-black h-fit">
+		<div className="flex bg-primary/50 justify-center items-start pt-40 pb-20">
+			<div className="flex flex-col w-full md:flex-row max-w-screen-lg gap-10 p-4 lg:p-0">
+				<div className="w-full lg:w-1/2 bg-white drop-shadow-cartoon rounded-lg border border-black h-fit">
 					<div className="text-3xl font-display pl-6 my-6">
 						Basket Summary
 					</div>
@@ -134,8 +135,8 @@ export default function Cart() {
 				</div>
 
 				{/* order section of the cart page */}
-				<div className="w-full lg:w-1/2 flex flex-col pr-10 items-end justify-center h-screen">
-					<div className="px-8 py-8 mt-20 bg-white drop-shadow-cartoon rounded-lg border border-black w-fit">
+				<div className="w-full lg:w-1/2 flex flex-col items-end">
+					<div className="px-8 py-8 bg-white drop-shadow-cartoon rounded-lg border border-black w-full">
 						<div className="text-4xl font-display">
 							Order Summary
 						</div>
@@ -150,7 +151,7 @@ export default function Cart() {
 						<InputBox />
 						<div className="flex flex-col w-full">
 							<LinkButton
-								to="/cart/checkout"
+								to="/checkout"
 								buttonClassNames="px-10 py-5 bg-secondary-dark w-full mt-12"
 								text="Checkout"
 								Icon={LockKeyhole}

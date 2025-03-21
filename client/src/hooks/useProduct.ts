@@ -12,9 +12,12 @@ import { productService } from "../services/productService"
  */
 export const useProduct = (slug: string) => {
 	const [product, setProduct] = useState<Product | null>(null)
+	const [relatedProducts, setRelatedProducts] = useState<Product[]>([])
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState<string | null>(null)
+	const [quantity, setQuantity] = useState(1)
 
+	// Fetch the product by its slug when the component mounts
 	useEffect(() => {
 		const fetchProduct = async () => {
 			try {
@@ -43,6 +46,15 @@ export const useProduct = (slug: string) => {
 					price: 10.99,
 					stock: 100,
 					category_id: 1,
+					product_images: [
+						{
+							id: 1,
+							product_id: 1,
+							image: "Keychron V1 Custom Mechanical Keyboard frosted black knob K-Pro red",
+							url: "http://localhost:8080/products/image/public/seed/ducky-one-2-mini.jpg",
+							primary_image: true,
+						},
+					],
 				},
 				message: "Product found",
 			})
@@ -57,5 +69,65 @@ export const useProduct = (slug: string) => {
 		}
 	}, [slug])
 
-	return { product, loading, error }
+	// Fetch related products when the product changes
+	useEffect(() => {
+		const fetchRelatedProducts = async () => {
+			if (!product?.data.name) return
+			try {
+				// cut the product name and get the first word for query
+				const query = String(product.data.name).split(" ")[0]
+				const response = await productService.searchProducts(query)
+				setRelatedProducts(response.data.products)
+				console.log(response.data.products)
+			} catch (error) {
+				setError(
+					error instanceof Error
+						? error.message
+						: "An error occurred",
+				)
+			}
+		}
+
+		fetchRelatedProducts()
+	}, [product?.data.name])
+
+	/**
+	 * Add the current product to user's cart, taking into account the quantity
+	 */
+	const addProductToCart = () => {
+		if (!product) return
+		if (quantity < 1) return
+		if (quantity > product.data.stock) return
+
+		try {
+			// Add product to cart
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	/**
+	 * Increase the quantity of the product to be added to the cart by 1
+	 */
+	const incrementQuantity = () => {
+		setQuantity((prev) => prev + 1)
+	}
+
+	/**
+	 * Descrease the quantity of the product to be added to the cart by 1 if it's not already 1
+	 */
+	const decrementQuantity = () => {
+		setQuantity((prev) => (prev > 1 ? prev - 1 : 1))
+	}
+
+	return {
+		product,
+		relatedProducts,
+		loading,
+		error,
+		quantity,
+		incrementQuantity,
+		decrementQuantity,
+		addProductToCart,
+	}
 }

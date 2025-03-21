@@ -14,10 +14,10 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	authGroup.POST("/register", handlers.Register)
 	authGroup.POST("/login", handlers.Login(sessionStore))
 	authGroup.POST("/logout", handlers.Logout(sessionStore))
+	authGroup.GET("/validate", handlers.ValidateSession(sessionStore))
 
-	// Protected related routes (example only but following the same pattern)
-	protectedRoutes := e.Group("/protected", middleware.AuthMiddleware(sessionStore))
-	protectedRoutes.GET("/", handlers.Protected)
+	// TEMP TEST ROUTE - use as an example
+	e.GET("/test/permission", handlers.TestPermission(), middleware.AuthMiddleware(sessionStore), middleware.PermissionMiddleware("admin:dashboard"))
 
 	// Category related routes
 	categoryGroup := e.Group("/categories")
@@ -33,13 +33,16 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	productGroup := e.Group("/products")
 	productGroup.GET("", handlers.ListProducts)
 	productGroup.GET("/:slug", handlers.GetProductBySlug)
-	productGroup.GET("/category/:category", handlers.GetProductsByCategory)
+	productGroup.GET("/category/:id", handlers.GetProductsByCategory)
 	productGroup.GET("/search/:query", handlers.SearchProducts)
+	productGroup.GET("/image/:path", handlers.GetProductImage)
 
 	// TODO: Add admin middleware to the following routes
 	productGroup.POST("", handlers.CreateProduct)
 	productGroup.DELETE("/:id", handlers.DeleteProduct)
 	productGroup.PUT("/:id", handlers.UpdateProduct)
+	productGroup.POST("/:slug/image", handlers.UploadProductImages)
+	productGroup.DELETE("/:slug/image/:id", handlers.DeleteProductImage)
 
 	productReviewGroup := e.Group("/products/:product_slug/reviews")
 	productReviewGroup.GET("", handlers.GetReviewsByProduct)
@@ -51,4 +54,19 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore) {
 	productReviewGroup.POST("", handlers.CreateReview, middleware.AuthMiddleware(sessionStore))
 	productReviewGroup.PUT("/:id", handlers.UpdateReview, middleware.AuthMiddleware(sessionStore))
 	productReviewGroup.DELETE("/:id", handlers.DeleteReview, middleware.AuthMiddleware(sessionStore))
+
+	// Cart related routes
+	cartGroup := e.Group("/cart", middleware.AuthMiddleware(sessionStore))
+	cartGroup.GET("", handlers.ListCartItems)
+	cartGroup.POST("", handlers.AddCartItem)
+	cartGroup.PUT("/:id", handlers.UpdateCartItemQuantity)
+	cartGroup.DELETE("/:id", handlers.DeleteCartItem)
+	cartGroup.POST("/checkout", handlers.CheckoutCart)
+
+	// Orders related routes
+	e.GET("/user/orders/:id", handlers.GetUserOrderDetails, middleware.AuthMiddleware(sessionStore))
+	// NEEDS ADMIN MIDDLEWARE
+	e.PUT("/orders/:id/status", handlers.UpdateOrderStatus)
+
+	e.POST("/contact", handlers.ContactUs)
 }

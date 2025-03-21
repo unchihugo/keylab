@@ -10,7 +10,7 @@ import Divider from "./components/Divider"
 import NavLink from "./components/NavLink"
 
 export default function NavBar() {
-	const { isAuthenticated, logout } = useAuth() // gets auth state from AuthContext
+	const { isAuthenticated, isLoading, logout } = useAuth() // gets auth state from AuthContext
 	const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false)
 
 	const toggleMobileMenu = () => {
@@ -62,39 +62,43 @@ export default function NavBar() {
 				</div>
 				<div className="flex w-1/3 justify-end items-center">
 					<div className="hidden md:flex">
-						{isAuthenticated ? (
+						{!isLoading && (
 							<>
-								{/* Signed in view */}
-								{/* TODO: remove temporary logout button */}
-								<button
-									onClick={() => logout()}
-									className="bg-secondary-dark text-white px-6 py-2 text-sm rounded-full">
-									temp logout btn
-								</button>
-								<LinkButton
-									to="/profile"
-									buttonClassNames="ms-2 h-10 w-10 bg-white"
-									Icon={UserRound}
-								/>
-								<LinkButton
-									to="/favorites"
-									buttonClassNames="ms-2 h-10 w-10 bg-white"
-									Icon={Heart}
-								/>
-							</>
-						) : (
-							<>
-								{/* Not signed in view */}
-								<LinkButton
-									to="/sign-in"
-									text="Sign in"
-									buttonClassNames="bg-white px-3 lg:px-6 hidden md:block"
-								/>
-								<LinkButton
-									to="/register"
-									text="Register"
-									buttonClassNames="bg-secondary-dark px-3 lg:px-6 hidden md:block ms-2"
-								/>
+								{isAuthenticated ? (
+									<>
+										{/* Signed in view */}
+										{/* TODO: remove temporary logout button */}
+										<button
+											onClick={() => logout()}
+											className="bg-secondary-dark text-white px-6 py-2 text-sm rounded-full">
+											temp logout btn
+										</button>
+										<LinkButton
+											to="/profile"
+											buttonClassNames="ms-2 h-10 w-10 bg-white"
+											Icon={UserRound}
+										/>
+										<LinkButton
+											to="/favorites"
+											buttonClassNames="ms-2 h-10 w-10 bg-white"
+											Icon={Heart}
+										/>
+									</>
+								) : (
+									<>
+										{/* Not signed in view */}
+										<LinkButton
+											to="/sign-in"
+											text="Sign in"
+											buttonClassNames="bg-white px-3 lg:px-6 hidden md:block"
+										/>
+										<LinkButton
+											to="/register"
+											text="Register"
+											buttonClassNames="bg-secondary-dark px-3 lg:px-6 hidden md:block ms-2"
+										/>
+									</>
+								)}
 							</>
 						)}
 						<LinkButton
