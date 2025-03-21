@@ -8,9 +8,10 @@ import (
 
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
-func AuthMiddleware(sessionStore *sessions.CookieStore) echo.MiddlewareFunc {
+func AuthMiddleware(sessionStore *sessions.CookieStore, db *gorm.DB) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			session, err := sessionStore.Get(c.Request(), handlers.SessionName)
@@ -24,7 +25,7 @@ func AuthMiddleware(sessionStore *sessions.CookieStore) echo.MiddlewareFunc {
 				return c.JSON(http.StatusUnauthorized, "Invalid session data")
 			}
 
-			user, err := repositories.FindUserByID(userID)
+			user, err := repositories.FindUserByID(userID, db)
 			if err != nil {
 				return c.JSON(http.StatusUnauthorized, "Unauthorized")
 			}
@@ -35,7 +36,7 @@ func AuthMiddleware(sessionStore *sessions.CookieStore) echo.MiddlewareFunc {
 	}
 }
 
-func PermissionMiddleware(requiredPermissions ...string) echo.MiddlewareFunc {
+func PermissionMiddleware(db *gorm.DB, requiredPermissions ...string) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 
@@ -44,7 +45,7 @@ func PermissionMiddleware(requiredPermissions ...string) echo.MiddlewareFunc {
 				return c.JSON(http.StatusUnauthorized, "Unauthorized user")
 			}
 
-			hasPermission, err := repositories.CheckRolePermissions(user.RoleID, requiredPermissions)
+			hasPermission, err := repositories.CheckRolePermissions(user.RoleID, requiredPermissions, db)
 			if err != nil {
 				return c.JSON(http.StatusInternalServerError, "A error occured! Please contact administration")
 			}
