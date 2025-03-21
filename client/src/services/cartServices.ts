@@ -44,13 +44,13 @@ export const cartServices = {
 	 */
 
 	async AddCartItem(id: number, quantity: number) {
-		const response = await fetch(`${CART_API_URL}/${id}/${quantity}`, {
+		const response = await fetch(`${CART_API_URL}`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
 			credentials: "include",
-			body: JSON.stringify({ productID: id, quantity }),
+			body: JSON.stringify({ product_id: id, quantity }),
 		})
 
 		if (!response.ok) {
@@ -100,7 +100,7 @@ export const cartServices = {
 				"Content-Type": "application/json",
 			},
 			credentials: "include",
-			body: JSON.stringify({ quantity }),
+			body: JSON.stringify({ quantity: quantity }),
 		})
 
 		if (!response.ok) {
