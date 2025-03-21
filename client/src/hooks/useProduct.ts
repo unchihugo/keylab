@@ -18,8 +18,8 @@ export const useProduct = (slug: string) => {
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState<string | null>(null)
 	const [quantity, setQuantity] = useState(1)
-    const navigate = useNavigate()
-    const [ addToCart, setAddToCart ] = useState(false)
+	const navigate = useNavigate()
+	const [addToCart, setAddToCart] = useState(false)
 
 	// Fetch the product by its slug when the component mounts
 	useEffect(() => {
@@ -106,14 +106,14 @@ export const useProduct = (slug: string) => {
 
 		try {
 			// Add product to cart
-            setAddToCart(true);
-            await cartServices.AddCartItem(product.data.id, quantity);
-            navigate('/cart');
+			setAddToCart(true)
+			await cartServices.AddCartItem(product.data.id, quantity)
+			navigate("/cart")
 		} catch (error) {
 			console.error(error)
 		} finally {
-            setAddToCart(false);
-        }
+			setAddToCart(false)
+		}
 	}
 
 	/**
@@ -136,7 +136,7 @@ export const useProduct = (slug: string) => {
 		loading,
 		error,
 		quantity,
-        addToCart,
+		addToCart,
 		incrementQuantity,
 		decrementQuantity,
 		addProductToCart,
