@@ -70,4 +70,20 @@ export const userService = {
 
 		return response.json()
 	},
+
+	// request to backend to get the orders of a specific user
+	async getUserOrders(userId: number) {
+		const response = await fetch(`${USERS_API_URL}/${userId}/orders`, {
+			method: "GET",
+			credentials: "include",
+			headers: { "Content-Type": "application/json" },
+		})
+
+		if (!response.ok) {
+			const errorData = await response.json()
+			throw new Error(errorData.message || "Failed to fetch user orders")
+		}
+
+		return response.json()
+	}
 }

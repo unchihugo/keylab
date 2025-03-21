@@ -6,6 +6,7 @@ import { authService } from "../../services/authService"
 import { userService } from "../../services/userService"
 import { useAuth } from "../../AuthContext"
 import AccountDetails from "./AccountDetails"
+import Orders from "./Orders"
 import ChangePassword from "./ChangePassword"
 import PaymentDetails from "./PaymentDetails"
 import Preferences from "./Preferences"
@@ -111,6 +112,9 @@ const Profile = () => {
 							userId={userId}
 							setUser={setUser}
 						/>
+					)}
+					{activeTab === "Orders" && userId !== null && (
+						<Orders userId={userId} />
 					)}
 					{activeTab === "Change Password" && userId !== null && (
 						<ChangePassword userId={userId} />
