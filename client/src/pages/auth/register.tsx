@@ -25,26 +25,32 @@ export default function Register() {
 		// validate all form fields and return an array of errors
 		// password will only be validated if it matches the confirm password
 		// if error is empty, filter it out
-		setErrors(
-			[
-				formValidation.validateFirstName(firstName),
-				formValidation.validateLastName(lastName),
-				formValidation.validateEmail(email),
-				formValidation.validateMatch(password, passwordConfirm, "Passwords") ||
-					formValidation.validatePassword(password),
-			].filter(Boolean),
-		)
+		const validationErrors = [
+			formValidation.validateForename(firstName),
+			formValidation.validateSurname(lastName),
+			formValidation.validateEmail(email),
+			formValidation.validateMatch(
+				password,
+				passwordConfirm,
+				"Passwords",
+			) || formValidation.validatePassword(password),
+		].filter(Boolean)
 
-		// if there are errors, log them and return
-		if (errors.length) {
-			console.error(errors)
+		setErrors(validationErrors)
+
+		// if there are errors, return
+		if (validationErrors.length > 0) {
 			return
 		}
 
 		try {
 			await register(firstName, lastName, email, password)
 		} catch (error) {
-			console.error(error)
+			if (error instanceof Error) {
+				setErrors([error.message])
+			} else {
+				setErrors(["An unexpected error occurred"])
+			}
 		}
 	}
 
@@ -54,7 +60,7 @@ export default function Register() {
 	useEffect(() => {
 		if (isAuthenticated) {
 			// redirect to home page if authenticated
-			navigate('/sign-in')
+			navigate("/sign-in")
 		}
 	}, [isAuthenticated, navigate])
 
