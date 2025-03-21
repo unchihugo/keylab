@@ -1,13 +1,12 @@
 package handlers
 
 import (
-	db "keylab/database"
 	"keylab/database/models"
 
 	"github.com/labstack/echo/v4"
 )
 
-func ContactUs(c echo.Context) error {
+func (h *Handlers) ContactUs(c echo.Context) error {
 	var ContactUsRequest models.ContactUsRequest
 
 	if err := c.Bind(&ContactUsRequest); err != nil {
@@ -18,7 +17,7 @@ func ContactUs(c echo.Context) error {
 		return jsonResponse(c, 400, err.Error())
 	}
 
-	if err := db.DB.Create(&ContactUsRequest).Error; err != nil {
+	if err := h.DB.Create(&ContactUsRequest).Error; err != nil {
 		return jsonResponse(c, 500, "Failed to save contact us request")
 	}
 

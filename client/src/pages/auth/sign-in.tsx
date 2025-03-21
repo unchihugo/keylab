@@ -21,23 +21,35 @@ export default function SignIn() {
 
 		// validate email and password
 		// if error is empty, filter it out
-		setErrors(
-			[
-				formValidation.validateEmail(email),
-				formValidation.validatePassword(password),
-			].filter(Boolean),
-		)
+		const validationErrors = [
+			formValidation.validateEmail(email),
+			formValidation.validatePassword(password),
+		].filter(Boolean)
+	
+		setErrors(validationErrors)
 
-		// if there are errors, log them and return
-		if (errors.length) {
-			console.error(errors)
+		// if there are errors, return
+		if (validationErrors.length > 0) {
 			return
 		}
 
 		try {
-			await login(email, password)
+			const role = await login(email, password)
+			if (!role) {
+				setErrors(['Login failed, please try again'])
+				return
+			}
+			if (role !== 'admin') {
+				navigate('/')
+			} else {
+				setErrors(['Admins must log in using the admin page'])
+			}
 		} catch (error) {
-			console.error(error)
+			if (error instanceof Error) {
+				setErrors([error.message])
+			} else {
+				setErrors(["An unexpected error occurred"])
+			}
 		}
 	}
 
@@ -45,7 +57,7 @@ export default function SignIn() {
 	useEffect(() => {
 		if (isAuthenticated) {
 			// redirect to home page if authenticated
-			navigate('/')
+			navigate("/")
 		}
 	}, [isAuthenticated, navigate])
 
