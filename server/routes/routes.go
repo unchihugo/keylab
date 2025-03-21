@@ -60,6 +60,7 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore, db *gorm.D
 	productReviewGroup.POST("", h.CreateReview, middleware.AuthMiddleware(sessionStore, db))
 	productReviewGroup.PUT("/:id", h.UpdateReview, middleware.AuthMiddleware(sessionStore, db))
 	productReviewGroup.DELETE("/:id", h.DeleteReview, middleware.AuthMiddleware(sessionStore, db))
+	productReviewGroup.GET("/user", h.GetUserReview, middleware.AuthMiddleware(sessionStore, db))
 
 	// // Cart related routes
 	cartGroup := e.Group("/cart", middleware.AuthMiddleware(sessionStore, db))

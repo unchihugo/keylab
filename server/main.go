@@ -7,6 +7,7 @@ import (
 	"keylab/routes"
 	"log"
 	"net/url"
+	"strings"
 
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
@@ -41,5 +42,6 @@ func main() {
 	}
 
 	fmt.Println("Server started at", config.SERVER_URL)
-	e.Logger.Fatal(e.Start(parsedURL.Host))
+	port := strings.Split(parsedURL.Host, ":")[1]
+	e.Logger.Fatal(e.Start(":" + port))
 }

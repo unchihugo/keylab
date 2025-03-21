@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"fmt"
+	"keylab/config"
 	"keylab/database/models"
 	"keylab/repositories"
-	"keylab/utils"
 	"log"
 	"net/http"
 	"os"
@@ -32,6 +32,8 @@ func wrapData(products []models.Product) []map[string]interface{} {
 func (h *Handlers) ListProducts(c echo.Context) error {
 	var products []models.Product
 
+	config := config.Initialize()
+
 	page, perPage, offset := getPaginationParams(c)
 	order := getSortOrder(c)
 
@@ -41,7 +43,7 @@ func (h *Handlers) ListProducts(c echo.Context) error {
 		return jsonResponse(c, http.StatusInternalServerError, "Error fetching products")
 	}
 
-	repositories.SetProductImageURLs(products, utils.GetBaseURL())
+	repositories.SetProductImageURLs(products, config.SERVER_URL)
 
 	var total int64
 	if err := h.DB.Model(&models.Product{}).Count(&total).Error; err != nil {
@@ -65,6 +67,8 @@ func (h *Handlers) ListProducts(c echo.Context) error {
 func (h *Handlers) GetProductBySlug(c echo.Context) error {
 	var product models.Product
 
+	config := config.Initialize()
+
 	slug := c.Param("slug")
 	if err := product.Validate(slug); err != nil {
 		log.Printf("Error validating product slug: %v", err)
@@ -77,7 +81,7 @@ func (h *Handlers) GetProductBySlug(c echo.Context) error {
 		return jsonResponse(c, http.StatusNotFound, "Product not found")
 	}
 
-	repositories.SetProductImageURLs([]models.Product{product}, utils.GetBaseURL())
+	repositories.SetProductImageURLs([]models.Product{product}, config.SERVER_URL)
 
 	return jsonResponse(c, http.StatusOK, "Product found", product)
 }
@@ -91,6 +95,8 @@ func (h *Handlers) GetProductBySlug(c echo.Context) error {
 
 func (h *Handlers) GetProductsByCategory(c echo.Context) error {
 	var products []models.Product
+
+	config := config.Initialize()
 
 	category, err := convertToInt64(c.Param("id"))
 	if err != nil {
@@ -106,7 +112,7 @@ func (h *Handlers) GetProductsByCategory(c echo.Context) error {
 		return jsonResponse(c, http.StatusInternalServerError, "Error fetching products by category")
 	}
 
-	repositories.SetProductImageURLs(products, utils.GetBaseURL())
+	repositories.SetProductImageURLs(products, config.SERVER_URL)
 
 	return jsonResponse(c, http.StatusOK, "Products fetched successfully", map[string]interface{}{
 		"products": wrapData(products),
@@ -309,6 +315,8 @@ func (h *Handlers) UpdateProduct(c echo.Context) error {
 func (h *Handlers) SearchProducts(c echo.Context) error {
 	query := c.Param("query")
 
+	config := config.Initialize()
+
 	page, perPage, offset := getPaginationParams(c)
 	order := getSortOrder(c)
 
@@ -324,7 +332,7 @@ func (h *Handlers) SearchProducts(c echo.Context) error {
 		return jsonResponse(c, http.StatusInternalServerError, "Error counting products")
 	}
 
-	repositories.SetProductImageURLs(products, utils.GetBaseURL())
+	repositories.SetProductImageURLs(products, config.SERVER_URL)
 
 	return jsonResponse(c, http.StatusOK, "Products fetched successfully", map[string]interface{}{
 		"products": wrapData(products),
