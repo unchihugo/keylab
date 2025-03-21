@@ -19,6 +19,7 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import About from "./pages/About"
 import Checkout from "./pages/Checkout"
 import AdminDashboard from "./pages/Admin/Dashboard"
+import ThankYou from "./pages/Thankyou"
 
 const router = createBrowserRouter([
 	{
@@ -28,6 +29,7 @@ const router = createBrowserRouter([
 			{ path: "/", element: <Home /> },
 			{ path: "/cart", element: <Cart /> },
 			{ path: "/checkout", element: <Checkout /> },
+			{ path: "/thankyou", element: <ThankYou /> },
 			{ path: "/example", element: <div>Example</div> },
 			{
 				path: "/protected",
