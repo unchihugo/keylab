@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import Divider from "../components/Divider"
 import { validateForename, validateMessage } from "../lib/formValidation";
+import { useNavigate } from 'react-router-dom';
 
 
 interface FormErrors {
@@ -10,6 +11,9 @@ interface FormErrors {
 	lastName?: string;
 	address1?: string;
 	address2?: string;
+	city?: string;
+	country?: string;
+	postcode?: string;
 	cardnumber?: string;
 	expirydate?: string;
 	cvv?: string;
@@ -29,12 +33,16 @@ export default function Checkout() {
 	const [isProcessing, setIsProcessing] = useState(false);
 
 	const [errors, setErrors] = useState<FormErrors>({});
+	const navigate = useNavigate();
     const validateForm = () => {
 		const newErrors: FormErrors = {};
 		newErrors.firstName = validateForename(firstName) || "";
-		newErrors.lastName = validateForename(lastName) || "";
+		newErrors.lastName = lastName.trim() ? validateForename(lastName) || "" : "Last name is required";
         newErrors.address1 = validateMessage(address1) || "";
-		newErrors.address2 = validateMessage(address2) || "";
+		newErrors.address2 = address2.trim() ? validateMessage(address2) || "" : "";
+		newErrors.city = city.trim() ? validateMessage(city) || "" : "City required";
+		newErrors.country = country.trim() ? validateMessage(country) || "" : "Country required";
+		newErrors.postcode = postcode.trim() ? validateMessage(postcode) || "" : "Postcode required";
         newErrors.cardnumber = cardnumber.match(/^\d{13,19}$/) ? "" : "Invalid card number";
         newErrors.expirydate = expirydate.match(/^(0[1-9]|1[0-2])\/(\d{2})$/) ? "" : "Invalid expiry date";
         newErrors.cvv = cvv.match(/^\d{3,4}$/) ? "" : "Invalid CVV";
@@ -47,13 +55,18 @@ export default function Checkout() {
 		e.preventDefault();
 		console.log("Form submitted");
 	
-		if (!validateForm()) return; 
-		console.log("Validation failed:", errors);
+		if (!validateForm()){
+			console.log("Validation failed", errors);
+			return;
+		}
+			  
+		
 	
 		setIsProcessing(true); 
 	
 		setTimeout(() => {
-			window.location.href = "/thankyou";
+			console.log("Redirecting...");
+			navigate("/thankyou");
 		}, 2000);
 	};
 
@@ -163,6 +176,7 @@ export default function Checkout() {
 										}
 										onBlur={validateForm}
 									/>
+									{errors.country && <p className="text-red-500 text-sm">{errors.country}</p>}
 								</div>
 								<div>
 									<label
@@ -181,6 +195,7 @@ export default function Checkout() {
 										}
 										onBlur={validateForm}
 									/>
+									{errors.city && <p className="text-red-500 text-sm">{errors.city}</p>}
 								</div>
 							</div>
 							<div>
@@ -200,6 +215,7 @@ export default function Checkout() {
 									}
 									onBlur={validateForm}
 								/>
+								{errors.postcode && <p className="text-red-500 text-sm">{errors.postcode}</p>}
 							</div>
 						</form>
 					</div>

@@ -6,7 +6,6 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 import Breadcrumb from "../../components/Breadcrumb";
 import Divider from "../../components/Divider";
 import ErrorBox from "../../components/ErrorBox";
-import LinkButton from "../../components/LinkButton";
 import Card from "../../components/Card";
 
 
@@ -106,15 +105,16 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-primary/25 py-14">
+    <div className="min-h-screen bg-primary/25 mt-10 py-14">
       <div className="container mx-auto px-6 flex flex-col md:flex-row gap-6">
-      <aside className="w-full lg:w-1/5 bg-primary/25 p-6 rounded-lg shadow-lg border border-gray-300 mr-4">
+      <aside className="w-full lg:w-1/5 bg-white p-6 rounded-lg shadow-lg mb-6 lg:mb-0 h-fit border border-gray-300 mr-4">
     <h2 className="text-lg font-semibold mb-4">Admin Panel</h2>
     <nav className="space-y-4">
         {[
             { label: "Dashboard", to: "/dashboard" },
             { label: "Inventory", to: "/inventory" },
-            { label: "Orders", to: "/orders" },
+            { label: "Order Managemet", to: "/order-management " },
+            { label: "Customer Managment", to: "/customers-management" },
             { label: "Settings", to: "/settings"  },
         ].map((item, index) => (
             <div key={item.label}>
@@ -136,7 +136,7 @@ export default function AdminDashboard() {
     </nav>
 </aside>
         {/* Main Dashboard Content */}
-        <main className="flex-1 bg-primary/25 rounded-2xl p-14 shadow border">
+        <main className="flex-1 bg-white rounded-2xl p-14 shadow border">
           <Breadcrumb breadcrumbs={["Admin Dashboard", "Overview"]} />
           <Divider />
 
@@ -197,13 +197,6 @@ export default function AdminDashboard() {
             <h2 className="text-2xl font-bold mb-4">Order Processing</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Card title="Orders to Process" value={stats.ordersToProcess.toLocaleString()} />
-              <div className="flex items-center">
-                <LinkButton
-                  to="/admin/orders"
-                  text="Go to Order Processing"
-                  buttonClassNames="bg-secondary-dark text-white"
-                />
-              </div>
             </div>
           </section>
 
