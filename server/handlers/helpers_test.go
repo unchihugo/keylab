@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -23,7 +22,7 @@ func TestConvertToInt64(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		result, err := handlers.ConvertToInt64(test.input)
+		result, err := convertToInt64(test.input)
 		if test.isError {
 			assert.Error(t, err)
 		} else {
@@ -34,7 +33,7 @@ func TestConvertToInt64(t *testing.T) {
 }
 
 func TestGeneratePaginationResponse(t *testing.T) {
-	result := handlers.GeneratePaginationResponse(2, 10, 50)
+	result := generatePaginationResponse(2, 10, 50)
 	assert.Equal(t, 2, result["page"])
 	assert.Equal(t, 10, result["per_page"])
 	assert.Equal(t, 50, result["total"])
@@ -46,14 +45,13 @@ func TestGetSortOrder(t *testing.T) {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
-	order := handlers.GetSortOrder(c)
+	order := getSortOrder(c)
 	assert.Equal(t, "name asc", order)
 
-	
 	req = httptest.NewRequest(http.MethodGet, "/", nil)
 	rec = httptest.NewRecorder()
 	c = e.NewContext(req, rec)
 
-	order = handlers.GetSortOrder(c)
+	order = getSortOrder(c)
 	assert.Equal(t, "created_at desc", order)
 }
