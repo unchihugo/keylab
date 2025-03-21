@@ -1,6 +1,6 @@
 /** @format */
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Product } from "../types/Product"
 import { productService } from "../services/productService"
 
@@ -14,7 +14,7 @@ export const useProducts = (searchTerm: string | null) => {
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState<string | null>(null)
 
-	const fetchProducts = async () => {
+	const fetchProducts = useCallback(async () => {
 		try {
 			setLoading(true)
 			const response = await productService.listProducts()
@@ -28,8 +28,46 @@ export const useProducts = (searchTerm: string | null) => {
 		} finally {
 			setLoading(false)
 		}
-	}
+	},[]) 
 
+	const searchProducts = useCallback( async (searchTerm: string) => {
+		searchTerm = searchTerm.trim()
+		if (searchTerm.length < 1) {
+			fetchProducts()
+			return
+		}
+		try {
+			setLoading(true)
+			const response = await productService.searchProducts(searchTerm)
+			setProducts(response.data.products)
+		} catch (err) {
+			setError(
+				err instanceof Error
+					? err.message
+					: "An error occurred while searching products.",
+			)
+		} finally {
+			setLoading(false)
+		}
+	}, [fetchProducts]); 
+
+	const getProductsByCategory = async (category: string) => {
+		category = category.trim()
+		try {
+			setLoading(true)
+			const response =
+				await productService.getProductsByCategory(category)
+			setProducts(response.data.products)
+		} catch (err) {
+			setError(
+				err instanceof Error
+					? err.message
+					: "An error occurred while fetching products by category.",
+			)
+		} finally {
+			setLoading(false)
+		}
+	}
 	useEffect(() => {
 		const fetchTestProducts = () => {
 			setProducts([
@@ -105,7 +143,6 @@ export const useProducts = (searchTerm: string | null) => {
 				},
 			])
 		}
-
 		// Fetch products
 		if (import.meta.env.MODE == "test") {
 			fetchTestProducts()
@@ -114,46 +151,6 @@ export const useProducts = (searchTerm: string | null) => {
 				searchProducts(searchTerm)
 			} else fetchProducts()
 		}
-	}, [])
-
-	const searchProducts = async (searchTerm: string) => {
-		searchTerm = searchTerm.trim()
-		if (searchTerm.length < 1) {
-			fetchProducts()
-			return
-		}
-		try {
-			setLoading(true)
-			const response = await productService.searchProducts(searchTerm)
-			setProducts(response.data.products)
-		} catch (err) {
-			setError(
-				err instanceof Error
-					? err.message
-					: "An error occurred while searching products.",
-			)
-		} finally {
-			setLoading(false)
-		}
-	}
-
-	const getProductsByCategory = async (category: string) => {
-		category = category.trim()
-		try {
-			setLoading(true)
-			const response =
-				await productService.getProductsByCategory(category)
-			setProducts(response.data.products)
-		} catch (err) {
-			setError(
-				err instanceof Error
-					? err.message
-					: "An error occurred while fetching products by category.",
-			)
-		} finally {
-			setLoading(false)
-		}
-	}
-
+	}, [searchTerm, searchProducts, fetchProducts])
 	return { products, loading, error, searchProducts, getProductsByCategory }
 }
