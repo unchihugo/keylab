@@ -1,11 +1,11 @@
+/** @format */
 import { useEffect, useState } from "react";
 import { userService } from "../services/userService";
+import { User, UserRole } from "../types/User";
 
 const { getUserRole, setUserRole } = userService;
 
-import { User } from "../types/user";
-
-export function useUsers(userId: number) {
+export function useUsers(userId: string) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -13,7 +13,6 @@ export function useUsers(userId: number) {
   useEffect(() => {
     async function fetchUser() {
       try {
-        
         const data = await getUserRole(userId);
         setUser(data);
       } catch (err) {
@@ -25,10 +24,10 @@ export function useUsers(userId: number) {
     fetchUser();
   }, [userId]);
 
-  async function changeUserRole(roleId: number) {
+  async function changeUserRole(roleId: UserRole) {
     if (!user) return;
     try {
-      const updatedUser = await setUserRole(user.id, roleId);
+      const updatedUser = await setUserRole(userId, roleId);
       setUser(updatedUser); // Update the state with new role
     } catch {
       setError("Failed to update role.");
@@ -37,3 +36,4 @@ export function useUsers(userId: number) {
 
   return { user, loading, error, changeUserRole };
 }
+  

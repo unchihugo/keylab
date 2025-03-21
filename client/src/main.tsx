@@ -1,7 +1,7 @@
 /** @format */
-import RolesPage from "./pages/admin/roles";
+import RolesPage from "./pages/Admin/Roles"
 
-<Route path="/admin/roles" element={<RolesPage />} />
+;<Route path="/admin/roles" element={<RolesPage />} />
 
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"

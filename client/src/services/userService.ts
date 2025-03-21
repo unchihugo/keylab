@@ -58,3 +58,25 @@ export const userService = {
 	setUserRole,
 	
 }
+// services/userService.js or .ts
+
+export const updateUserRole = async (userId: number, roleId: number) => {
+	try {
+	  const response = await fetch(`/api/users/${userId}/role`, {
+		method: 'PUT',
+		headers: {
+		  'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ roleId }),
+	  });
+	  
+	  if (!response.ok) {
+		throw new Error('Failed to update user role');
+	  }
+	  
+	  return await response.json();
+	} catch (error) {
+	  console.error('Error updating user role:', error);
+	  throw error;
+	}
+  };
