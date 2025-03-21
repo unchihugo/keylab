@@ -1,9 +1,12 @@
 /** @format */
+import RolesPage from "./pages/admin/roles";
+
+<Route path="/admin/roles" element={<RolesPage />} />
 
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import "./index.css"
-import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import { createBrowserRouter, Route, RouterProvider } from "react-router-dom"
 
 import { AuthProvider } from "./AuthContext"
 import AppLayout from "./layouts/AppLayout"
