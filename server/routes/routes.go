@@ -84,7 +84,7 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore, db *gorm.D
 	e.POST("/contact", h.ContactUs)
 
 	// NEEDS ADMIN MIDDLEWARE
-	adminGroup := e.Group("/admin")
+	adminGroup := e.Group("/admin", middleware.AuthMiddleware(sessionStore, db))
 
 	adminUserGroup := adminGroup.Group("/users")
 	adminUserGroup.GET("", h.GetAllUsers)
