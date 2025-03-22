@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"errors"
-	db "keylab/database"
 	"keylab/database/models"
 	"log"
 	"net/http"
@@ -18,10 +17,10 @@ import (
 // 4. Returns status 500 if an error occurs.
 // 5. Returns the product categories as JSON.
 
-func GetCategories(c echo.Context) error {
+func (h *Handlers) GetCategories(c echo.Context) error {
 	var categories []models.ProductCategory
 
-	if err := db.DB.Preload("Parent").Find(&categories).Error; err != nil {
+	if err := h.DB.Preload("Parent").Find(&categories).Error; err != nil {
 		log.Printf("Error fetching categories: %v", err)
 		return jsonResponse(c, http.StatusInternalServerError, "Error fetching categories")
 	}
@@ -40,15 +39,15 @@ func GetCategories(c echo.Context) error {
 // 4. Returns status 500 if an error occurs.
 // 5. Returns the product category as JSON.
 
-func GetCategoryBySlug(c echo.Context) error {
+func (h *Handlers) GetCategoryBySlug(c echo.Context) error {
 	var category models.ProductCategory
 
 	slug := c.Param("slug")
-	if err := category.Validate(slug); err != nil {
+	if slug == "" {
 		return jsonResponse(c, http.StatusBadRequest, "Invalid category slug")
 	}
 
-	if err := db.DB.Where("slug = ?", slug).Preload("Parent").First(&category).Error; err != nil {
+	if err := h.DB.Where("slug = ?", slug).Preload("Parent").First(&category).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return jsonResponse(c, http.StatusNotFound, "Category not found")
 		}
@@ -69,7 +68,7 @@ func GetCategoryBySlug(c echo.Context) error {
 // 6. Returns status 400 if invalid input.
 // 7. Returns status 500 if an error occurs.
 
-func CreateCategory(c echo.Context) error {
+func (h *Handlers) CreateCategory(c echo.Context) error {
 	var category models.ProductCategory
 
 	if err := c.Bind(&category); err != nil {
@@ -80,11 +79,11 @@ func CreateCategory(c echo.Context) error {
 		return jsonResponse(c, http.StatusBadRequest, err.Error())
 	}
 
-	if err := db.DB.Where("slug = ?", category.Slug).First(&category).Error; err == nil {
+	if err := h.DB.Where("slug = ?", category.Slug).First(&category).Error; err == nil {
 		return jsonResponse(c, http.StatusBadRequest, "Category already exists with the same slug")
 	}
 
-	if err := db.DB.Create(&category).Error; err != nil {
+	if err := h.DB.Create(&category).Error; err != nil {
 		log.Printf("Error creating product category: %v", err)
 		return jsonResponse(c, http.StatusInternalServerError, "Error creating product category")
 	}
@@ -99,7 +98,7 @@ func CreateCategory(c echo.Context) error {
 // 4. Returns status 404 if no category is found.
 // 5. Returns status 500 if an error occurs.
 
-func DeleteCategory(c echo.Context) error {
+func (h *Handlers) DeleteCategory(c echo.Context) error {
 	var category models.ProductCategory
 
 	slug := c.Param("slug")
@@ -107,7 +106,7 @@ func DeleteCategory(c echo.Context) error {
 		return jsonResponse(c, http.StatusBadRequest, "Invalid category slug")
 	}
 
-	if err := db.DB.Where("slug = ?", slug).Preload("Parent").First(&category).Error; err != nil {
+	if err := h.DB.Where("slug = ?", slug).Preload("Parent").First(&category).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return jsonResponse(c, http.StatusNotFound, "Category not found")
 		}
@@ -116,7 +115,7 @@ func DeleteCategory(c echo.Context) error {
 		return jsonResponse(c, http.StatusInternalServerError, "Error fetching category by slug")
 	}
 
-	if err := db.DB.Delete(&category).Error; err != nil {
+	if err := h.DB.Delete(&category).Error; err != nil {
 		log.Printf("Error deleting product category: %v", err)
 		return jsonResponse(c, http.StatusInternalServerError, "Error deleting product category")
 	}
@@ -133,16 +132,16 @@ func DeleteCategory(c echo.Context) error {
 // 6. Returns status 400 if invalid input.
 // 7. Returns status 404 if no category is found.
 // 8. Returns status 500 if an error occurs.
-
-func UpdateCategory(c echo.Context) error {
+func (h *Handlers) UpdateCategory(c echo.Context) error {
 	var category models.ProductCategory
 
 	slug := c.Param("slug")
-	if err := category.Validate(slug); err != nil {
+	if slug == "" {
 		return jsonResponse(c, http.StatusBadRequest, "Invalid category slug")
 	}
 
-	if err := db.DB.Where("slug = ?", slug).First(&category).Error; err != nil {
+	// Fetch the existing category
+	if err := h.DB.Where("slug = ?", slug).First(&category).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return jsonResponse(c, http.StatusNotFound, "Category not found")
 		}
@@ -159,7 +158,7 @@ func UpdateCategory(c echo.Context) error {
 		return jsonResponse(c, http.StatusBadRequest, err.Error())
 	}
 
-	if err := db.DB.Save(&category).Error; err != nil {
+	if err := h.DB.Save(&category).Error; err != nil {
 		log.Printf("Error updating product category: %v", err)
 		return jsonResponse(c, http.StatusInternalServerError, "Error updating product category")
 	}

@@ -18,6 +18,7 @@ import Cart from "./pages/Cart"
 import ProtectedRoute from "./components/ProtectedRoute"
 import About from "./pages/About"
 import Checkout from "./pages/Checkout"
+import Profile from "./pages/User/Profile"
 import AdminDashboard from "./pages/Admin/Dashboard"
 
 const router = createBrowserRouter([
@@ -39,7 +40,7 @@ const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "/Dashboard", element: <AdminDashboard/>,
+				path: "/admin/dashboard", element: <AdminDashboard/>,
 			},
 			{ path: "/sign-in", element: <SignIn /> },
 			{ path: "/register", element: <Register /> },
@@ -48,6 +49,7 @@ const router = createBrowserRouter([
 			{ path: "*", element: <NotFound /> },
 			{ path: "/about", element: <About /> },
 			{ path: "/shop", element: <Shop /> },
+			{ path: "/profile", element: <Profile /> },
 		],
 	},
 ])

@@ -2,9 +2,12 @@
 
 export interface Carts {
 	id: number
-	name: string
-	product: number
+	product_id: number
+	user_id: number
+	product: {
+		id: number
+		name: string
+		price: number
+	}
 	quantity: number
-	price: number
-	totalPrice: number
 }

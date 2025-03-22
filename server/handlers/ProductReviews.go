@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	db "keylab/database"
 	"keylab/database/models"
 	"keylab/repositories"
 	"log"
@@ -18,7 +17,7 @@ import (
 // 5. Returns status 404 if no reviews are found.
 // 6. Returns status 500 if an error occurs.
 
-func GetReviewByUser(c echo.Context) error {
+func (h *Handlers) GetReviewByUser(c echo.Context) error {
 	var reviews []models.ProductReviews
 	var user models.User
 
@@ -28,12 +27,12 @@ func GetReviewByUser(c echo.Context) error {
 		return jsonResponse(c, http.StatusBadRequest, "Invalid user ID")
 	}
 
-	user, err = repositories.FindUserByID(userID)
+	user, err = repositories.FindUserByID(userID, h.DB)
 	if err != nil {
 		return jsonResponse(c, http.StatusNotFound, "Cannot find user with that ID")
 	}
 
-	reviews, err = repositories.GetReviewByUserID(user.ID)
+	reviews, err = repositories.GetReviewByUserID(user.ID, h.DB)
 	if err != nil || len(reviews) == 0 {
 		return jsonResponse(c, http.StatusNotFound, "No reviews found for this user")
 	}
@@ -49,16 +48,16 @@ func GetReviewByUser(c echo.Context) error {
 // 5. Returns status 404 if no reviews are found
 // 6. Returns status 500 if an error occurs
 
-func GetReviewsByProduct(c echo.Context) error {
+func (h *Handlers) GetReviewsByProduct(c echo.Context) error {
 	var reviews []models.ProductReviews
 	var product models.Product
 
-	product, err := repositories.GetProductBySlug(c.Param("product_slug"))
+	product, err := repositories.GetProductBySlug(c.Param("product_slug"), h.DB)
 	if err != nil {
 		return jsonResponse(c, http.StatusNotFound, "Cannot find product with that slug")
 	}
 
-	reviews, err = repositories.GetReviewsByProductID(product.ID)
+	reviews, err = repositories.GetReviewsByProductID(product.ID, h.DB)
 	if err != nil || len(reviews) == 0 {
 		return jsonResponse(c, http.StatusNotFound, "No reviews found for this product")
 	}
@@ -74,7 +73,7 @@ func GetReviewsByProduct(c echo.Context) error {
 // 5. Returns status 404 if no reviews are found.
 // 6. Returns status 500 if an error occurs.
 
-func GetReviewsByUser(c echo.Context) error {
+func (h *Handlers) GetReviewsByUser(c echo.Context) error {
 	var reviews []models.ProductReviews
 	var user models.User
 
@@ -84,12 +83,12 @@ func GetReviewsByUser(c echo.Context) error {
 		return jsonResponse(c, http.StatusBadRequest, "Invalid user ID")
 	}
 
-	user, err = repositories.FindUserByID(userID)
+	user, err = repositories.FindUserByID(userID, h.DB)
 	if err != nil {
 		return jsonResponse(c, http.StatusNotFound, "Cannot find user with that ID")
 	}
 
-	reviews, err = repositories.GetReviewByUserID(user.ID)
+	reviews, err = repositories.GetReviewByUserID(user.ID, h.DB)
 	if err != nil || len(reviews) == 0 {
 		return jsonResponse(c, http.StatusNotFound, "No reviews found for this user")
 	}
@@ -103,7 +102,7 @@ func GetReviewsByUser(c echo.Context) error {
 // 3. Returns status 200 with the review if successful.
 // 4. Returns status 404 if the review is not found.
 
-func GetReview(c echo.Context) error {
+func (h *Handlers) GetReview(c echo.Context) error {
 	var review models.ProductReviews
 
 	reviewID, err := convertToInt64(c.Param("id"))
@@ -112,7 +111,7 @@ func GetReview(c echo.Context) error {
 		return jsonResponse(c, http.StatusBadRequest, "Invalid review ID")
 	}
 
-	product, err := repositories.GetProductBySlug(c.Param("product_slug"))
+	product, err := repositories.GetProductBySlug(c.Param("product_slug"), h.DB)
 	if err != nil {
 		return jsonResponse(c, http.StatusNotFound, "Product not found")
 	}
@@ -121,7 +120,7 @@ func GetReview(c echo.Context) error {
 		return jsonResponse(c, http.StatusNotFound, "Product not found")
 	}
 
-	review, err = repositories.GetReviewByID(reviewID)
+	review, err = repositories.GetReviewByID(reviewID, h.DB)
 	if err != nil {
 		return jsonResponse(c, http.StatusNotFound, "Review not found")
 	}
@@ -137,7 +136,7 @@ func GetReview(c echo.Context) error {
 // 5. Returns status 404 if no reviews are found.
 // 6. Returns status 500 if an error occurs.
 
-func GetReviewStatistics(c echo.Context) error {
+func (h *Handlers) GetReviewStatistics(c echo.Context) error {
 	var reviews []models.ProductReviews
 	var product models.Product
 
@@ -146,12 +145,12 @@ func GetReviewStatistics(c echo.Context) error {
 		return jsonResponse(c, http.StatusBadRequest, "Invalid product slug")
 	}
 
-	product, err := repositories.GetProductBySlug(slug)
+	product, err := repositories.GetProductBySlug(slug, h.DB)
 	if err != nil {
 		return jsonResponse(c, http.StatusNotFound, "Product not found")
 	}
 
-	reviews, err = repositories.GetReviewsByProductID(product.ID)
+	reviews, err = repositories.GetReviewsByProductID(product.ID, h.DB)
 	if err != nil || len(reviews) == 0 {
 		return jsonResponse(c, http.StatusNotFound, "No reviews found for this product")
 	}
@@ -185,7 +184,7 @@ func GetReviewStatistics(c echo.Context) error {
 // 8. Returns status 400 if invalid input is provided.
 // 9. Returns status 500 if an error occurs.
 
-func CreateReview(c echo.Context) error {
+func (h *Handlers) CreateReview(c echo.Context) error {
 	var review models.ProductReviews
 	var product models.Product
 
@@ -202,7 +201,7 @@ func CreateReview(c echo.Context) error {
 		return jsonResponse(c, http.StatusBadRequest, "Invalid product slug")
 	}
 
-	product, err := repositories.GetProductBySlug(productSlug)
+	product, err := repositories.GetProductBySlug(productSlug, h.DB)
 	if err != nil {
 		return jsonResponse(c, http.StatusNotFound, "Product not found")
 	}
@@ -213,16 +212,16 @@ func CreateReview(c echo.Context) error {
 	review.UserID = user.ID
 
 	var existingReview models.ProductReviews
-	if err := db.DB.Where("product_id = ? AND user_id = ?", review.ProductID, review.UserID).First(&existingReview).Error; err == nil {
+	if err := h.DB.Where("product_id = ? AND user_id = ?", review.ProductID, review.UserID).First(&existingReview).Error; err == nil {
 		return jsonResponse(c, http.StatusBadRequest, "User has already reviewed this product")
 	}
 
-	if err := db.DB.Create(&review).Error; err != nil {
+	if err := h.DB.Create(&review).Error; err != nil {
 		log.Printf("Error creating review: %v", err)
 		return jsonResponse(c, http.StatusInternalServerError, "Error creating review")
 	}
 
-	if err := db.DB.Preload("Product").Preload("Product.Category").First(&review, review.ID).Error; err != nil {
+	if err := h.DB.Preload("Product").Preload("Product.Category").First(&review, review.ID).Error; err != nil {
 		log.Printf("Error fetching created review with related data: %v", err)
 		return jsonResponse(c, http.StatusInternalServerError, "Error fetching related data for created review")
 	}
@@ -239,7 +238,7 @@ func CreateReview(c echo.Context) error {
 // 6. Returns status 400 if invalid input is provided.
 // 7. Returns status 500 if an error occurs.
 
-func UpdateReview(c echo.Context) error {
+func (h *Handlers) UpdateReview(c echo.Context) error {
 	var review models.ProductReviews
 
 	reviewID, err := convertToInt64(c.Param("id"))
@@ -247,7 +246,7 @@ func UpdateReview(c echo.Context) error {
 		return jsonResponse(c, http.StatusBadRequest, "Invalid review ID")
 	}
 
-	review, err = repositories.GetReviewByID(reviewID)
+	review, err = repositories.GetReviewByID(reviewID, h.DB)
 	if err != nil {
 		return jsonResponse(c, http.StatusNotFound, "Review not found")
 	}
@@ -265,7 +264,7 @@ func UpdateReview(c echo.Context) error {
 		return jsonResponse(c, http.StatusBadRequest, err.Error())
 	}
 
-	if err := db.DB.Save(&review).Error; err != nil {
+	if err := h.DB.Save(&review).Error; err != nil {
 		log.Printf("Error updating review: %v", err)
 		return jsonResponse(c, http.StatusInternalServerError, "Error updating review")
 	}
@@ -281,7 +280,7 @@ func UpdateReview(c echo.Context) error {
 // 5. Returns status 404 if the review is not found.
 // 6. Returns status 500 if an error occurs.
 
-func DeleteReview(c echo.Context) error {
+func (h *Handlers) DeleteReview(c echo.Context) error {
 	var review models.ProductReviews
 
 	reviewID, err := convertToInt64(c.Param("id"))
@@ -289,7 +288,7 @@ func DeleteReview(c echo.Context) error {
 		return jsonResponse(c, http.StatusBadRequest, "Invalid review ID")
 	}
 
-	review, err = repositories.GetReviewByID(reviewID)
+	review, err = repositories.GetReviewByID(reviewID, h.DB)
 	if err != nil {
 		return jsonResponse(c, http.StatusNotFound, "Review not found")
 	}
@@ -299,7 +298,7 @@ func DeleteReview(c echo.Context) error {
 		return jsonResponse(c, http.StatusForbidden, "You are not authorized to delete this review")
 	}
 
-	if err := db.DB.Delete(&review).Error; err != nil {
+	if err := h.DB.Delete(&review).Error; err != nil {
 		log.Printf("Error deleting review: %v", err)
 		return jsonResponse(c, http.StatusInternalServerError, "Error deleting review")
 	}
@@ -312,19 +311,57 @@ func DeleteReview(c echo.Context) error {
 // 2. Returns status 200 with the review if successful.
 // 3. Returns status 404 if the review is not found.
 // 4. Returns status 500 if an error occurs.
-func GetUserReview(c echo.Context) error {
+
+func (h *Handlers) GetUserReview(c echo.Context) error {
 	var review []models.ProductReviews
 
 	productSlug := c.Param("product_slug")
-	product, err := repositories.GetProductBySlug(productSlug)
+	product, err := repositories.GetProductBySlug(productSlug, h.DB)
 	if err != nil {
 		return jsonResponse(c, http.StatusNotFound, "Product not found")
 	}
 
 	user := c.Get("user").(models.User)
-	if err := db.DB.Where("product_id = ? AND user_id = ?", product.ID, user.ID).First(&review).Error; err != nil {
+	if err := h.DB.Where("product_id = ? AND user_id = ?", product.ID, user.ID).First(&review).Error; err != nil {
 		return jsonResponse(c, http.StatusNotFound, "Review not found")
 	}
 
 	return jsonResponse(c, http.StatusOK, "Review found", review)
+}
+
+// FetchRecentViews [GET /reviews/recent]
+// 1. Gets the limit parameter from the query string
+// 2. Fetches the most recent reviews from the database
+// 3. Returns status 200 with the reviews if successful
+// 4. Returns status 400 if invalid parameters are provided
+// 5. Returns status 500 if an error occurs
+
+func (h *Handlers) FetchRecentViews(c echo.Context) error {
+	limitStr := c.QueryParam("limit")
+	limit := 5
+
+	if limitStr != "" {
+		parsedLimit, err := convertToInt64(limitStr)
+		if err != nil {
+			return jsonResponse(c, http.StatusBadRequest, "Invalid limit parameter")
+		}
+
+		if parsedLimit <= 0 {
+			return jsonResponse(c, http.StatusBadRequest, "Limit must be a positive number")
+		}
+
+		limit = int(parsedLimit)
+	}
+
+	var reviews []models.ProductReviews
+	if err := h.DB.Preload("User").Preload("Product").Order("created_at DESC").Limit(limit).Find(&reviews).Error; err != nil {
+		log.Printf("Error fetching recent reviews: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error fetching recent reviews")
+	}
+
+	if len(reviews) == 0 {
+		return jsonResponse(c, http.StatusOK, "No reviews found", []models.ProductReviews{})
+	}
+
+	return jsonResponse(c, http.StatusOK, "Recent reviews found", reviews)
 }
