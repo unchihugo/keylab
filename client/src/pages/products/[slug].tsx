@@ -76,9 +76,9 @@ export default function Product() {
 					</div>
 					<div className="lg:col-span-2 flex-col gap-5 inline-flex">
 						<div>
-							<div className="text-black/50">
+							{/* <div className="text-black/50">
 								Tag1 | Tag2 | Tag3
-							</div>
+							</div> */}
 							{statistics ? (
 								<div className="flex">
 									{Array.from(

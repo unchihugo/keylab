@@ -30,8 +30,8 @@ const router = createBrowserRouter([
 		children: [
 			{ path: "/", element: <Home /> },
 			{ path: "/cart", element: <Cart /> },
-			{ path: "/checkout", element: <Checkout /> },
-			{ path: "/example", element: <div>Example</div> },
+			{ path: "/checkout", element: ( <ProtectedRoute><Checkout /></ProtectedRoute> ) },
+			// { path: "/example", element: <div>Example</div> }, - No longer needed?
 			{
 				path: "/protected",
 				element: (
@@ -48,7 +48,7 @@ const router = createBrowserRouter([
 			{ path: "*", element: <NotFound /> },
 			{ path: "/about", element: <About /> },
 			{ path: "/shop", element: <Shop /> },
-			{ path: "/profile", element: <Profile /> },
+			{ path: "/profile", element: ( <ProtectedRoute><Profile /></ProtectedRoute> ) },
 		],
 	},
 	{

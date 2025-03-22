@@ -26,7 +26,7 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
 					{product.data.name}
 				</h3>
 				<p className="text-gray-500 relative select-none pointer-events-none">
-					${product.data.price}
+					£{product.data.price}
 				</p>
 			</div>
 		</Link>
