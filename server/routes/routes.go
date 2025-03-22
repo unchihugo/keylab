@@ -71,6 +71,13 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore, db *gorm.D
 	cartGroup.DELETE("/:id", h.DeleteCartItem)
 	cartGroup.POST("/checkout", h.CheckoutCart)
 
+	//User related routes
+	userGroup := e.Group("/users", middleware.AuthMiddleware(sessionStore, db))
+	userGroup.GET("/:id", h.GetUserProfile)
+	userGroup.PUT("/:id", h.UpdateUserProfile)
+	userGroup.POST("/:id/change-password", h.ChangeUserPassword)
+	userGroup.GET("/:id/orders", h.GetUsersOrders)
+
 	// // Orders related routes
 	e.GET("/user/orders/:id", h.GetUserOrderDetails, middleware.AuthMiddleware(sessionStore, db))
 
