@@ -20,6 +20,7 @@ import (
 // 7. Returns status 401 if the user is not authenticated
 // 8. Returns status 403 if a user tries to access another user's profile
 // 9. Returns status 404 if user is not found
+
 func (h *Handlers) GetUserProfile(c echo.Context) error {
 
 	authenticatedUser, ok := c.Get("user").(models.User)
@@ -58,6 +59,7 @@ func (h *Handlers) GetUserProfile(c echo.Context) error {
 // 7. Returns status 200 if successful
 // 8. Returns status 400 if the input data is invalid
 // 9. Returns status 404 if the user is not found
+
 func (h *Handlers) UpdateUserProfile(c echo.Context) error {
 
 	userID, err := convertToInt64(c.Param("id"))
@@ -103,6 +105,7 @@ func (h *Handlers) UpdateUserProfile(c echo.Context) error {
 // 6. Returns status 400 if input is invalid.
 // 7. Returns status 401 if old password is incorrect.
 // 8. Returns status 500 if an error occurs.
+
 func (h *Handlers) ChangeUserPassword(c echo.Context) error {
 	userID, err := convertToInt64(c.Param("id"))
 	if err != nil {
@@ -135,12 +138,12 @@ func (h *Handlers) ChangeUserPassword(c echo.Context) error {
 		log.Printf("User not found: %v", err)
 		return jsonResponse(c, http.StatusNotFound, "User not found")
 	}
-	// Compare hashed passwords
+
 	if utils.ComparePasswordHash(body.CurrentPassword, user.Password) != nil {
 		log.Printf("Incorrect password for user ID: %d", userID)
 		return jsonResponse(c, http.StatusUnauthorized, "Incorrect password")
 	}
-	// Hash new password before saving
+
 	hashedPassword, err := utils.HashPassword(body.NewPassword)
 	if err != nil {
 		log.Printf("Error hashing password: %v", err)
@@ -148,7 +151,7 @@ func (h *Handlers) ChangeUserPassword(c echo.Context) error {
 	}
 
 	user.Password = hashedPassword
-	if err := h.DB.Save(&user).Error; err != nil {
+	if err := h.DB.Model(&user).Select("Password").Updates(&user).Error; err != nil {
 		log.Printf("Error updating password: %v", err)
 		return jsonResponse(c, http.StatusInternalServerError, "Could not update password")
 	}
@@ -165,8 +168,8 @@ func (h *Handlers) ChangeUserPassword(c echo.Context) error {
 // 6. Returns status 400 if user ID is invalid
 // 7. Returns status 401 if the user is not authenticated
 // 8. Returns status 404 if user has no orders
-func (h *Handlers) GetUsersOrders(c echo.Context) error {
 
+func (h *Handlers) GetUsersOrders(c echo.Context) error {
 	userID, err := convertToInt64(c.Param("id"))
 	if err != nil {
 		return jsonResponse(c, http.StatusBadRequest, "Invalid user ID")
@@ -178,7 +181,7 @@ func (h *Handlers) GetUsersOrders(c echo.Context) error {
 	}
 
 	var orders []models.Order
-	if err := h.DB.Where("user_id = ?", userID).Preload("OrderItems").Find(&orders).Error; err != nil {
+	if err := h.DB.Where("user_id = ?", userID).Find(&orders).Error; err != nil {
 		return jsonResponse(c, http.StatusInternalServerError, "Error fetching orders")
 	}
 
@@ -186,5 +189,21 @@ func (h *Handlers) GetUsersOrders(c echo.Context) error {
 		return jsonResponse(c, http.StatusNotFound, "No orders found for this user")
 	}
 
-	return jsonResponse(c, http.StatusOK, "User orders retrieved successfully", orders)
+	var ordersWithItems []map[string]interface{}
+
+	for _, order := range orders {
+		var orderedItems []models.OrderedItem
+		if err := h.DB.Preload("Product").Where("order_id = ?", order.ID).Find(&orderedItems).Error; err != nil {
+			return jsonResponse(c, http.StatusInternalServerError, "Failed to fetch ordered items")
+		}
+
+		orderData := map[string]interface{}{
+			"order":         order,
+			"ordered_items": orderedItems,
+		}
+		ordersWithItems = append(ordersWithItems, orderData)
+
+	}
+
+	return jsonResponse(c, http.StatusOK, "User orders retrieved successfully", ordersWithItems)
 }

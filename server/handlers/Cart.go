@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -243,6 +244,7 @@ func (h *Handlers) CheckoutCart(c echo.Context) error {
 		Total:             total,
 		ShippingAddressID: shippingAddress.ID,
 		BillingAddressID:  billingAddress.ID,
+		OrderDate:         time.Now(),
 	}
 
 	if err := transaction.Create(&order).Error; err != nil {
