@@ -342,7 +342,7 @@ export default function Product() {
 									</div>
 									<div className="flex items-center gap-4">
 										<div className="font-bold">
-											User {review.user.forename}{" "}{review.user.surname}
+											{review.user.forename}{" "}{review.user.surname}
 										</div>
 										<div className="text-black/50 text-sm">
 											{review.updated_at

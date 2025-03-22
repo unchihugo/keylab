@@ -170,8 +170,8 @@ export const reviewService = {
 		return response.json()
 	},
 
-	async fetchRecentReviews() {
-		const response = await fetch(`http://localhost:8080/reviews/recent`, {
+	async fetchRecentReviews(limit: number = 5) {
+		const response = await fetch(`http://localhost:8080/reviews/recent?limit=${limit}`, {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",
