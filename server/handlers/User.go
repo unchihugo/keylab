@@ -1,19 +1,19 @@
 package handlers
 
 import (
-	"log"
-	"net/http"
-    "keylab/utils"
 	db "keylab/database"
 	"keylab/database/models"
 	"keylab/repositories"
+	"keylab/utils"
+	"log"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
 // GetUserProfile [GET /users/:id]
 // 1. Ensures the user is authenticated
-// 2. Ensures a user can only access their own profile 
+// 2. Ensures a user can only access their own profile
 // 3. Fetches user ID from the request and validates it
 // 4. Fetches user from the database by ID
 // 5. Returns status 200 with user details if successful
@@ -29,7 +29,7 @@ func GetUserProfile(c echo.Context) error {
 		return jsonResponse(c, http.StatusUnauthorized, "Unauthorized")
 	}
 
-	userID, err := convertToInt64(c.Param("id")) 
+	userID, err := convertToInt64(c.Param("id"))
 	if err != nil {
 		log.Printf("Invalid user ID: %v", err)
 		return jsonResponse(c, http.StatusBadRequest, "Invalid user ID")
@@ -60,39 +60,39 @@ func GetUserProfile(c echo.Context) error {
 // 8. Returns status 400 if the input data is invalid
 // 9. Returns status 404 if the user is not found
 func UpdateUserProfile(c echo.Context) error {
-    
-    userID, err := convertToInt64(c.Param("id"))
-    if err != nil {
-        return jsonResponse(c, http.StatusBadRequest, "Invalid user ID")
-    }
 
-    authenticatedUser, ok := c.Get("user").(models.User)
-    if !ok || authenticatedUser.ID != userID {
-        return jsonResponse(c, http.StatusUnauthorized, "Unauthorized to update this profile")
-    }
+	userID, err := convertToInt64(c.Param("id"))
+	if err != nil {
+		return jsonResponse(c, http.StatusBadRequest, "Invalid user ID")
+	}
 
-    existingUser, err := repositories.FindUserByID(userID)
-    if err != nil {
-        return jsonResponse(c, http.StatusNotFound, "User not found")
-    }
+	authenticatedUser, ok := c.Get("user").(models.User)
+	if !ok || authenticatedUser.ID != userID {
+		return jsonResponse(c, http.StatusUnauthorized, "Unauthorized to update this profile")
+	}
 
-    var updatedUser models.User
-    if err := c.Bind(&updatedUser); err != nil {
-        return jsonResponse(c, http.StatusBadRequest, "Invalid request body")
-    }
+	existingUser, err := repositories.FindUserByID(userID)
+	if err != nil {
+		return jsonResponse(c, http.StatusNotFound, "User not found")
+	}
 
-    updatedUser.Email = existingUser.Email 
+	var updatedUser models.User
+	if err := c.Bind(&updatedUser); err != nil {
+		return jsonResponse(c, http.StatusBadRequest, "Invalid request body")
+	}
 
-    if err := db.DB.Model(&existingUser).Omit("password").Updates(updatedUser).Error; err != nil {
-        return jsonResponse(c, http.StatusInternalServerError, "Could not update user")
-    }
+	updatedUser.Email = existingUser.Email
+
+	if err := db.DB.Model(&existingUser).Omit("password").Updates(updatedUser).Error; err != nil {
+		return jsonResponse(c, http.StatusInternalServerError, "Could not update user")
+	}
 
 	fullUser, err := repositories.FindUserByID(userID)
 	if err != nil {
-	    return jsonResponse(c, http.StatusInternalServerError, "Failed to retrieve updated user")
+		return jsonResponse(c, http.StatusInternalServerError, "Failed to retrieve updated user")
 	}
 
-return jsonResponse(c, http.StatusOK, "User profile updated successfully", fullUser) 
+	return jsonResponse(c, http.StatusOK, "User profile updated successfully", fullUser)
 }
 
 // ChangeUserPassword [POST /users/:id/change-password]
@@ -117,8 +117,8 @@ func ChangeUserPassword(c echo.Context) error {
 	}
 
 	var body struct {
-		CurrentPassword string `json:"current_password"`
-		NewPassword     string `json:"new_password"`
+		CurrentPassword      string `json:"current_password"`
+		NewPassword          string `json:"new_password"`
 		PasswordConfirmation string `json:"password_confirmation"`
 	}
 
@@ -168,24 +168,24 @@ func ChangeUserPassword(c echo.Context) error {
 // 8. Returns status 404 if user has no orders
 func GetUserOrders(c echo.Context) error {
 
-    userID, err := convertToInt64(c.Param("id"))
-    if err != nil {
-        return jsonResponse(c, http.StatusBadRequest, "Invalid user ID")
-    }
+	userID, err := convertToInt64(c.Param("id"))
+	if err != nil {
+		return jsonResponse(c, http.StatusBadRequest, "Invalid user ID")
+	}
 
-    authenticatedUser, ok := c.Get("user").(models.User)
-    if !ok || authenticatedUser.ID != userID {
-        return jsonResponse(c, http.StatusUnauthorized, "Unauthorized to view orders")
-    }
+	authenticatedUser, ok := c.Get("user").(models.User)
+	if !ok || authenticatedUser.ID != userID {
+		return jsonResponse(c, http.StatusUnauthorized, "Unauthorized to view orders")
+	}
 
-    var orders []models.Order
-    if err := db.DB.Where("user_id = ?", userID).Preload("OrderedItems").Find(&orders).Error; err != nil {
-        return jsonResponse(c, http.StatusInternalServerError, "Error fetching orders")
-    }
+	var orders []models.Order
+	if err := db.DB.Where("user_id = ?", userID).Preload("OrderItems").Find(&orders).Error; err != nil {
+		return jsonResponse(c, http.StatusInternalServerError, "Error fetching orders")
+	}
 
-    if len(orders) == 0 {
-        return jsonResponse(c, http.StatusNotFound, "No orders found for this user")
-    }
+	if len(orders) == 0 {
+		return jsonResponse(c, http.StatusNotFound, "No orders found for this user")
+	}
 
-    return jsonResponse(c, http.StatusOK, "User orders retrieved successfully", orders)
+	return jsonResponse(c, http.StatusOK, "User orders retrieved successfully", orders)
 }
