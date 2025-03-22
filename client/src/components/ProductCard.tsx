@@ -11,8 +11,8 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
 	return (
 		<Link
 			to={linkTo}
-			className="block border border-black h-full w-full bg-white rounded-lg hover:drop-shadow-cartoon-y hover:-translate-y-1 duration-200 overflow-hidden">
-			<div className="w-full aspect-square rounded-md object-fill -z-10 flex items-center justify-center">
+			className="group block border border-black h-full w-full bg-white rounded-lg hover:drop-shadow-cartoon-y hover:-translate-y-1 duration-200 overflow-hidden active:translate-y-0 active:drop-shadow-none active:shadow-inner-cartoon-y">
+			<div className="group-active:translate-y-0.5 w-full aspect-square rounded-md object-fill -z-10 flex items-center justify-center">
 				{product.data.product_images &&
 					product.data.product_images.length > 0 && (
 						<ZoomImage
@@ -21,12 +21,12 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
 						/>
 					)}
 			</div>
-			<div className="p-4">
+			<div className="group-active:translate-y-0.5 p-4">
 				<h3 className="font-medium leading-tight text-gray-800 relative select-none pointer-events-none">
 					{product.data.name}
 				</h3>
 				<p className="text-gray-500 relative select-none pointer-events-none">
-					${product.data.price}
+					£{product.data.price}
 				</p>
 			</div>
 		</Link>

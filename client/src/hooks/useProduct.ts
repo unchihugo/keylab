@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react"
 import { Product } from "../types/Product"
 import { productService } from "../services/productService"
+import { useNavigate } from "react-router-dom"
+import { cartServices } from "../services/cartServices"
 
 /**
  * Hook that returns a product by its slug
@@ -16,6 +18,8 @@ export const useProduct = (slug: string) => {
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState<string | null>(null)
 	const [quantity, setQuantity] = useState(1)
+	const navigate = useNavigate()
+	const [addToCart, setAddToCart] = useState(false)
 
 	// Fetch the product by its slug when the component mounts
 	useEffect(() => {
@@ -95,15 +99,23 @@ export const useProduct = (slug: string) => {
 	/**
 	 * Add the current product to user's cart, taking into account the quantity
 	 */
-	const addProductToCart = () => {
+	const addProductToCart = async () => {
 		if (!product) return
 		if (quantity < 1) return
 		if (quantity > product.data.stock) return
+		if (addToCart) return
 
 		try {
 			// Add product to cart
+			setAddToCart(true)
+			await cartServices.AddCartItem(product.data.id, quantity)
+			navigate("/cart")
 		} catch (error) {
 			console.error(error)
+		} finally {
+			setTimeout(() => {
+				setAddToCart(false)
+			}, 1000)
 		}
 	}
 
@@ -127,6 +139,7 @@ export const useProduct = (slug: string) => {
 		loading,
 		error,
 		quantity,
+		addToCart,
 		incrementQuantity,
 		decrementQuantity,
 		addProductToCart,

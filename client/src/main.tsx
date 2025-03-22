@@ -9,6 +9,8 @@ import { createBrowserRouter, Route, RouterProvider } from "react-router-dom"
 
 import { AuthProvider } from "./AuthContext"
 import AppLayout from "./layouts/AppLayout"
+import AdminLayout from "./layouts/AdminLayout"
+
 import Home from "./pages/Home"
 import NotFound from "./pages/NotFound"
 import SignIn from "./pages/auth/sign-in"
@@ -20,6 +22,7 @@ import Cart from "./pages/Cart"
 import ProtectedRoute from "./components/ProtectedRoute"
 import About from "./pages/About"
 import Checkout from "./pages/Checkout"
+import Profile from "./pages/User/Profile"
 import AdminDashboard from "./pages/Admin/Dashboard"
 
 const router = createBrowserRouter([
@@ -29,8 +32,8 @@ const router = createBrowserRouter([
 		children: [
 			{ path: "/", element: <Home /> },
 			{ path: "/cart", element: <Cart /> },
-			{ path: "/checkout", element: <Checkout /> },
-			{ path: "/example", element: <div>Example</div> },
+			{ path: "/checkout", element: ( <ProtectedRoute><Checkout /></ProtectedRoute> ) },
+			// { path: "/example", element: <div>Example</div> }, - No longer needed?
 			{
 				path: "/protected",
 				element: (
@@ -40,19 +43,30 @@ const router = createBrowserRouter([
 					</ProtectedRoute>
 				),
 			},
-			{
-				// path: "/Dashboard", element: <AdminDashboard/>,
-			},
 			{ path: "/sign-in", element: <SignIn /> },
 			{ path: "/register", element: <Register /> },
+<<<<<<< HEAD
 			{ path: "/adminlogin", element: <AdminLogin /> },
 			// { path: "/admin/roles", element: <RolesPage /> },
 			{ path: "/admin/roles", element: <RolesManagementpage /> },
+=======
+			{ path: "/admin/login", element: <AdminLogin /> },
+>>>>>>> b57fd013870c2653f04db3547d655480bbe25c43
 			{ path: "/products/:slug", element: <Product /> },
 			{ path: "*", element: <NotFound /> },
 			{ path: "/about", element: <About /> },
 			{ path: "/shop", element: <Shop /> },
+			{ path: "/profile", element: ( <ProtectedRoute><Profile /></ProtectedRoute> ) },
 		],
+	},
+	{
+		path: "/admin",
+		element: (
+			<ProtectedRoute>
+				<AdminLayout />
+			</ProtectedRoute>
+		),
+		children: [{ path: "/admin/dashboard", element: <AdminDashboard /> }],
 	},
 ])
 
