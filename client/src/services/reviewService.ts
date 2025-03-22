@@ -169,4 +169,19 @@ export const reviewService = {
 		}
 		return response.json()
 	},
+
+	async fetchRecentReviews() {
+		const response = await fetch(`http://localhost:8080/reviews/recent`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		})
+
+		if (!response.ok) {
+			const errorData = await response.json()
+			throw new Error(errorData.message || "Failed to fetch recent reviews")
+		}
+		return response.json()
+	},
 }

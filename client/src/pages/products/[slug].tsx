@@ -25,6 +25,7 @@ export default function Product() {
 		addProductToCart,
 		incrementQuantity,
 		decrementQuantity,
+		addToCart,
 	} = useProduct(slug as string)
 	const {
 		reviews,
@@ -134,7 +135,7 @@ export default function Product() {
 								<button
 									className="grow shrink basis-0 h-11 bg-white rounded-full border border-black justify-center items-center gap-2 flex"
 									onClick={addProductToCart}>
-									Add to cart
+									{addToCart ? "Added!" : "Add to cart"}
 								</button>
 							</div>
 							<div>
@@ -341,8 +342,7 @@ export default function Product() {
 									</div>
 									<div className="flex items-center gap-4">
 										<div className="font-bold">
-											{/* TODO: get username instead */}
-											User {review.user_id}
+											User {review.user.forename}{" "}{review.user.surname}
 										</div>
 										<div className="text-black/50 text-sm">
 											{review.updated_at
