@@ -28,3 +28,4 @@ func (u *User) Validate(fields ...string) error {
 
 	return validate.Struct(u)
 }
+

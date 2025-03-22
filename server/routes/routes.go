@@ -25,17 +25,17 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore, db *gorm.D
 	// TEMP TEST ROUTE - use as an example
 	e.GET("/test/permission", h.TestPermission, middleware.AuthMiddleware(sessionStore, db), middleware.PermissionMiddleware(db, "admin:dashboard"))
 
-	// // Category related routes
+	// Category related routes
 	categoryGroup := e.Group("/categories")
 	categoryGroup.GET("", h.GetCategories)
 	categoryGroup.GET("/:slug", h.GetCategoryBySlug)
 
-	// // TODO: Add admin middleware to the following routes
+	// TODO: Add admin middleware to the following routes
 	categoryGroup.POST("", h.CreateCategory)
 	categoryGroup.DELETE("/:slug", h.DeleteCategory)
 	categoryGroup.PUT("/:slug", h.UpdateCategory)
 
-	// // Product related routes
+	// Product related routes
 	productGroup := e.Group("/products")
 	productGroup.GET("", h.ListProducts)
 	productGroup.GET("/:slug", h.GetProductBySlug)
@@ -43,7 +43,7 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore, db *gorm.D
 	productGroup.GET("/search/:query", h.SearchProducts)
 	productGroup.GET("/image/:path", h.GetProductImage)
 
-	// // TODO: Add admin middleware to the following routes
+	// TODO: Add admin middleware to the following routes
 	productGroup.POST("", h.CreateProduct)
 	productGroup.DELETE("/:id", h.DeleteProduct)
 	productGroup.PUT("/:id", h.UpdateProduct)
@@ -63,7 +63,7 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore, db *gorm.D
 	productReviewGroup.GET("/user", h.GetUserReview, middleware.AuthMiddleware(sessionStore, db))
 	e.GET("/reviews/recent", h.FetchRecentViews)
 
-	// // Cart related routes
+	// Cart related routes
 	cartGroup := e.Group("/cart", middleware.AuthMiddleware(sessionStore, db))
 	cartGroup.GET("", h.ListCartItems)
 	cartGroup.POST("", h.AddCartItem)
@@ -71,25 +71,17 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore, db *gorm.D
 	cartGroup.DELETE("/:id", h.DeleteCartItem)
 	cartGroup.POST("/checkout", h.CheckoutCart)
 
-	//User related routes
-	userGroup := e.Group("/users", middleware.AuthMiddleware(sessionStore, db))
-	userGroup.GET("/:id", h.GetUserProfile)
-	userGroup.PUT("/:id", h.UpdateUserProfile)
-	userGroup.POST("/:id/change-password", h.ChangeUserPassword)
-	userGroup.GET("/:id/orders", h.GetUsersOrders)
-
-	// // Orders related routes
+	// Orders related routes
 	e.GET("/user/orders/:id", h.GetUserOrderDetails, middleware.AuthMiddleware(sessionStore, db))
+	// NEEDS ADMIN MIDDLEWARE
+	e.PUT("/orders/:id/status", h.UpdateOrderStatus)
 
 	e.POST("/contact", h.ContactUs)
 
-	// NEEDS ADMIN MIDDLEWARE
-	adminUserGroup := e.Group("/admin", middleware.AuthMiddleware(sessionStore, db))
-	adminUserGroup.GET("/users", h.GetAllUsers)
-
-	adminOrdersGroup := e.Group("/admin/orders", middleware.AuthMiddleware(sessionStore, db))
-	adminOrdersGroup.GET("", h.GetAllOrders)
-	adminOrdersGroup.GET("/:id", h.GetOrderDetails)
-	adminOrdersGroup.GET("/user/:id", h.GetUserOrders)
-	adminOrdersGroup.PUT("/:id/status", h.UpdateOrderStatus)
+	// Role Management Routes - using proper handler methods
+	e.GET("/api/roles", h.GetRoles)
+	e.GET("/api/users/:id/role", h.GetUserRole)
+	e.GET("/users", h.GetUsers)
+	e.PUT("/api/users/:id/role", h.UpdateUserRole)
+	e.POST("/api/roles", h.CreateRole)
 }

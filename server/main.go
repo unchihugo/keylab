@@ -6,6 +6,7 @@ import (
 	db "keylab/database"
 	"keylab/routes"
 	"log"
+	"net/http"
 	"net/url"
 	"strings"
 
@@ -23,6 +24,7 @@ func main() {
 		AllowOrigins:     []string{config.CLIENT_URL},
 		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 		AllowCredentials: true,
+		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete, http.MethodOptions},
 	}))
 
 	if len(config.SESSIONS_KEY) < 32 || len(config.HASH_KEY) < 32 {
