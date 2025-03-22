@@ -11,3 +11,9 @@ GET http://localhost:8080/products/ducky-one-2-mini/reviews/1
 
 ### Get review statistics for ducky one 2 mini
 GET http://localhost:8080/products/ducky-one-2-mini/reviews/statistics
+
+### Fetch most recent site-wide reviews
+GET http://localhost:8080/reviews/recent
+
+### Fetch 2 of the most recent site-wide reviews
+GET http://localhost:8080/reviews/recent?limit=2

@@ -9,7 +9,7 @@ import { productService } from "../services/productService"
  * @returns An object with the products array, loading state, and error state
  * @see ../../../../server/database/models/Product.go
  */
-export const useProducts = (searchTerm: string | null) => {
+export const useProducts = (searchTerm: string = "") => {
 	const [products, setProducts] = useState<Product[]>([])
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState<string | null>(null)
