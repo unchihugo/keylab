@@ -170,6 +170,7 @@ func (h *Handlers) ChangeUserPassword(c echo.Context) error {
 // 8. Returns status 404 if user has no orders
 
 func (h *Handlers) GetUsersOrders(c echo.Context) error {
+
 	userID, err := convertToInt64(c.Param("id"))
 	if err != nil {
 		return jsonResponse(c, http.StatusBadRequest, "Invalid user ID")
@@ -181,7 +182,7 @@ func (h *Handlers) GetUsersOrders(c echo.Context) error {
 	}
 
 	var orders []models.Order
-	if err := h.DB.Where("user_id = ?", userID).Find(&orders).Error; err != nil {
+	if err := h.DB.Where("user_id = ?", userID).Preload("OrderItems").Preload("OrderItems.Product").Find(&orders).Error; err != nil {
 		return jsonResponse(c, http.StatusInternalServerError, "Error fetching orders")
 	}
 
@@ -189,21 +190,5 @@ func (h *Handlers) GetUsersOrders(c echo.Context) error {
 		return jsonResponse(c, http.StatusNotFound, "No orders found for this user")
 	}
 
-	var ordersWithItems []map[string]interface{}
-
-	for _, order := range orders {
-		var orderedItems []models.OrderedItem
-		if err := h.DB.Preload("Product").Where("order_id = ?", order.ID).Find(&orderedItems).Error; err != nil {
-			return jsonResponse(c, http.StatusInternalServerError, "Failed to fetch ordered items")
-		}
-
-		orderData := map[string]interface{}{
-			"order":         order,
-			"ordered_items": orderedItems,
-		}
-		ordersWithItems = append(ordersWithItems, orderData)
-
-	}
-
-	return jsonResponse(c, http.StatusOK, "User orders retrieved successfully", ordersWithItems)
+	return jsonResponse(c, http.StatusOK, "User orders retrieved successfully", orders)
 }

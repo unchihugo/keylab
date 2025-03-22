@@ -18,7 +18,8 @@ export default function Orders({ userId }: OrdersProps) {
 		const fetchOrders = async () => {
 			try {
 				const response = await userService.getUserOrders(userId)
-				setOrders(response.data.orders)
+				setOrders(response.data)
+
 				// test data
 				// setOrders([
 				// 	{
@@ -73,7 +74,7 @@ export default function Orders({ userId }: OrdersProps) {
 			{/*cards list */}
 			<div className="space-y-4">
 				{orders.map((order) => (
-					<OrderCard order={order} />
+					<OrderCard key={order.id} order={order} />
 				))}
 			</div>
 		</div>
