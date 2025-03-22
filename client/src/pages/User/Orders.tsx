@@ -50,6 +50,7 @@ export default function Orders({ userId }: OrdersProps) {
 				// ])
 			} catch (error) {
 				console.error("Error fetching orders:", error)
+				setOrders([])
 				if (error instanceof Error) {
 					setErrors([error.message])
 				} else {

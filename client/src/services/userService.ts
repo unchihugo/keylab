@@ -1,5 +1,7 @@
 /** @format */
 
+import { UserProfile } from "../pages/User/AccountDetails"
+
 const USERS_API_URL = "http://localhost:8080/users"
 
 /**
@@ -26,7 +28,7 @@ export const userService = {
 	},
 
 	// request to update the profile of a specific user
-	async updateUserProfile(userId: number, updatedUser: any) {
+	async updateUserProfile(userId: number, updatedUser: UserProfile) {
 		const response = await fetch(`${USERS_API_URL}/${userId}`, {
 			method: "PUT",
 			credentials: "include",
@@ -85,5 +87,5 @@ export const userService = {
 		}
 
 		return response.json()
-	}
+	},
 }

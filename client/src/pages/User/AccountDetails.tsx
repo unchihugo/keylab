@@ -5,7 +5,7 @@ import ErrorBox from "../../components/ErrorBox"
 import { userService } from "../../services/userService"
 import * as formValidation from "../../lib/formValidation"
 
-interface UserProfile {
+export interface UserProfile {
 	forename: string
 	surname: string
 	email: string
