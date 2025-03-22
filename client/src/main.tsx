@@ -5,7 +5,7 @@ import RolesManagementpage from "./pages/Admin/RolesManagement"
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import "./index.css"
-import { createBrowserRouter, Route, RouterProvider } from "react-router-dom"
+import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
 import { AuthProvider } from "./AuthContext"
 import AppLayout from "./layouts/AppLayout"
