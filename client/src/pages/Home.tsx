@@ -244,7 +244,7 @@ export default function Home() {
 							<Link
 								to={`/products/${review.product.slug}`}
 								key={review.id || index}
-								className="flex flex-col bg-white rounded-lg p-6 border border-black hover:drop-shadow-cartoon-y hover:-translate-y-1 duration-200 active:translate-y-0 active:drop-shadow-none active:shadow-inner-cartoon-y">
+								className="group flex flex-col bg-white rounded-lg p-6 border border-black hover:drop-shadow-cartoon-y hover:-translate-y-1 duration-200 active:translate-y-0 active:drop-shadow-none active:shadow-inner-cartoon-y">
 								<div className="">
 									{review.product.product_images &&
 										review.product.product_images.length >
@@ -261,12 +261,12 @@ export default function Home() {
 											/>
 										)}
 
-									<div className="flex mb-1">
+									<div className="group-active:translate-y-0.5 flex mb-1">
 										<p className="font-bold">
 											{`Review for ${review.product.name}`}
 										</p>
 									</div>
-									<div className="flex items-center mb-2">
+									<div className="group-active:translate-y-0.5 flex items-center mb-2">
 										<div className="text-lg">
 											{Array.from(
 												{ length: review.rating },
@@ -285,7 +285,7 @@ export default function Home() {
 											{review.user.surname}
 										</span>
 									</div>
-									<p className="line-clamp-3">
+									<p className="group-active:translate-y-0.5 line-clamp-3">
 										{review.comment}
 									</p>
 								</div>
