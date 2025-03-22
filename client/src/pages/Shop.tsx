@@ -3,11 +3,14 @@
 import React, { useState, useEffect } from "react"
 import ProductCard from "../components/ProductCard"
 import { useProducts } from "../hooks/useProducts"
+import { useSearchParams, useNavigate } from "react-router-dom";
 import NotFound from "./NotFound"
+import { Search } from "lucide-react";
 
 export default function DisplayPage() {
 	const { products, loading, error, searchProducts, getProductsByCategory } =
 		useProducts() // Fetch products from backend
+	
 
 	const [searchTerm, setSearchTerm] = useState<string>("")
 	const [activeFilters, setActiveFilters] = useState<{
@@ -25,6 +28,26 @@ export default function DisplayPage() {
 	const [activeSizes, setActiveSizes] = useState<string[]>([]);
 
 	const [activeBrands, setActiveBrands] = useState<string[]>([]);
+
+	const [searchParams, setSearchParams] = useSearchParams();
+
+	// gets the specific category 
+	const category = searchParams.get("category") ?? "";
+	const search = searchParams.get("search") ?? "";
+
+	setSearchTerm(search);
+	setFilteredProducts(products);
+
+	useEffect(() => {
+		setSearchTerm(search || "")
+		if(category) {
+			getProductsByCategory(category).then(() => {
+				setFilteredProducts(products);
+			});
+		} else {
+			setFilteredProducts(products);
+		}
+	}, [category, search, products, getProductsByCategory]);
 
 	useEffect(() => {
         const applyFilters = () => {
@@ -122,6 +145,7 @@ export default function DisplayPage() {
 
 	const handleSearch = async (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === "Enter") {
+			setSearchParams({ category, search: searchTerm });
 			try {
 				await searchProducts(searchTerm)
 				setFilteredProducts(products);
@@ -184,12 +208,14 @@ export default function DisplayPage() {
 	}
 	const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const selectedCategory = e.target.value
+		setSearchParams({ category: selectedCategory, search: searchTerm });
 		if (selectedCategory) {
 			getProductsByCategory(selectedCategory).then(() => {
 				setFilteredProducts(products); // Update filtered products after category change.
             }); // Fetch products for the selected category
         } else {
             setFilteredProducts(products); // Reset if no category is selected.
+			// setSearchParams({ search: searchTerm })
         }
     }
 
