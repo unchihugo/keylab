@@ -32,7 +32,14 @@ const router = createBrowserRouter([
 		children: [
 			{ path: "/", element: <Home /> },
 			{ path: "/cart", element: <Cart /> },
-			{ path: "/checkout", element: ( <ProtectedRoute><Checkout /></ProtectedRoute> ) },
+			{
+				path: "/checkout",
+				element: (
+					<ProtectedRoute>
+						<Checkout />
+					</ProtectedRoute>
+				),
+			},
 			// { path: "/example", element: <div>Example</div> }, - No longer needed?
 			{
 				path: "/protected",
@@ -45,18 +52,22 @@ const router = createBrowserRouter([
 			},
 			{ path: "/sign-in", element: <SignIn /> },
 			{ path: "/register", element: <Register /> },
-<<<<<<< HEAD
 			{ path: "/adminlogin", element: <AdminLogin /> },
 			// { path: "/admin/roles", element: <RolesPage /> },
 			{ path: "/admin/roles", element: <RolesManagementpage /> },
-=======
 			{ path: "/admin/login", element: <AdminLogin /> },
->>>>>>> b57fd013870c2653f04db3547d655480bbe25c43
 			{ path: "/products/:slug", element: <Product /> },
 			{ path: "*", element: <NotFound /> },
 			{ path: "/about", element: <About /> },
 			{ path: "/shop", element: <Shop /> },
-			{ path: "/profile", element: ( <ProtectedRoute><Profile /></ProtectedRoute> ) },
+			{
+				path: "/profile",
+				element: (
+					<ProtectedRoute>
+						<Profile />
+					</ProtectedRoute>
+				),
+			},
 		],
 	},
 	{

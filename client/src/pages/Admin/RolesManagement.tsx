@@ -128,7 +128,7 @@ const RolesManagement: React.FC = () => {
 										? getRoleName(user.roleId)
 										: typeof user.role === "object" &&
 											  user.role !== null
-											? (user.role as Role).name // Explicit type casting
+											? (user.role as Role).name
 											: "No Role"}
 								</td>
 								<td className="py-2 px-4 border">
