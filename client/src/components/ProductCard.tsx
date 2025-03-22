@@ -11,7 +11,7 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
 	return (
 		<Link
 			to={linkTo}
-			className="block border border-black h-full w-full bg-white rounded-lg hover:drop-shadow-cartoon-y hover:-translate-y-1 duration-200 overflow-hidden">
+			className="block border border-black h-full w-full bg-white rounded-lg hover:drop-shadow-cartoon-y hover:-translate-y-1 duration-200 overflow-hidden active:translate-y-0 active:drop-shadow-none active:shadow-inner-cartoon-y">
 			<div className="w-full aspect-square rounded-md object-fill -z-10 flex items-center justify-center">
 				{product.data.product_images &&
 					product.data.product_images.length > 0 && (

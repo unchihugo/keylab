@@ -244,7 +244,7 @@ export default function Home() {
 							<Link
 								to={`/products/${review.product.slug}`}
 								key={review.id || index}
-								className="flex flex-col bg-white rounded-lg p-6 border border-black hover:drop-shadow-cartoon-y hover:-translate-y-1 duration-200">
+								className="flex flex-col bg-white rounded-lg p-6 border border-black hover:drop-shadow-cartoon-y hover:-translate-y-1 duration-200 active:translate-y-0 active:drop-shadow-none active:shadow-inner-cartoon-y">
 								<div className="">
 									{review.product.product_images &&
 										review.product.product_images.length >
