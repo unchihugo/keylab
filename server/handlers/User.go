@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	db "keylab/database"
 	"keylab/database/models"
 	"keylab/repositories"
 	"keylab/utils"
@@ -21,7 +20,7 @@ import (
 // 7. Returns status 401 if the user is not authenticated
 // 8. Returns status 403 if a user tries to access another user's profile
 // 9. Returns status 404 if user is not found
-func GetUserProfile(c echo.Context) error {
+func (h *Handlers) GetUserProfile(c echo.Context) error {
 
 	authenticatedUser, ok := c.Get("user").(models.User)
 	if !ok {
@@ -40,7 +39,7 @@ func GetUserProfile(c echo.Context) error {
 		return jsonResponse(c, http.StatusForbidden, "Access denied")
 	}
 
-	user, err := repositories.FindUserByID(userID)
+	user, err := repositories.FindUserByID(userID, h.DB)
 	if err != nil {
 		log.Printf("User not found: %v", err)
 		return jsonResponse(c, http.StatusNotFound, "User not found")
@@ -59,7 +58,7 @@ func GetUserProfile(c echo.Context) error {
 // 7. Returns status 200 if successful
 // 8. Returns status 400 if the input data is invalid
 // 9. Returns status 404 if the user is not found
-func UpdateUserProfile(c echo.Context) error {
+func (h *Handlers) UpdateUserProfile(c echo.Context) error {
 
 	userID, err := convertToInt64(c.Param("id"))
 	if err != nil {
@@ -71,7 +70,7 @@ func UpdateUserProfile(c echo.Context) error {
 		return jsonResponse(c, http.StatusUnauthorized, "Unauthorized to update this profile")
 	}
 
-	existingUser, err := repositories.FindUserByID(userID)
+	existingUser, err := repositories.FindUserByID(userID, h.DB)
 	if err != nil {
 		return jsonResponse(c, http.StatusNotFound, "User not found")
 	}
@@ -83,11 +82,11 @@ func UpdateUserProfile(c echo.Context) error {
 
 	updatedUser.Email = existingUser.Email
 
-	if err := db.DB.Model(&existingUser).Omit("password").Updates(updatedUser).Error; err != nil {
+	if err := h.DB.Model(&existingUser).Omit("password").Updates(updatedUser).Error; err != nil {
 		return jsonResponse(c, http.StatusInternalServerError, "Could not update user")
 	}
 
-	fullUser, err := repositories.FindUserByID(userID)
+	fullUser, err := repositories.FindUserByID(userID, h.DB)
 	if err != nil {
 		return jsonResponse(c, http.StatusInternalServerError, "Failed to retrieve updated user")
 	}
@@ -104,7 +103,7 @@ func UpdateUserProfile(c echo.Context) error {
 // 6. Returns status 400 if input is invalid.
 // 7. Returns status 401 if old password is incorrect.
 // 8. Returns status 500 if an error occurs.
-func ChangeUserPassword(c echo.Context) error {
+func (h *Handlers) ChangeUserPassword(c echo.Context) error {
 	userID, err := convertToInt64(c.Param("id"))
 	if err != nil {
 		log.Printf("Invalid user ID: %v", err)
@@ -131,7 +130,7 @@ func ChangeUserPassword(c echo.Context) error {
 		return jsonResponse(c, http.StatusBadRequest, "New password and confirmation do not match")
 	}
 
-	user, err := repositories.FindUserByID(userID)
+	user, err := repositories.FindUserByID(userID, h.DB)
 	if err != nil {
 		log.Printf("User not found: %v", err)
 		return jsonResponse(c, http.StatusNotFound, "User not found")
@@ -149,7 +148,7 @@ func ChangeUserPassword(c echo.Context) error {
 	}
 
 	user.Password = hashedPassword
-	if err := db.DB.Save(&user).Error; err != nil {
+	if err := h.DB.Save(&user).Error; err != nil {
 		log.Printf("Error updating password: %v", err)
 		return jsonResponse(c, http.StatusInternalServerError, "Could not update password")
 	}
@@ -157,7 +156,7 @@ func ChangeUserPassword(c echo.Context) error {
 	return jsonResponse(c, http.StatusOK, "Password changed successfully")
 }
 
-// GetUserOrders [GET /users/:id/orders]
+// GetUsersOrders [GET /users/:id/orders]
 // 1. Ensures the user is authenticated
 // 2. Fetches user ID from the request and validates it
 // 3. Checks if the authenticated user matches the requested user ID
@@ -166,7 +165,7 @@ func ChangeUserPassword(c echo.Context) error {
 // 6. Returns status 400 if user ID is invalid
 // 7. Returns status 401 if the user is not authenticated
 // 8. Returns status 404 if user has no orders
-func GetUserOrders(c echo.Context) error {
+func (h *Handlers) GetUsersOrders(c echo.Context) error {
 
 	userID, err := convertToInt64(c.Param("id"))
 	if err != nil {
@@ -179,7 +178,7 @@ func GetUserOrders(c echo.Context) error {
 	}
 
 	var orders []models.Order
-	if err := db.DB.Where("user_id = ?", userID).Preload("OrderItems").Find(&orders).Error; err != nil {
+	if err := h.DB.Where("user_id = ?", userID).Preload("OrderItems").Find(&orders).Error; err != nil {
 		return jsonResponse(c, http.StatusInternalServerError, "Error fetching orders")
 	}
 
