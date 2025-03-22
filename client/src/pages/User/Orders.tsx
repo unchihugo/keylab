@@ -7,6 +7,7 @@ import { useEffect, useState } from "react"
 import { userService } from "../../services/userService"
 import { Order } from "../../types/Order"
 import ErrorBox from "../../components/ErrorBox"
+import OrderCard from "../../components/OrderCard"
 
 export default function Orders({ userId }: OrdersProps) {
 	const [errors, setErrors] = useState<string[]>([])
@@ -16,8 +17,37 @@ export default function Orders({ userId }: OrdersProps) {
 		// fetch orders
 		const fetchOrders = async () => {
 			try {
-				// const response = await userService.getUserOrders(userId)
-				// setOrders(response.data.orders)
+				const response = await userService.getUserOrders(userId)
+				setOrders(response.data.orders)
+				// test data
+				// setOrders([
+				// 	{
+				// 		id: 1,
+				// 		userId: 1,
+				// 		orderDate: "2025-01-01",
+				// 		status: "pending",
+				// 		total: 100,
+				// 		shippingAddressId: 1,
+				// 		billingAddressId: 1,
+				// 		shippingAddress: null,
+				// 		billingAddress: null,
+				// 		createdAt: "2025-01-01",
+				// 		updatedAt: "2025-01-01",
+				// 	},
+				// 	{
+				// 		id: 2,
+				// 		userId: 1,
+				// 		orderDate: "2025-02-20",
+				// 		status: "shipped",
+				// 		total: 200,
+				// 		shippingAddressId: 1,
+				// 		billingAddressId: 1,
+				// 		shippingAddress: null,
+				// 		billingAddress: null,
+				// 		createdAt: "2025-02-20",
+				// 		updatedAt: "2025-02-25",
+				// 	},
+				// ])
 			} catch (error) {
 				console.error("Error fetching orders:", error)
 				if (error instanceof Error) {
@@ -42,9 +72,7 @@ export default function Orders({ userId }: OrdersProps) {
 			{/*cards list */}
 			<div className="space-y-4">
 				{orders.map((order) => (
-					<div
-						key={order.id}
-						className="p-4 border rounded-lg shadow-md flex items-center gap-4 relative cursor-pointer transition duration-200"></div>
+					<OrderCard order={order} />
 				))}
 			</div>
 		</div>
