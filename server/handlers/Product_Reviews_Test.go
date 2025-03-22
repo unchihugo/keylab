@@ -1,0 +1,247 @@
+package handlers
+
+import (
+	"bytes"
+	"encoding/json"
+	db "keylab/database"
+	"keylab/database/models"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+	"time"
+
+	"github.com/labstack/echo/v4"
+	"github.com/stretchr/testify/assert"
+)
+
+func setupReviewHandler(t *testing.T) (*Handlers, *db.TestDB, models.User, models.Product) {
+	testDB := db.SetupTestDB(t)
+
+	user := models.User{
+		Forename:    "John",
+		Surname:     "Doe",
+		Email:       "john.doe@example.com",
+		Password:    "hashedpassword",
+		PhoneNumber: "+1234567890",
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+	if err := testDB.DB.Create(&user).Error; err != nil {
+		t.Fatalf("Failed to create user: %v", err)
+	}
+
+	product := models.Product{
+		Name:        "Test Product",
+		Slug:        "test-product",
+		Description: "Test Description",
+		Price:       10.0,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+	if err := testDB.DB.Create(&product).Error; err != nil {
+		t.Fatalf("Failed to create product: %v", err)
+	}
+
+	h := &Handlers{DB: testDB.DB}
+	return h, testDB, user, product
+}
+
+func TestCreateReview(t *testing.T) {
+	h, testDB, user, product := setupReviewHandler(t)
+	defer db.CleanupTestDB(t, testDB)
+
+	e := echo.New()
+	review := models.ProductReviews{
+		Rating:  5,
+		Comment: "Amazing!",
+	}
+	body, _ := json.Marshal(review)
+
+	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewReader(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.Set("user", user)
+	c.SetParamNames("product_slug")
+	c.SetParamValues(product.Slug)
+
+	err := h.CreateReview(c)
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, rec.Code)
+}
+
+func TestGetReviewsByUser(t *testing.T) {
+	h, testDB, user, product := setupReviewHandler(t)
+	defer db.CleanupTestDB(t, testDB)
+
+	review := models.ProductReviews{
+		Rating:    4,
+		Comment:   "Nice product",
+		ProductID: product.ID,
+		UserID:    user.ID,
+	}
+	assert.NoError(t, testDB.DB.Create(&review).Error)
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.SetParamNames("user_id")
+	c.SetParamValues("1")
+
+	err := h.GetReviewsByUser(c)
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, rec.Code)
+}
+
+func TestGetReviewsByProduct(t *testing.T) {
+	h, testDB, user, product := setupReviewHandler(t)
+	defer db.CleanupTestDB(t, testDB)
+
+	review := models.ProductReviews{
+		Rating:    4,
+		Comment:   "Good product",
+		ProductID: product.ID,
+		UserID:    user.ID,
+	}
+	assert.NoError(t, testDB.DB.Create(&review).Error)
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.SetParamNames("product_slug")
+	c.SetParamValues(product.Slug)
+
+	err := h.GetReviewsByProduct(c)
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, rec.Code)
+}
+
+func TestGetReview(t *testing.T) {
+	h, testDB, user, product := setupReviewHandler(t)
+	defer db.CleanupTestDB(t, testDB)
+
+	review := models.ProductReviews{
+		Rating:    5,
+		Comment:   "Perfect!",
+		ProductID: product.ID,
+		UserID:    user.ID,
+	}
+	assert.NoError(t, testDB.DB.Create(&review).Error)
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.SetParamNames("id", "product_slug")
+	c.SetParamValues("1", product.Slug)
+
+	err := h.GetReview(c)
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, rec.Code)
+}
+
+func TestGetReviewStatistics(t *testing.T) {
+	h, testDB, user, product := setupReviewHandler(t)
+	defer db.CleanupTestDB(t, testDB)
+
+	reviews := []models.ProductReviews{
+		{Rating: 5, Comment: "Great!", ProductID: product.ID, UserID: user.ID},
+		{Rating: 3, Comment: "Okay", ProductID: product.ID, UserID: user.ID},
+	}
+	assert.NoError(t, testDB.DB.Create(&reviews).Error)
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.SetParamNames("product_slug")
+	c.SetParamValues(product.Slug)
+
+	err := h.GetReviewStatistics(c)
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, rec.Code)
+}
+
+func TestUpdateReview(t *testing.T) {
+	h, testDB, user, product := setupReviewHandler(t)
+	defer db.CleanupTestDB(t, testDB)
+
+	review := models.ProductReviews{
+		Rating:    2,
+		Comment:   "Not great",
+		ProductID: product.ID,
+		UserID:    user.ID,
+	}
+	assert.NoError(t, testDB.DB.Create(&review).Error)
+
+	updated := models.ProductReviews{
+		Rating:  4,
+		Comment: "Actually better now",
+	}
+	body, _ := json.Marshal(updated)
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodPut, "/", bytes.NewReader(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.Set("user", user)
+	c.SetParamNames("id")
+	c.SetParamValues("1")
+
+	err := h.UpdateReview(c)
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, rec.Code)
+}
+
+func TestDeleteReview(t *testing.T) {
+	h, testDB, user, product := setupReviewHandler(t)
+	defer db.CleanupTestDB(t, testDB)
+
+	review := models.ProductReviews{
+		Rating:    3,
+		Comment:   "Meh",
+		ProductID: product.ID,
+		UserID:    user.ID,
+	}
+	assert.NoError(t, testDB.DB.Create(&review).Error)
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodDelete, "/", nil)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.Set("user", user)
+	c.SetParamNames("id")
+	c.SetParamValues("1")
+
+	err := h.DeleteReview(c)
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, rec.Code)
+}
+
+func TestGetUserReview(t *testing.T) {
+	h, testDB, user, product := setupReviewHandler(t)
+	defer db.CleanupTestDB(t, testDB)
+
+	review := models.ProductReviews{
+		Rating:    5,
+		Comment:   "Excellent",
+		ProductID: product.ID,
+		UserID:    user.ID,
+	}
+	assert.NoError(t, testDB.DB.Create(&review).Error)
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.Set("user", user)
+	c.SetParamNames("product_slug")
+	c.SetParamValues(product.Slug)
+
+	err := h.GetUserReview(c)
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, rec.Code)
+}
