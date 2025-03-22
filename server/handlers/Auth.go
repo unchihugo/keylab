@@ -179,3 +179,36 @@ func (h *Handlers) TestPermission(c echo.Context) error {
 
 	return jsonResponse(c, http.StatusOK, "Test Permission")
 }
+
+// GetAllUsers Handler [GET /admin/users]
+// 1. Fetches all users from the database
+// 2. Returns status 200 with user data if successful
+// 3. Returns status 500 if an error occurs
+
+// GetAllUsers Handler [GET /admin/users]
+// 1. Fetches all users from the database with pagination support
+// 2. Returns status 200 with user data and pagination metadata if successful
+// 3. Returns status 500 if an error occurs
+
+func (h *Handlers) GetAllUsers(c echo.Context) error {
+	var users []models.User
+
+	page, perPage, offset := getPaginationParams(c)
+	order := getSortOrder(c)
+
+	if err := h.DB.Order(order).Limit(perPage).Offset(offset).Find(&users).Error; err != nil {
+		log.Printf("Error fetching users: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error fetching users")
+	}
+
+	var total int64
+	if err := h.DB.Preload("Role").Model(&models.User{}).Count(&total).Error; err != nil {
+		log.Printf("Error counting users: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error counting users")
+	}
+
+	return jsonResponse(c, http.StatusOK, "Users fetched successfully", map[string]interface{}{
+		"users":    users,
+		"metadata": generatePaginationResponse(page, perPage, int(total)),
+	})
+}

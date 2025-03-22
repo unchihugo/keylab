@@ -61,6 +61,7 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore, db *gorm.D
 	productReviewGroup.PUT("/:id", h.UpdateReview, middleware.AuthMiddleware(sessionStore, db))
 	productReviewGroup.DELETE("/:id", h.DeleteReview, middleware.AuthMiddleware(sessionStore, db))
 	productReviewGroup.GET("/user", h.GetUserReview, middleware.AuthMiddleware(sessionStore, db))
+	e.GET("/reviews/recent", h.FetchRecentViews)
 
 	// // Cart related routes
 	cartGroup := e.Group("/cart", middleware.AuthMiddleware(sessionStore, db))
@@ -72,8 +73,16 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore, db *gorm.D
 
 	// // Orders related routes
 	e.GET("/user/orders/:id", h.GetUserOrderDetails, middleware.AuthMiddleware(sessionStore, db))
-	// // NEEDS ADMIN MIDDLEWARE
-	e.PUT("/orders/:id/status", h.UpdateOrderStatus)
 
 	e.POST("/contact", h.ContactUs)
+
+	// NEEDS ADMIN MIDDLEWARE
+	adminUserGroup := e.Group("/admin", middleware.AuthMiddleware(sessionStore, db))
+	adminUserGroup.GET("/users", h.GetAllUsers)
+
+	adminOrdersGroup := e.Group("/admin/orders", middleware.AuthMiddleware(sessionStore, db))
+	adminOrdersGroup.GET("", h.GetAllOrders)
+	adminOrdersGroup.GET("/:id", h.GetOrderDetails)
+	adminOrdersGroup.GET("/user/:id", h.GetUserOrders)
+	adminOrdersGroup.PUT("/:id/status", h.UpdateOrderStatus)
 }

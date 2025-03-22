@@ -328,3 +328,40 @@ func (h *Handlers) GetUserReview(c echo.Context) error {
 
 	return jsonResponse(c, http.StatusOK, "Review found", review)
 }
+
+// FetchRecentViews [GET /reviews/recent]
+// 1. Gets the limit parameter from the query string
+// 2. Fetches the most recent reviews from the database
+// 3. Returns status 200 with the reviews if successful
+// 4. Returns status 400 if invalid parameters are provided
+// 5. Returns status 500 if an error occurs
+
+func (h *Handlers) FetchRecentViews(c echo.Context) error {
+	limitStr := c.QueryParam("limit")
+	limit := 5
+
+	if limitStr != "" {
+		parsedLimit, err := convertToInt64(limitStr)
+		if err != nil {
+			return jsonResponse(c, http.StatusBadRequest, "Invalid limit parameter")
+		}
+
+		if parsedLimit <= 0 {
+			return jsonResponse(c, http.StatusBadRequest, "Limit must be a positive number")
+		}
+
+		limit = int(parsedLimit)
+	}
+
+	var reviews []models.ProductReviews
+	if err := h.DB.Preload("User").Preload("Product").Order("created_at DESC").Limit(limit).Find(&reviews).Error; err != nil {
+		log.Printf("Error fetching recent reviews: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error fetching recent reviews")
+	}
+
+	if len(reviews) == 0 {
+		return jsonResponse(c, http.StatusOK, "No reviews found", []models.ProductReviews{})
+	}
+
+	return jsonResponse(c, http.StatusOK, "Recent reviews found", reviews)
+}
