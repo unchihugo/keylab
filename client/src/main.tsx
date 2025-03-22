@@ -7,6 +7,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 
 import { AuthProvider } from "./AuthContext"
 import AppLayout from "./layouts/AppLayout"
+import AdminLayout from "./layouts/AdminLayout"
+
 import Home from "./pages/Home"
 import NotFound from "./pages/NotFound"
 import SignIn from "./pages/auth/sign-in"
@@ -28,8 +30,8 @@ const router = createBrowserRouter([
 		children: [
 			{ path: "/", element: <Home /> },
 			{ path: "/cart", element: <Cart /> },
-			{ path: "/checkout", element: <Checkout /> },
-			{ path: "/example", element: <div>Example</div> },
+			{ path: "/checkout", element: ( <ProtectedRoute><Checkout /></ProtectedRoute> ) },
+			// { path: "/example", element: <div>Example</div> }, - No longer needed?
 			{
 				path: "/protected",
 				element: (
@@ -39,18 +41,24 @@ const router = createBrowserRouter([
 					</ProtectedRoute>
 				),
 			},
-			{
-				path: "/admin/dashboard", element: <AdminDashboard/>,
-			},
 			{ path: "/sign-in", element: <SignIn /> },
 			{ path: "/register", element: <Register /> },
-			{ path: "/adminlogin", element: <AdminLogin/> },
+			{ path: "/admin/login", element: <AdminLogin /> },
 			{ path: "/products/:slug", element: <Product /> },
 			{ path: "*", element: <NotFound /> },
 			{ path: "/about", element: <About /> },
 			{ path: "/shop", element: <Shop /> },
-			{ path: "/profile", element: <Profile /> },
+			{ path: "/profile", element: ( <ProtectedRoute><Profile /></ProtectedRoute> ) },
 		],
+	},
+	{
+		path: "/admin",
+		element: (
+			<ProtectedRoute>
+				<AdminLayout />
+			</ProtectedRoute>
+		),
+		children: [{ path: "/admin/dashboard", element: <AdminDashboard /> }],
 	},
 ])
 

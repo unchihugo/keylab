@@ -5,20 +5,30 @@ import LinkButton from "../components/LinkButton"
 import ProductCarousel from "../components/ProductCarousel"
 import { useProducts } from "../hooks/useProducts"
 import Divider from "../components/Divider"
+import { ProductReview } from "../types/ProductReview"
+import { useEffect, useState } from "react"
+import { reviewService } from "../services/reviewService"
+import { Star } from "lucide-react"
+import ZoomImage from "../components/ZoomImage"
 
 export default function Home() {
 	const { products: popularKeycaps } = useProducts("keycap")
 	const { products: popularKeyboards } = useProducts("keyboard")
 	const { products: duckyProducts } = useProducts("ducky")
+	const [recentReviews, setRecentReviews] = useState<ProductReview[]>([])
+
+	useEffect(() => {
+		// fetch recent reviews
+		const fetchRecentReviews = async () => {
+			const reviews = await reviewService.fetchRecentReviews(4)
+			setRecentReviews(reviews.data)
+		}
+		fetchRecentReviews()
+	}, [])
 
 	return (
 		<div className="flex justify-center items-center bg-primary/25">
 			<div className="max-w-screen-2xl w-full my-28 px-6">
-				<link
-					rel="stylesheet"
-					href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-				/>
-
 				{/* hero section */}
 				<div>
 					<div className="flex flex-col md:flex-row gap-3">
@@ -224,6 +234,71 @@ export default function Home() {
 				{/* i havent touched the page beyond this line */}
 				<Divider />
 
+				{/* reviews */}
+				<div className="mt-16">
+					<div className="text-xl font-display my-4">
+						Most Recent Reviews
+					</div>
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 md:gap-8">
+						{recentReviews.map((review, index) => (
+							<Link
+								to={`/products/${review.product.slug}`}
+								key={review.id || index}
+								className="group flex flex-col bg-white rounded-lg p-6 border border-black hover:drop-shadow-cartoon-y hover:-translate-y-1 duration-200 active:translate-y-0 active:drop-shadow-none active:shadow-inner-cartoon-y">
+								<div className="">
+									{review.product.product_images &&
+										review.product.product_images.length >
+											0 && (
+											<ZoomImage
+												src={
+													review.product
+														.product_images[0].url
+												}
+												alt={
+													review.product
+														.product_images[0].image
+												}
+											/>
+										)}
+
+									<div className="group-active:translate-y-0.5 flex mb-1">
+										<p className="font-bold">
+											{`Review for ${review.product.name}`}
+										</p>
+									</div>
+									<div className="group-active:translate-y-0.5 flex items-center mb-2">
+										<div className="text-lg">
+											{Array.from(
+												{ length: review.rating },
+												(_, i) => (
+													<Star
+														key={i}
+														fill="#ffd063"
+														strokeWidth={0}
+														className="inline-block"
+													/>
+												),
+											)}
+										</div>
+										<span className="ml-2 text-sm">
+											{review.user.forename}{" "}
+											{review.user.surname}
+										</span>
+									</div>
+									<p className="group-active:translate-y-0.5 line-clamp-3">
+										{review.comment}
+									</p>
+								</div>
+							</Link>
+						))}
+						{recentReviews.length === 0 && (
+							<div className="col-span-full text-center py-8">
+								<p>No reviews available yet.</p>
+							</div>
+						)}
+					</div>
+				</div>
+
 				<section className="py-16 px-8">
 					<div className="flex gap-4">
 						{/* First Product Image Box */}
@@ -243,45 +318,6 @@ export default function Home() {
 								className="w-full h-full object-cover rounded-md"
 							/>
 						</div>
-					</div>
-				</section>
-
-				{/* Reviews Section */}
-				<section className="py-16 px-8 bg-yellow-50">
-					<h2 className="text-2xl font-body text-center mb-8">
-						Latest Reviews
-					</h2>
-					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-screen-lg mx-auto">
-						{[
-							"bg-primary-dark",
-							"bg-blue-100",
-							"bg-purple-100",
-							"bg-pink-100",
-						].map((bgColor, index) => (
-							<div
-								key={index}
-								className={`${bgColor} p-6 rounded-lg shadow-md text-center`}>
-								<div className="h-12 w-12 bg-gray-200 rounded-full mx-auto mb-4"></div>
-								<h4 className="text-lg font-display">
-									Review Title
-								</h4>
-								<p className="text-gray-600 font-body mt-2">
-									Review Body
-								</p>
-								<p className="text-sm text-gray-500 font-body mt-4">
-									Reviewer Name - Date
-								</p>
-
-								{/* Star Icons */}
-								<div className="flex justify-center space-x-1 mt-4">
-									<i className="fas fa-star text-yellow-400"></i>
-									<i className="fas fa-star text-yellow-400"></i>
-									<i className="fas fa-star text-yellow-400"></i>
-									<i className="fas fa-star text-yellow-400"></i>
-									<i className="fas fa-star text-gray-300"></i>
-								</div>
-							</div>
-						))}
 					</div>
 				</section>
 			</div>
