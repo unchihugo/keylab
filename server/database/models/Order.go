@@ -27,7 +27,7 @@ type Order struct {
 	BillingAddressID  int64         `gorm:"column:billing_address;not null" json:"billing_address_id"`
 	ShippingAddress   *Address      `gorm:"foreignKey:ShippingAddressID" json:"shipping_address"`
 	BillingAddress    *Address      `gorm:"foreignKey:BillingAddressID" json:"billing_address"`
-	OrderedItems      []OrderedItem `gorm:"foreignKey:OrderID" json:"ordered_items"`
+	OrderItems        []OrderedItem `gorm:"foreignKey:OrderID" json:"order_items"`
 	CreatedAt         time.Time     `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdatedAt         time.Time     `gorm:"default:CURRENT_TIMESTAMP;autoUpdateTime" json:"updated_at"`
 }

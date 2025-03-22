@@ -116,6 +116,16 @@ func (h *Handlers) Register(c echo.Context) error {
 		return jsonResponse(c, http.StatusInternalServerError, "Error creating user")
 	}
 
+	session, err := h.SessionStore.Get(c.Request(), SessionName)
+	if err != nil {
+		log.Printf("Error creating session: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error creating session")
+	}
+	initiateSession(session, user.ID)
+	if err := session.Save(c.Request(), c.Response()); err != nil {
+		return jsonResponse(c, http.StatusInternalServerError, "Error saving session")
+	}
+
 	return jsonResponse(c, http.StatusOK, "User created successfully!")
 }
 
