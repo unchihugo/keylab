@@ -119,12 +119,12 @@ export const validateMatch = (
 /**
  * Validates phone numbers based on the following criteria:
  * - Isn't empty
- * - Should match a phone number pattern (e.g., format like +1234567890)
+ * - Should match a phone number pattern (e.g., format like +1234567890 and american format phone numbers)
  * @param phoneNum Phone number to validate
  * @returns Error message if phone number is invalid, otherwise an empty string
  */
 export const validatePhoneNum = (phoneNum: string) => {
-	const regex = /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s./0-9]*$/
+	const regex = /^(\+?\d{1,3}[-.\s]?)?(\(?\d{3}\)?[-.\s]?)?\d{3}[-.\s]?\d{4}$/
 	if (!phoneNum) {
 		return "Phone number is required"
 	}
