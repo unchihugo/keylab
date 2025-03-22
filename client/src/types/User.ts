@@ -1,6 +1,6 @@
 /** @format */
 
-// src/types/User.ts
+//src/types/User.ts
 
 // Defining the possible user roles (you can adjust this based on your backend roles)
 export type UserRole = 0 | 1 // Adjust based on backend roles

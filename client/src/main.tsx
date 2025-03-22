@@ -1,7 +1,6 @@
 /** @format */
-import RolesPage from "./pages/Admin/Roles"
-
-;<Route path="/admin/roles" element={<RolesPage />} />
+// import RolesPage from "./pages/Admin/Roles"
+import RolesManagementpage from "./pages/Admin/RolesManagement"
 
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
@@ -46,7 +45,9 @@ const router = createBrowserRouter([
 			},
 			{ path: "/sign-in", element: <SignIn /> },
 			{ path: "/register", element: <Register /> },
-			{ path: "/adminlogin", element: <AdminLogin/> },
+			{ path: "/adminlogin", element: <AdminLogin /> },
+			// { path: "/admin/roles", element: <RolesPage /> },
+			{ path: "/admin/roles", element: <RolesManagementpage /> },
 			{ path: "/products/:slug", element: <Product /> },
 			{ path: "*", element: <NotFound /> },
 			{ path: "/about", element: <About /> },
