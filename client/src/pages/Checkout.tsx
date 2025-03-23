@@ -3,6 +3,8 @@
 import React, { useState } from "react"
 import Divider from "../components/Divider"
 import LinkButton from "../components/LinkButton"
+import { useCart } from "../hooks/useCarts"
+import { Carts } from "../types/Carts"
 
 export default function Checkout() {
 	const [firstName, setFirstName] = useState("")
@@ -16,6 +18,25 @@ export default function Checkout() {
 	const [cardnumber, setCardNumber] = useState("")
 	const [expirydate, setExpiryDate] = useState("")
 	const [cvv, setCvv] = useState("")
+	const { carts } = useCart();
+
+	const shippingPrice = 3.99;
+
+	const productPrice = carts
+	    ?.reduce(
+		   (accumulator, item) =>
+			   accumulator + item.product.price * item.quantity,
+		    0,
+	)
+	.toFixed(2)
+
+	const totalPrice = carts
+	    ?.reduce(
+		   (accumulator, item) =>
+			   accumulator + item.product.price * item.quantity + shippingPrice,
+		    0,
+	)
+	.toFixed(2)
 
 	return (
 		<div className="flex justify-center items-center bg-primary">
@@ -164,7 +185,7 @@ export default function Checkout() {
 							<Divider />
 							<div className="flex justify-between font-body text-lg mt-4">
 								<span>Subtotal:</span>
-								<span>£150</span>
+								<span>£{productPrice}</span>
 							</div>
 							<div className="flex justify-between font-body text-lg mt-2">
 								<span>Shipping:</span>
@@ -172,7 +193,7 @@ export default function Checkout() {
 							</div>
 							<div className="flex justify-between font-body text-xl font-semibold mt-4 border-t border-gray-300 pt-2">
 								<span>Total:</span>
-								<span>£153.99</span>
+								<span>£{totalPrice}</span>
 							</div>
 						</div>
 						{/* Payment */}

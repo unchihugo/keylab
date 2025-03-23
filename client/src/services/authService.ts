@@ -19,13 +19,14 @@ export const authService = {
 			credentials: "include", // to allow HttpOnly and Secure cookies to be sent
 		})
 
+		const data = await response.json()
+
 		if (!response.ok) {
 			// handle errors
-			const errorData = await response.json()
-			throw new Error(errorData.message || "Login failed")
+			throw new Error(data.message || "Login failed")
 		}
 
-		return response.json()
+		return data
 	},
 
 	// request to backend to create a new user
@@ -44,13 +45,14 @@ export const authService = {
 			credentials: "include",
 		})
 
+		const data = await response.json()
+
 		if (!response.ok) {
 			// handle errors
-			const errorData = await response.json()
-			throw new Error(errorData.message || "Registration failed")
+			throw new Error(data.message || "Registration failed")
 		}
 
-		return response.json()
+		return data
 	},
 
 	// this is where we make a request to backend to logout the user
@@ -60,13 +62,14 @@ export const authService = {
 			credentials: "include",
 		})
 
+		const data = await response.json()
+
 		if (!response.ok) {
 			// handle errors
-			const errorData = await response.json()
-			throw new Error(errorData.message || "Logout failed")
+			throw new Error(data.message || "Logout failed")
 		}
 
-		return response.json()
+		return data
 	},
 
 	// validate the user's session
@@ -76,12 +79,17 @@ export const authService = {
 			credentials: "include",
 		})
 
+		const data = await response.json()
+
 		if (!response.ok) {
 			// handle errors
-			const errorData = await response.json()
-			throw new Error(errorData.message || "Session validation failed")
+			if (response.status === 401) {
+				return null
+			}
+
+			throw new Error(data.message || "Session validation failed")
 		}
 
-		return response.json()
+		return data
 	},
 }

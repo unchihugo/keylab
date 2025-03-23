@@ -119,14 +119,15 @@ export const validateMatch = (
 /**
  * Validates phone numbers based on the following criteria:
  * - Isn't empty
- * - Should match a phone number pattern (e.g., format like +1234567890)
+ * - Should match a phone number pattern (e.g., format like +1234567890 and american format phone numbers)
  * @param phoneNum Phone number to validate
  * @returns Error message if phone number is invalid, otherwise an empty string
  */
 export const validatePhoneNum = (phoneNum: string) => {
-	const regex = /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s./0-9]*$/
+	const regex =
+		/^(\+?\d{1,3}[-.\s]?)?(\(?\d{3,4}\)?|\d{3,4})[-.\s]?\d{3}[-.\s]?\d{3,4}$/
 	if (!phoneNum) {
-		return "Phone number is required"
+		return ""
 	}
 	if (!regex.test(phoneNum)) {
 		return "Invalid phone number format"
@@ -149,4 +150,34 @@ export const validateMessage = (message: string) => {
 		return "Message must be at least 10 characters long"
 	}
 	return ""
+}
+
+// TODO: IMPORTANT: future implementations should follow the pattern of the following function:
+/**
+ * Validates review input based on the following criteria:
+ * - Rating is between 1 and 5 stars
+ * - Comment is at least 10 characters long
+ * - Comment is no longer than 500 characters
+ * @param review Review input to validate
+ * @returns Array of error messages if review is invalid, otherwise an empty array
+ */
+export const validateReview = (review: {
+	rating: number
+	comment: string
+}): string[] => {
+	const errors: string[] = []
+
+	if (!review.rating || review.rating < 1 || review.rating > 5) {
+		errors.push("Rating must be between 1 and 5 stars")
+	}
+
+	if (!review.comment || review.comment.trim().length < 10) {
+		errors.push("Review comment must be at least 10 characters")
+	}
+
+	if (review.comment && review.comment.trim().length > 255) {
+		errors.push("Review comment cannot exceed 255 characters")
+	}
+
+	return errors
 }

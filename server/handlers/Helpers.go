@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"io"
+	"keylab/config"
 	"keylab/utils"
 	"log"
 	"os"
@@ -89,6 +90,8 @@ func getSortOrder(c echo.Context) string {
 func uploadImages(c echo.Context, formField string, destination string, allowedExtensions []string) ([]map[string]interface{}, error) {
 	var uploadedFiles []map[string]interface{}
 
+	config := config.Initialize()
+
 	files, err := c.MultipartForm()
 	if err != nil {
 		return nil, fmt.Errorf("Failed to parse multipart form: %v", err)
@@ -133,8 +136,7 @@ func uploadImages(c echo.Context, formField string, destination string, allowedE
 			return nil, fmt.Errorf("Failed to copy content to destination: %v", err)
 		}
 
-		baseURL := utils.GetBaseURL()
-		fileURL := fmt.Sprintf("%s/uploads/%s", baseURL, filename)
+		fileURL := fmt.Sprintf("%s/uploads/%s", config.SERVER_URL, filename)
 
 		uploadedFiles = append(uploadedFiles, map[string]interface{}{
 			"filename": filename,

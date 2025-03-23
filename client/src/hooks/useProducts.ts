@@ -9,7 +9,7 @@ import { productService } from "../services/productService"
  * @returns An object with the products array, loading state, and error state
  * @see ../../../../server/database/models/Product.go
  */
-export const useProducts = () => {
+export const useProducts = (searchTerm: string = "") => {
 	const [products, setProducts] = useState<Product[]>([])
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState<string | null>(null)
@@ -110,7 +110,9 @@ export const useProducts = () => {
 		if (import.meta.env.MODE == "test") {
 			fetchTestProducts()
 		} else {
-			fetchProducts()
+			if (searchTerm) {
+				searchProducts(searchTerm)
+			} else fetchProducts()
 		}
 	}, [])
 
