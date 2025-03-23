@@ -124,7 +124,7 @@ export const validateMatch = (
  * @returns Error message if phone number is invalid, otherwise an empty string
  */
 export const validatePhoneNum = (phoneNum: string) => {
-	const regex = /^(\+?\d{1,3}[-.\s]?)?(\(?\d{3}\)?[-.\s]?)?\d{3}[-.\s]?\d{4}$/
+	const regex = /^(\+?\d{1,3}[-.\s]?)?(\(?\d{3,4}\)?|\d{3,4})[-.\s]?\d{3}[-.\s]?\d{3,4}$/
 	if (!phoneNum) {
 		return "Phone number is required"
 	}
