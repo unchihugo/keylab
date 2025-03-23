@@ -116,11 +116,10 @@ export default function Inventory() {
         .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     return (
-        <div className="p-8 min-h-screen bg-gray-100">
-            <h2 className="text-3xl font-bold text-gray-700">Inventory Management</h2>
+        <div className="p-8 min-h-screen bg-[#faf6ed]">
 
-            <div className="mt-6 bg-blue-100 p-4 rounded shadow mb-4">
-                <p className="text-gray-600">Manage your product stock and details.</p>
+            <div className="mt-16 bg-blue-100 p-4 rounded shadow mb-4">
+                <p className="text-black">Manage your product stock and details.</p>
             </div>
 
             <input
@@ -171,7 +170,7 @@ export default function Inventory() {
                 />
                 <button
                     onClick={addProduct}
-                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                    className="bg-secondary/50 text-black px-4 py-2 rounded"
                     disabled={loading}
                 >
                     {loading ? "Adding..." : "Add Product"}

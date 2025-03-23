@@ -1,4 +1,4 @@
-const API_URL = "https://your-api-url.com/products";
+const PRODUCTS_API_URL = "http://localhost:8080/products";
 
 interface Product {
   id: string;
@@ -12,7 +12,7 @@ interface Product {
 export const inventoryService = {
   async getProducts(): Promise<Product[]> {
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(PRODUCTS_API_URL, {
         method: "GET",
         credentials: "include",
       });
@@ -26,7 +26,7 @@ export const inventoryService = {
 
   async createProduct(product: Product): Promise<Product | null> {
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(PRODUCTS_API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -42,7 +42,7 @@ export const inventoryService = {
 
   async updateProduct(id: string, updatedProduct: Product): Promise<Product | null> {
     try {
-      const response = await fetch(`${API_URL}/${id}`, {
+      const response = await fetch(`${PRODUCTS_API_URL}/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -58,7 +58,7 @@ export const inventoryService = {
 
   async deleteProduct(id: string): Promise<boolean> {
     try {
-      const response = await fetch(`${API_URL}/${id}`, {
+      const response = await fetch(`${PRODUCTS_API_URL}/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
