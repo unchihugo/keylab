@@ -2,8 +2,8 @@
 
 // src/pages/RolesManagement.tsx
 import React, { useState, useEffect } from "react"
-import { Role } from "../../types/Role"
-import { User, UserRole } from "../../types/User"
+import { Role, UserRoleUpdate } from "../../types/Role"
+import { User } from "../../types/User"
 import { roleService } from "../../services/roleService"
 import { userService } from "../../services/userService"
 
@@ -12,6 +12,7 @@ const RolesManagement: React.FC = () => {
 	const [roles, setRoles] = useState<Role[]>([])
 	const [loading, setLoading] = useState(true)
 	const [newRoleName, setNewRoleName] = useState("")
+	const [error, setError] = useState<string | null>(null)
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -22,8 +23,10 @@ const RolesManagement: React.FC = () => {
 				])
 				setUsers(usersData)
 				setRoles(rolesData)
+				setError(null)
 			} catch (error) {
 				console.error("Error fetching data:", error)
+				setError("Failed to load data. Please try again.")
 			} finally {
 				setLoading(false)
 			}
@@ -32,56 +35,79 @@ const RolesManagement: React.FC = () => {
 		fetchData()
 	}, [])
 
-	const handleRoleChange = async (userId: number, roleId: number) => {
-		try {
-			await roleService.updateUserRole(userId, roleId)
-			setUsers(
-				users.map((user) => {
-					if (user.id === userId) {
-						const selectedRole = roles.find((r) => r.id === roleId)
+	const handleRoleChange = async (
+		userId: number,
+		roleId: number | string,
+	) => {
+		const numericRoleId = roleId === "" ? 0 : Number(roleId)
 
+		try {
+			setLoading(true)
+			const updatedUserRole: UserRoleUpdate =
+				await roleService.updateUserRole(userId, numericRoleId)
+
+			setUsers((prevUsers) =>
+				prevUsers.map((user) => {
+					if (user.id === userId) {
 						return {
 							...user,
-							roleId,
-							role: selectedRole
-								? convertRoleToUserRole(selectedRole)
-								: user.role,
+							roleId: updatedUserRole.roleId,
+							role: updatedUserRole.role,
 						}
 					}
 					return user
 				}),
 			)
-
-			function convertRoleToUserRole(role: Role): UserRole {
-				return role.name.toLowerCase() === "admin" ? 1 : 0
-			}
+			setError(null)
 		} catch (error) {
 			console.error("Error updating role:", error)
+			setError("Failed to update user role. Please try again.")
+		} finally {
+			setLoading(false)
 		}
 	}
 
-	function getRoleName(roleValue: number | null | undefined): string {
-		if (roleValue === null || roleValue === undefined) return "No Role"
-		return roleValue === 1 ? "Admin" : "User"
+	const getRoleName = (user: User): string => {
+		if (!user.roleId || user.roleId === 0) return "No Role"
+
+		if (user.role && typeof user.role === "object") {
+			return user.role.name || "Unknown Role"
+		}
+
+		const role = roles.find((r) => r.id === user.roleId)
+		return role ? role.name : "Unknown Role"
 	}
 
 	const createNewRole = async () => {
 		if (!newRoleName) return
 
 		try {
+			setLoading(true)
 			const newRole = await roleService.createRole(newRoleName)
-			setRoles([...roles, newRole])
+			setRoles((prevRoles) => [...prevRoles, newRole])
 			setNewRoleName("")
+			setError(null)
 		} catch (error) {
 			console.error("Error creating role:", error)
+			setError("Failed to create new role. Please try again.")
+		} finally {
+			setLoading(false)
 		}
 	}
 
-	if (loading) return <div>Loading...</div>
+	if (loading && users.length === 0 && roles.length === 0) {
+		return <div className="container mx-auto p-4">Loading...</div>
+	}
 
 	return (
 		<div className="container mx-auto p-4">
 			<h1 className="text-2xl font-bold mb-6">User Roles Management</h1>
+
+			{error && (
+				<div className="mb-4 p-3 bg-red-100 text-red-700 border border-red-200 rounded">
+					{error}
+				</div>
+			)}
 
 			<div className="mb-8 p-4 border rounded">
 				<h2 className="text-xl font-semibold mb-4">Create New Role</h2>
@@ -95,8 +121,13 @@ const RolesManagement: React.FC = () => {
 					/>
 					<button
 						onClick={createNewRole}
-						className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-						Create Role
+						disabled={loading || !newRoleName}
+						className={`px-4 py-2 rounded text-white ${
+							loading || !newRoleName
+								? "bg-gray-400 cursor-not-allowed"
+								: "bg-blue-500 hover:bg-blue-600"
+						}`}>
+						{loading ? "Creating..." : "Create Role"}
 					</button>
 				</div>
 			</div>
@@ -123,13 +154,7 @@ const RolesManagement: React.FC = () => {
 									{user.email}
 								</td>
 								<td className="py-2 px-4 border">
-									{user.roleId !== undefined &&
-									user.roleId !== null
-										? getRoleName(user.roleId)
-										: typeof user.role === "object" &&
-											  user.role !== null
-											? (user.role as Role).name
-											: "No Role"}
+									{getRoleName(user)}
 								</td>
 								<td className="py-2 px-4 border">
 									<select
@@ -137,9 +162,10 @@ const RolesManagement: React.FC = () => {
 										onChange={(e) =>
 											handleRoleChange(
 												user.id,
-												Number(e.target.value),
+												e.target.value,
 											)
 										}
+										disabled={loading}
 										className="border rounded px-2 py-1">
 										<option value="">No Role</option>
 										{roles.map((role) => (

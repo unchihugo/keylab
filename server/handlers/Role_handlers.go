@@ -11,15 +11,18 @@ import (
 type Role struct {
 	ID          int64  `json:"id"`
 	Name        string `json:"name"`
-	Description string `json:"description"`
-	Permissions string `json:"permissions"`
+	Description string `json:"description,omitempty"`
+	Permissions string `json:"permissions,omitempty"`
 }
 
 // User represents the user model with role information
 type User struct {
-	ID     int64 `json:"id"`
-	RoleID int64 `json:"role_id"`
-	Role   *Role `json:"role,omitempty" gorm:"foreignKey:RoleID"`
+	ID       int64  `json:"id"`
+	RoleID   int64  `json:"roleId"` // Changed to match frontend expectations
+	Role     *Role  `json:"role,omitempty" gorm:"foreignKey:RoleID"`
+	Forename string `json:"forename,omitempty"`
+	Surname  string `json:"surname,omitempty"`
+	Email    string `json:"email,omitempty"`
 }
 
 // GetRoles returns all roles
@@ -76,12 +79,20 @@ func (h *Handlers) UpdateUserRole(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 
-	// Verify role exists if a role ID is provided
+	// Check if user exists
+	var user User
+	if err := h.DB.First(&user, userID).Error; err != nil {
+		return c.JSON(http.StatusNotFound, map[string]string{"error": "User not found"})
+	}
+
+	// If roleId is 0, it means "no role"
 	if input.RoleID != 0 {
-		var role Role
-		if err := h.DB.First(&role, input.RoleID).Error; err != nil {
+		// Verify role exists
+		var fetchedRole Role
+		if err := h.DB.First(&fetchedRole, input.RoleID).Error; err != nil {
 			return c.JSON(http.StatusNotFound, map[string]string{"error": "Role not found"})
 		}
+		// Role exists, continue with update
 	}
 
 	// Update user's role
@@ -90,7 +101,6 @@ func (h *Handlers) UpdateUserRole(c echo.Context) error {
 	}
 
 	// Get updated user with role
-	var user User
 	h.DB.Preload("Role").First(&user, userID)
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
@@ -102,14 +112,25 @@ func (h *Handlers) UpdateUserRole(c echo.Context) error {
 
 // CreateRole creates a new role
 func (h *Handlers) CreateRole(c echo.Context) error {
-	var role Role
-	if err := c.Bind(&role); err != nil {
+	var input struct {
+		Name        string `json:"name"`
+		Description string `json:"description,omitempty"`
+		Permissions string `json:"permissions,omitempty"`
+	}
+	
+	if err := c.Bind(&input); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 
 	// Simple validation
-	if role.Name == "" {
+	if input.Name == "" {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Role name is required"})
+	}
+
+	role := Role{
+		Name:        input.Name,
+		Description: input.Description,
+		Permissions: input.Permissions,
 	}
 
 	if err := h.DB.Create(&role).Error; err != nil {

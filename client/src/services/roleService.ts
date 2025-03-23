@@ -1,7 +1,7 @@
 /** @format */
 
 // src/services/roleService.ts
-import { Role } from "../types/Role"
+import { Role, UserRoleUpdate } from "../types/Role"
 
 const API_URL = "/api"
 
@@ -14,9 +14,7 @@ export const roleService = {
 		return response.json()
 	},
 
-	getUserRole: async (
-		userId: number,
-	): Promise<{ userId: number; roleId: number; role: Role }> => {
+	getUserRole: async (userId: number): Promise<UserRoleUpdate> => {
 		const response = await fetch(`${API_URL}/users/${userId}/role`)
 		if (!response.ok) {
 			throw new Error("Failed to fetch user role")
@@ -27,7 +25,7 @@ export const roleService = {
 	updateUserRole: async (
 		userId: number,
 		roleId: number,
-	): Promise<{ userId: number; roleId: number; role: Role }> => {
+	): Promise<UserRoleUpdate> => {
 		const response = await fetch(`${API_URL}/users/${userId}/role`, {
 			method: "PUT",
 			headers: {
@@ -41,7 +39,6 @@ export const roleService = {
 		return response.json()
 	},
 
-	// Add the missing createRole function
 	createRole: async (name: string): Promise<Role> => {
 		const response = await fetch(`${API_URL}/roles`, {
 			method: "POST",
