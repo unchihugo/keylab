@@ -4,7 +4,8 @@ import React, { useState } from "react"
 import Divider from "../components/Divider"
 import { validateForename, validateMessage } from "../lib/formValidation";
 import { useNavigate } from 'react-router-dom';
-
+import { useCart } from "../hooks/useCarts"
+import { Carts } from "../types/Carts"
 
 interface FormErrors {
 	firstName?: string;
@@ -18,6 +19,7 @@ interface FormErrors {
 	expirydate?: string;
 	cvv?: string;
 }
+
 export default function Checkout() {
 	const [firstName, setFirstName] = useState("")
 	const [lastName, setLastName] = useState("")
@@ -30,6 +32,25 @@ export default function Checkout() {
 	const [cardnumber, setCardNumber] = useState("")
 	const [expirydate, setExpiryDate] = useState("")
 	const [cvv, setCvv] = useState("")
+	const { carts } = useCart();
+
+	const shippingPrice = 3.99;
+
+	const productPrice = carts
+	    ?.reduce(
+		   (accumulator, item) =>
+			   accumulator + item.product.price * item.quantity,
+		    0,
+	)
+	.toFixed(2)
+
+	const totalPrice = carts
+	    ?.reduce(
+		   (accumulator, item) =>
+			   accumulator + item.product.price * item.quantity + shippingPrice,
+		    0,
+	)
+	.toFixed(2)
 	const [isProcessing, setIsProcessing] = useState(false);
 
 	const [errors, setErrors] = useState<FormErrors>({});
@@ -229,7 +250,7 @@ export default function Checkout() {
 							<Divider />
 							<div className="flex justify-between font-body text-lg mt-4">
 								<span>Subtotal:</span>
-								<span>£150</span>
+								<span>£{productPrice}</span>
 							</div>
 							<div className="flex justify-between font-body text-lg mt-2">
 								<span>Shipping:</span>
@@ -237,7 +258,7 @@ export default function Checkout() {
 							</div>
 							<div className="flex justify-between font-body text-xl font-semibold mt-4 border-t border-gray-300 pt-2">
 								<span>Total:</span>
-								<span>£153.99</span>
+								<span>£{totalPrice}</span>
 							</div>
 						</div>
 						{/* Payment */}

@@ -61,6 +61,7 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore, db *gorm.D
 	productReviewGroup.PUT("/:id", h.UpdateReview, middleware.AuthMiddleware(sessionStore, db))
 	productReviewGroup.DELETE("/:id", h.DeleteReview, middleware.AuthMiddleware(sessionStore, db))
 	productReviewGroup.GET("/user", h.GetUserReview, middleware.AuthMiddleware(sessionStore, db))
+	e.GET("/reviews/recent", h.FetchRecentViews)
 
 	// // Cart related routes
 	cartGroup := e.Group("/cart", middleware.AuthMiddleware(sessionStore, db))
@@ -70,10 +71,42 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore, db *gorm.D
 	cartGroup.DELETE("/:id", h.DeleteCartItem)
 	cartGroup.POST("/checkout", h.CheckoutCart)
 
+	//User related routes
+	userGroup := e.Group("/users", middleware.AuthMiddleware(sessionStore, db))
+	userGroup.GET("/:id", h.GetUserProfile)
+	userGroup.PUT("/:id", h.UpdateUserProfile)
+	userGroup.POST("/:id/change-password", h.ChangeUserPassword)
+	userGroup.GET("/:id/orders", h.GetUsersOrders)
+
 	// // Orders related routes
 	e.GET("/user/orders/:id", h.GetUserOrderDetails, middleware.AuthMiddleware(sessionStore, db))
-	// // NEEDS ADMIN MIDDLEWARE
-	e.PUT("/orders/:id/status", h.UpdateOrderStatus)
 
 	e.POST("/contact", h.ContactUs)
+
+	// NEEDS ADMIN MIDDLEWARE
+	adminGroup := e.Group("/admin", middleware.AuthMiddleware(sessionStore, db))
+
+	adminUserGroup := adminGroup.Group("/users")
+	adminUserGroup.GET("", h.GetAllUsers)
+	adminUserGroup.PUT("/:id", h.UpdateUserByAdmin)
+	//adminUserGroup.DELETE("/users/:id", h.DeleteUserByAdmin)
+
+	adminOrdersGroup := adminGroup.Group("/orders")
+	adminOrdersGroup.GET("", h.GetAllOrders)
+	adminOrdersGroup.GET("/:id", h.GetOrderDetails)
+	adminOrdersGroup.GET("/user/:id", h.GetUserOrders)
+	adminOrdersGroup.PUT("/:id/status", h.UpdateOrderStatus)
+
+	adminRolesGroup := adminGroup.Group("/roles")
+	adminRolesGroup.GET("", h.GetAllRoles)
+	adminRolesGroup.GET("/:id", h.GetRoleById)
+	adminRolesGroup.POST("", h.CreateRole)
+	adminRolesGroup.PUT("/:id", h.UpdateRole)
+	adminRolesGroup.DELETE("/:id", h.DeleteRole)
+	adminRolesGroup.POST("/:id/permissions", h.AddPermissionToRole)
+	adminRolesGroup.DELETE("/:roleId/permissions/:permissionId", h.RemovePermissionFromRole)
+
+	//Permissions related routes
+	adminPermissionsGroup := adminGroup.Group("/permissions")
+	adminPermissionsGroup.GET("", h.GetAllPermissions)
 }

@@ -10,7 +10,7 @@ import Divider from "./components/Divider"
 import NavLink from "./components/NavLink"
 
 export default function NavBar() {
-	const { isAuthenticated, isLoading, logout } = useAuth() // gets auth state from AuthContext
+	const { isAuthenticated, isLoading } = useAuth() // gets auth state from AuthContext
 	const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false)
 
 	const toggleMobileMenu = () => {
@@ -67,12 +67,6 @@ export default function NavBar() {
 								{isAuthenticated ? (
 									<>
 										{/* Signed in view */}
-										{/* TODO: remove temporary logout button */}
-										<button
-											onClick={() => logout()}
-											className="bg-secondary-dark text-white px-6 py-2 text-sm rounded-full">
-											temp logout btn
-										</button>
 										<LinkButton
 											to="/profile"
 											buttonClassNames="ms-2 h-10 w-10 bg-white"
@@ -167,12 +161,6 @@ export default function NavBar() {
 										${mobileMenuOpen ? "translate-x-0 delay-300" : "-translate-x-full delay-50"}`}
 									onClick={() => setMobileMenuOpen(false)}
 								/>
-								<button
-									onClick={() => logout()}
-									className={`text-xl font-body py-2 duration-300 ease-in-out
-										${mobileMenuOpen ? "translate-x-0 delay-350" : "-translate-x-full delay-0"}`}>
-									Logout
-								</button>
 							</>
 						) : (
 							<>

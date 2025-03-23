@@ -115,9 +115,9 @@ func runSeeder(db *gorm.DB) error {
 		log.Println("Database seeded successfully")
 		return nil
 	} else {
-		if err := seeders.CleanTables(db); err != nil {
-			return fmt.Errorf("could not clean tables: %w", err)
-		}
+		// if err := seeders.CleanTables(db); err != nil {
+		// 	return fmt.Errorf("could not clean tables: %w", err)
+		// }
 
 		log.Println("Database test seeding is disabled")
 		return nil

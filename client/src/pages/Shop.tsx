@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react"
 import ProductCard from "../components/ProductCard"
 import { useProducts } from "../hooks/useProducts"
 import NotFound from "./NotFound"
+import Breadcrumb from "../components/Breadcrumb"
 
 export default function DisplayPage() {
 	const { products, loading, error, searchProducts, getProductsByCategory } = useProducts("") 
@@ -191,8 +192,8 @@ export default function DisplayPage() {
 		<div className="min-h-screen bg-primary/25 py-24">
 			{/* Shop Banner */}
 			<div className="container mx-auto px-24 py-12 bg-white text-black rounded-2xl my-4 border border-black">
-				<div className="w-full text-black/50">Home — Shop</div>
-				<h1 className="text-5xl font-display">SHOP</h1>
+				<Breadcrumb breadcrumbs={["Shop"]} />
+				<h1 className="text-5xl font-display select-none">SHOP</h1>
 				<p className="mt-4 leading-5 opacity-50">
 					Christmas keycaps in stock! <br /> Browse our selection of
 					keycaps, switches, and keyboards.

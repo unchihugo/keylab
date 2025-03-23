@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -243,6 +244,7 @@ func (h *Handlers) CheckoutCart(c echo.Context) error {
 		Total:             total,
 		ShippingAddressID: shippingAddress.ID,
 		BillingAddressID:  billingAddress.ID,
+		OrderDate:         time.Now(),
 	}
 
 	if err := transaction.Create(&order).Error; err != nil {
@@ -322,6 +324,7 @@ func (h *Handlers) UpdateOrderStatus(c echo.Context) error {
 		"shipped":   true,
 		"delivered": true,
 		"cancelled": true,
+		"returned":  true,
 	}
 
 	status := strings.ToLower(requestBody.Status)
@@ -344,4 +347,159 @@ func (h *Handlers) UpdateOrderStatus(c echo.Context) error {
 	}
 
 	return jsonResponse(c, http.StatusOK, "Order status updated successfully", order)
+}
+
+// GetAllOrders Handler [GET /admin/orders]
+// 1. Fetches all orders with pagination
+// 2. Returns status 200 with orders data and pagination metadata if successful
+// 3. Returns status 500 if an error occurs
+
+func (h *Handlers) GetAllOrders(c echo.Context) error {
+	page, perPage, offset := getPaginationParams(c)
+	order := getSortOrder(c)
+
+	status := c.QueryParam("status")
+
+	var orders []models.Order
+	query := h.DB.Preload("User").Preload("ShippingAddress").Preload("BillingAddress").Order(order)
+
+	if status != "" {
+		query = query.Where("status = ?", status)
+	}
+
+	if err := query.Limit(perPage).Offset(offset).Find(&orders).Error; err != nil {
+		log.Printf("Error fetching orders: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error fetching orders")
+	}
+
+	var total int64
+	countQuery := h.DB.Model(&models.Order{})
+	if status != "" {
+		countQuery = countQuery.Where("status = ?", status)
+	}
+
+	if err := countQuery.Count(&total).Error; err != nil {
+		log.Printf("Error counting orders: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error counting orders")
+	}
+
+	var processedOrders []map[string]interface{}
+	for _, order := range orders {
+		var orderedItems []models.OrderedItem
+		if err := h.DB.Preload("Product").Where("order_id = ?", order.ID).Find(&orderedItems).Error; err != nil {
+			log.Printf("Error fetching ordered items for order %d: %v", order.ID, err)
+			continue
+		}
+
+		processedOrders = append(processedOrders, map[string]interface{}{
+			"order":         order,
+			"ordered_items": orderedItems,
+		})
+	}
+
+	return jsonResponse(c, http.StatusOK, "Orders fetched successfully", map[string]interface{}{
+		"orders":   processedOrders,
+		"metadata": generatePaginationResponse(page, perPage, int(total)),
+	})
+}
+
+// GetOrderDetails Handler [GET /admin/orders/:id]
+// 1. Fetches a specific order by ID with all related data
+// 2. Returns status 200 with order data if successful
+// 3. Returns status 404 if order not found
+// 4. Returns status 500 if an error occurs
+
+func (h *Handlers) GetOrderDetails(c echo.Context) error {
+	orderID, err := convertToInt64(c.Param("id"))
+	if err != nil {
+		return jsonResponse(c, http.StatusBadRequest, "Invalid order ID")
+	}
+
+	var order models.Order
+	if err := h.DB.Preload("User").Preload("ShippingAddress").Preload("BillingAddress").Where("id = ?", orderID).First(&order).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return jsonResponse(c, http.StatusNotFound, "Order not found")
+		}
+		log.Printf("Error fetching order details: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error fetching order details")
+	}
+
+	var orderedItems []models.OrderedItem
+	if err := h.DB.Preload("Product").Where("order_id = ?", orderID).Find(&orderedItems).Error; err != nil {
+		log.Printf("Error fetching ordered items: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Failed to fetch ordered items")
+	}
+
+	response := map[string]interface{}{
+		"order":         order,
+		"ordered_items": orderedItems,
+	}
+
+	return jsonResponse(c, http.StatusOK, "Order found", response)
+}
+
+// GetUserOrders Handler [GET /admin/users/:id/orders]
+// 1. Fetches all orders for a specific user with pagination
+// 2. Returns status 200 with orders data and pagination metadata if successful
+// 3. Returns status 404 if user not found
+// 4. Returns status 500 if an error occurs
+
+func (h *Handlers) GetUserOrders(c echo.Context) error {
+	userID, err := convertToInt64(c.Param("id"))
+	if err != nil {
+		return jsonResponse(c, http.StatusBadRequest, "Invalid user ID")
+	}
+
+	user, err := repositories.FindUserByID(userID, h.DB)
+	if err != nil {
+		return jsonResponse(c, http.StatusNotFound, "User not found")
+	}
+
+	page, perPage, offset := getPaginationParams(c)
+	order := getSortOrder(c)
+
+	status := c.QueryParam("status")
+
+	var orders []models.Order
+	query := h.DB.Preload("User").Preload("ShippingAddress").Preload("BillingAddress").Where("user_id = ?", user.ID).Order(order)
+
+	if status != "" {
+		query = query.Where("status = ?", status)
+	}
+
+	if err := query.Limit(perPage).Offset(offset).Find(&orders).Error; err != nil {
+		log.Printf("Error fetching user orders: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error fetching user orders")
+	}
+
+	var total int64
+	countQuery := h.DB.Model(&models.Order{}).Where("user_id = ?", user.ID)
+	if status != "" {
+		countQuery = countQuery.Where("status = ?", status)
+	}
+
+	if err := countQuery.Count(&total).Error; err != nil {
+		log.Printf("Error counting user orders: %v", err)
+		return jsonResponse(c, http.StatusInternalServerError, "Error counting user orders")
+	}
+
+	var processedOrders []map[string]interface{}
+	for _, order := range orders {
+		var orderedItems []models.OrderedItem
+		if err := h.DB.Preload("Product").Where("order_id = ?", order.ID).Find(&orderedItems).Error; err != nil {
+			log.Printf("Error fetching ordered items for order %d: %v", order.ID, err)
+			continue
+		}
+
+		processedOrders = append(processedOrders, map[string]interface{}{
+			"order":         order,
+			"ordered_items": orderedItems,
+		})
+	}
+
+	return jsonResponse(c, http.StatusOK, "User orders fetched successfully", map[string]interface{}{
+		"user":     user,
+		"orders":   processedOrders,
+		"metadata": generatePaginationResponse(page, perPage, int(total)),
+	})
 }

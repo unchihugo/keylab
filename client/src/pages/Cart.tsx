@@ -1,23 +1,21 @@
 /** @format */
 
-import { useState } from "react"
 import Divider from "../components/Divider"
 import InputBox from "../components/InputBox"
 import LinkButton from "../components/LinkButton"
 import { LockKeyhole, Minus, Plus } from "lucide-react"
-import { Link } from "react-router-dom"
 import { useCart } from "../hooks/useCarts";
 import { cartServices } from "../services/cartServices";
 import NotFound from "./NotFound"
 
 export default function Cart() {
-    const { carts, loading, error }= useCart();
+    const { carts, loading, error, fetchCart } = useCart();
 
     // the function that displays the total amount in the order summary section
     const totalPrice = carts
         ?.reduce(
-            (accumulator, product) =>
-                accumulator + product.price * product.quantity,
+            (accumulator, item) =>
+                accumulator + item.product.price * item.quantity,
             0,
         )
         .toFixed(2)
@@ -25,19 +23,21 @@ export default function Cart() {
 
     // function that lets users decrease quantity
     const handleDelete = async (item: {
+        id: number;
         quantity: number
-        product: number
+        product: { id: number };
     }) => {
 		try {
 			if(item.quantity > 1) {
 				await cartServices.updateCartItemQuantity(
-					item.product, item.quantity - 1
+					item.id, item.quantity - 1
 				);
 			} 
 			else {
 				await cartServices.deleteCartItem
-				(item.product)
+				(item.id)
 			}
+            fetchCart();
 		} 
 		catch(error) {
 			console.error("Failed to adjust quantity", error);
@@ -45,13 +45,17 @@ export default function Cart() {
 	};
 
     // function allowing users to increase quantity
-	const handleAdd = async (item: { quantity: number; product: number }) => {
+	const handleAdd = async (item: 
+        { quantity: number; id: number 
+            product: { id: number }
+        }) => {
 		try {
 			if(item.quantity >= 0) {
 				await cartServices.updateCartItemQuantity(
-					item.product, item.quantity + 1
+					item.id, item.quantity + 1
 				)
 			}
+            fetchCart();
 		}
 		catch(error) {
 			console.error("Failed to adjust quantity", error);
@@ -60,7 +64,9 @@ export default function Cart() {
 
 	if (loading) return <div>Loading...</div>
 	if (error) {
-        return <NotFound errorMessage="400 - Bad Request" bodyMessage={error || "An unexpected error occurred."}/>
+        return <NotFound errorMessage="Please register/sign in to view your cart" 
+        // bodyMessage={error || "An unexpected error occurred."}
+        />
     }
     
                     
@@ -78,35 +84,34 @@ export default function Cart() {
                     <div className="p-6 font-display">
                         Your Items:
                         <div className="Items space-y-4 font-body">
-                            {carts.map((product) => (
-                                <div>
+                            {carts && carts.map((item) => (
+                                <div key={item.product.id}>
                                     <div className="opacity-25">
                                         <Divider />
                                     </div>
                                     <div className="p-3">
                                         <ul
-                                            key={product.product}
                                             className="flex justify-between items-center font-medium text-lg border-black">
-                                            <li>{product.name}</li>
+                                            <li>{item.product.name}</li>
                                             <Divider />
                                             <li>
-                                                £{product.price * product.quantity}
+                                                £{item.product.price * item.quantity}
                                             </li>
                                         </ul>
                                         <div className="text-black/50 flex items-center gap-x-3">
                                             <span className="">Qty:</span>
                                             <button
                                                 onClick={() =>
-                                                    handleDelete(product)
+                                                    handleDelete(item)
                                                 }
                                                 className="p-1 border rounded-full">
                                                 <Minus size={16} />
                                             </button>
                                             <span className="">
-                                                {product.quantity}
+                                                {item.quantity}
                                             </span>
                                             <button
-                                                onClick={() => handleAdd(product)}
+                                                onClick={() => handleAdd(item)}
                                                 className="p-1 border rounded-full">
                                                 <Plus size={16} />
                                             </button>
