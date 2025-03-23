@@ -192,3 +192,42 @@ func (h *Handlers) GetUsersOrders(c echo.Context) error {
 
 	return jsonResponse(c, http.StatusOK, "User orders retrieved successfully", orders)
 }
+
+// UpdateUserByAdmin [PUT /admin/users/:id]
+// 1. Fetches user ID from the request and validates it
+// 2. Fetches user from the database
+// 3. Validates key fields
+// 4. Restricts the update to only allowed fields
+// 5. Returns status 200 and the updated user if successful
+// 6. Returns status 400 if input is invalid
+// 7. Returns status 404 if the user is not found
+// 8. Returns status 500 if the update fails
+func (h *Handlers) UpdateUserByAdmin(c echo.Context) error {
+	userID, err := convertToInt64(c.Param("id"))
+	if err != nil {
+		return jsonResponse(c, http.StatusBadRequest, "Invalid user ID")
+	}
+	existingUser, err := repositories.FindUserByID(userID, h.DB)
+	if err != nil {
+		return jsonResponse(c, http.StatusNotFound, "User not found")
+	}
+	var updatedUser models.User
+	if err := c.Bind(&updatedUser); err != nil {
+		return jsonResponse(c, http.StatusBadRequest, "Invalid request body")
+	}
+	if err := updatedUser.Validate("Email", "Forename", "Surname"); err != nil {
+		return jsonResponse(c, http.StatusBadRequest, err.Error())
+	}
+	updates := map[string]interface{}{
+		"forename":     updatedUser.Forename,
+		"surname":      updatedUser.Surname,
+		"email":        updatedUser.Email,
+		"phone_number": updatedUser.PhoneNumber,
+	}
+	if err := h.DB.Model(&existingUser).Updates(updates).Error; err != nil {
+		return jsonResponse(c, http.StatusInternalServerError, "Failed to update user")
+	}
+	return jsonResponse(c, http.StatusOK, "User updated successfully", existingUser)
+}
+
+//delete user endpoint

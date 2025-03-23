@@ -37,6 +37,14 @@ func SeedAll(DB *gorm.DB) error {
 		return err
 	}
 
+	if err := seedAddresses(DB); err != nil {
+		return err
+	}
+
+	if err := seedOrders(DB); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -332,6 +340,36 @@ func seedProductReviews(DB *gorm.DB) error {
 	}
 
 	if err := DB.Create(&productReviews).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func seedAddresses(DB *gorm.DB) error {
+	addresses := []models.Address{
+		{UserID: 1, Street: "123 Main St", City: "Springfield", County: "IL", PostalCode: "62701", Country: "USA", Type: "billing", CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{UserID: 2, Street: "456 Elm St", City: "Springfield", County: "IL", PostalCode: "62701", Country: "USA", Type: "shipping", CreatedAt: time.Now(), UpdatedAt: time.Now()},
+	}
+
+	if err := DB.Create(&addresses).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func seedOrders(DB *gorm.DB) error {
+	orders := []models.Order{
+		{UserID: 1, Total: 200.00, Status: "delivered", ShippingAddressID: 1, BillingAddressID: 1, OrderDate: time.Now(), CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{UserID: 1, Total: 120.00, Status: "pending", ShippingAddressID: 1, BillingAddressID: 1, OrderDate: time.Now(), CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{UserID: 2, Total: 150.00, Status: "shipped", ShippingAddressID: 1, BillingAddressID: 1, OrderDate: time.Now(), CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{UserID: 3, Total: 100.00, Status: "delivered", ShippingAddressID: 1, BillingAddressID: 1, OrderDate: time.Now(), CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{UserID: 3, Total: 80.00, Status: "cancelled", ShippingAddressID: 1, BillingAddressID: 1, OrderDate: time.Now(), CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{UserID: 1, Total: 90.00, Status: "returned", ShippingAddressID: 1, BillingAddressID: 1, OrderDate: time.Now(), CreatedAt: time.Now(), UpdatedAt: time.Now()},
+	}
+
+	if err := DB.Create(&orders).Error; err != nil {
 		return err
 	}
 

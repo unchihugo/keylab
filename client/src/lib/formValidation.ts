@@ -126,7 +126,7 @@ export const validateMatch = (
 export const validatePhoneNum = (phoneNum: string) => {
 	const regex = /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s./0-9]*$/
 	if (!phoneNum) {
-		return "Phone number is required"
+		return ""
 	}
 	if (!regex.test(phoneNum)) {
 		return "Invalid phone number format"

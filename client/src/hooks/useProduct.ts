@@ -103,6 +103,7 @@ export const useProduct = (slug: string) => {
 		if (!product) return
 		if (quantity < 1) return
 		if (quantity > product.data.stock) return
+		if (addToCart) return
 
 		try {
 			// Add product to cart
@@ -112,7 +113,9 @@ export const useProduct = (slug: string) => {
 		} catch (error) {
 			console.error(error)
 		} finally {
-			setAddToCart(false)
+			setTimeout(() => {
+				setAddToCart(false)
+			}, 1000)
 		}
 	}
 

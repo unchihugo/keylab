@@ -1,6 +1,7 @@
 /** @format */
 
 import { Address } from "./Address"
+import { User } from "./User"
 
 export interface Order {
 	id: number
@@ -14,4 +15,5 @@ export interface Order {
 	billingAddress: Address | null
 	createdAt: string
 	updatedAt: string
+	user: User
 }

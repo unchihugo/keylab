@@ -2,3 +2,6 @@
 
 ### Get all orders from user 1
 GET http://localhost:8080/users/1/orders
+
+### test
+GET http://localhost:8080/admin/orders

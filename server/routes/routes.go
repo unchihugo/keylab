@@ -84,12 +84,29 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore, db *gorm.D
 	e.POST("/contact", h.ContactUs)
 
 	// NEEDS ADMIN MIDDLEWARE
-	adminUserGroup := e.Group("/admin", middleware.AuthMiddleware(sessionStore, db))
-	adminUserGroup.GET("/users", h.GetAllUsers)
+	adminGroup := e.Group("/admin", middleware.AuthMiddleware(sessionStore, db))
 
-	adminOrdersGroup := e.Group("/admin/orders", middleware.AuthMiddleware(sessionStore, db))
+	adminUserGroup := adminGroup.Group("/users")
+	adminUserGroup.GET("", h.GetAllUsers)
+	adminUserGroup.PUT("/:id", h.UpdateUserByAdmin)
+	//adminUserGroup.DELETE("/users/:id", h.DeleteUserByAdmin)
+
+	adminOrdersGroup := adminGroup.Group("/orders")
 	adminOrdersGroup.GET("", h.GetAllOrders)
 	adminOrdersGroup.GET("/:id", h.GetOrderDetails)
 	adminOrdersGroup.GET("/user/:id", h.GetUserOrders)
 	adminOrdersGroup.PUT("/:id/status", h.UpdateOrderStatus)
+
+	adminRolesGroup := adminGroup.Group("/roles")
+	adminRolesGroup.GET("", h.GetAllRoles)
+	adminRolesGroup.GET("/:id", h.GetRoleById)
+	adminRolesGroup.POST("", h.CreateRole)
+	adminRolesGroup.PUT("/:id", h.UpdateRole)
+	adminRolesGroup.DELETE("/:id", h.DeleteRole)
+	adminRolesGroup.POST("/:id/permissions", h.AddPermissionToRole)
+	adminRolesGroup.DELETE("/:roleId/permissions/:permissionId", h.RemovePermissionFromRole)
+
+	//Permissions related routes
+	adminPermissionsGroup := adminGroup.Group("/permissions")
+	adminPermissionsGroup.GET("", h.GetAllPermissions)
 }
