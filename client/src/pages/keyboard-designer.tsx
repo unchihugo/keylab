@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react"
 import Divider from "../components/Divider"
+import { cartServices } from "../services/cartServices" 
 
 export default function KeyboardDesigner() {
 	const [bgColor, setBgColor] = useState("#B0C4DE")
@@ -10,28 +11,25 @@ export default function KeyboardDesigner() {
 	const [notification, setNotification] = useState("") 
 	const [keyboardImage, setKeyboardImage] = useState("keyboard.png")
 
-	//just a dummy cart system
-	const [cart, setCart] = useState(() => {
-		const storedCart = localStorage.getItem("cart")
-		return storedCart ? JSON.parse(storedCart) : []
-	})
 
-
-	useEffect(() => {
-		localStorage.setItem("cart", JSON.stringify(cart))
-	}, [cart])
-
-
-	const handleAddToCart = () => {
+	const handleAddToCart = async () => {
 		if (!selectedOption) {
 			setNotification("Please select a color option before adding to the cart.")
 			return
 		}
-
-		const newCartItem = { name: "Custom Keylab Keyboard", color: selectedOption }
-		setCart([...cart, newCartItem])
-		setNotification("Added Custom Keylab Keyboard To Cart!")
+	
+		const productId = 54; 
+		const quantity = 1;    
+	
+		try {
+			await cartServices.AddCartItem(productId, quantity)
+			setNotification("Added Custom Keylab Keyboard To Cart!")
+		} catch (error) {
+			console.error("Failed to add item to cart:", error)
+			setNotification("Failed to add item to cart. Please try again.")
+		}
 	}
+	
 
 	return (
 		<div
