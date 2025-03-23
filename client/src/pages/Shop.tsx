@@ -34,19 +34,33 @@ export default function DisplayPage() {
 	const [activeSizes, setActiveSizes] = useState<string[]>([]);
 
 	const [activeBrands, setActiveBrands] = useState<string[]>([]);
-	const [activeCategory, setSelectedCategory] = useState<string>("");
-
+	const [selectedCategory, setSelectedCategory] = useState<string>("");
+	
+	// Combined useEffect for URL parameters to prevent excessive calls
 	useEffect(() => {
-		if (catParams) {
-			setSelectedCategory(catParams);
-		}
-	}, [location.search]);
-
-	useEffect(() => {
-		if(shopSearchParam) {
-			setSearchTerm(shopSearchParam);
-		}
-	}, [location.search]);
+		const handleUrlParams = async () => {
+			// Handle category parameter
+			if (catParams) {
+				// Always set on initial load or when changed
+				if (catParams !== selectedCategory) {
+					setSelectedCategory(catParams);
+					await getProductsByCategory(catParams);
+				}
+			}
+			
+			// Handle search parameter
+			if (shopSearchParam) {
+				// Always set on initial load or when changed
+				if (shopSearchParam !== searchTerm) {
+					setSearchTerm(shopSearchParam);
+					await searchProducts(shopSearchParam);
+				}
+			}
+		};
+		
+		handleUrlParams();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [catParams, shopSearchParam]);
 
 	useEffect(() => {
         const applyFilters = () => {
