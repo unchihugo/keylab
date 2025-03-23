@@ -4,10 +4,19 @@ import React, { useState, useEffect } from "react"
 import ProductCard from "../components/ProductCard"
 import { useProducts } from "../hooks/useProducts"
 import NotFound from "./NotFound"
+import { useNavigate } from "react-router-dom"
+import { useLocation } from "react-router-dom"
 
 export default function DisplayPage() {
 	const { products, loading, error, searchProducts, getProductsByCategory } =
 		useProducts() // Fetch products from backend
+
+	const shopLoc = useLocation();
+	const nav = useNavigate();
+
+	const queryParams = new URLSearchParams(shopLoc.search);
+	const catParams = (queryParams.get('category') ?? "")	
+	const shopSearchParam = (queryParams.get('search') ?? "");	
 
 	const [searchTerm, setSearchTerm] = useState<string>("")
 	const [activeFilters, setActiveFilters] = useState<{
@@ -25,6 +34,19 @@ export default function DisplayPage() {
 	const [activeSizes, setActiveSizes] = useState<string[]>([]);
 
 	const [activeBrands, setActiveBrands] = useState<string[]>([]);
+	const [activeCategory, setSelectedCategory] = useState<string>("");
+
+	useEffect(() => {
+		if (catParams) {
+			setSelectedCategory(catParams);
+		}
+	}, [location.search]);
+
+	useEffect(() => {
+		if(shopSearchParam) {
+			setSearchTerm(shopSearchParam);
+		}
+	}, [location.search]);
 
 	useEffect(() => {
         const applyFilters = () => {
@@ -120,12 +142,27 @@ export default function DisplayPage() {
 	// 	applyFilters()
 	// }, [searchTerm, activeFilters, priceRange, sortOption, products])
 
+	const updateSearch = (searchTerm: string) => {
+		const paramaters = new URLSearchParams(shopLoc.search);
+
+		if(searchTerm) {
+			paramaters.set('search', searchTerm);
+		} else {
+			paramaters.delete('search');
+		} nav({
+			pathname: location.pathname,
+			search: paramaters.toString()
+		});
+	}
+
 	const handleSearch = async (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === "Enter") {
 			try {
 				await searchProducts(searchTerm)
 				setFilteredProducts(products);
 				console.log("Search results:", products)
+				
+				updateSearch(searchTerm);
 
 				// Check if products is an array
 				if (!Array.isArray(products)) {
@@ -182,8 +219,22 @@ export default function DisplayPage() {
 	const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setPriceRange(parseInt(e.target.value, 10))
 	}
+
+    const updateCategorySearch = (activeCategory: string) => {
+		const paramaters = new URLSearchParams(shopLoc.search);
+		if(activeCategory) {
+			paramaters.set('category', activeCategory);
+		} else {
+			paramaters.delete('category');
+		} nav({
+			pathname: shopLoc.pathname,
+			search: paramaters.toString()
+		  });
+	};
+
 	const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const selectedCategory = e.target.value
+		updateCategorySearch(selectedCategory)
 		if (selectedCategory) {
 			getProductsByCategory(selectedCategory).then(() => {
 				setFilteredProducts(products); // Update filtered products after category change.
