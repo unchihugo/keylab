@@ -2,12 +2,12 @@
 
 import React from "react"
 import { Outlet } from "react-router-dom"
-import NavBar from "../NavBar"
+import NavBarAdmin from "../NavBarAdmin"
 
 const AdminLayout: React.FC = () => {
     return (
         <>
-            <NavBar />
+            <NavBarAdmin />
             <Outlet />
         </>
     )

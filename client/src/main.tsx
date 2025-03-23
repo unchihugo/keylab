@@ -22,6 +22,7 @@ import About from "./pages/About"
 import Checkout from "./pages/Checkout"
 import Profile from "./pages/User/Profile"
 import AdminDashboard from "./pages/Admin/Dashboard"
+import AdminOrders from "./pages/Admin/Orders"
 
 const router = createBrowserRouter([
 	{
@@ -30,7 +31,14 @@ const router = createBrowserRouter([
 		children: [
 			{ path: "/", element: <Home /> },
 			{ path: "/cart", element: <Cart /> },
-			{ path: "/checkout", element: ( <ProtectedRoute><Checkout /></ProtectedRoute> ) },
+			{
+				path: "/checkout",
+				element: (
+					<ProtectedRoute>
+						<Checkout />
+					</ProtectedRoute>
+				),
+			},
 			// { path: "/example", element: <div>Example</div> }, - No longer needed?
 			{
 				path: "/protected",
@@ -48,7 +56,14 @@ const router = createBrowserRouter([
 			{ path: "*", element: <NotFound /> },
 			{ path: "/about", element: <About /> },
 			{ path: "/shop", element: <Shop /> },
-			{ path: "/profile", element: ( <ProtectedRoute><Profile /></ProtectedRoute> ) },
+			{
+				path: "/profile",
+				element: (
+					<ProtectedRoute>
+						<Profile />
+					</ProtectedRoute>
+				),
+			},
 		],
 	},
 	{
@@ -58,7 +73,10 @@ const router = createBrowserRouter([
 				<AdminLayout />
 			</ProtectedRoute>
 		),
-		children: [{ path: "/admin/dashboard", element: <AdminDashboard /> }],
+		children: [
+			{ path: "dashboard", element: <AdminDashboard /> },
+			{ path: "orders", element: <AdminOrders /> },
+		],
 	},
 ])
 

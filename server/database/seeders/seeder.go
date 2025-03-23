@@ -37,6 +37,10 @@ func SeedAll(DB *gorm.DB) error {
 		return err
 	}
 
+	if err := seedOrders(DB); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -332,6 +336,23 @@ func seedProductReviews(DB *gorm.DB) error {
 	}
 
 	if err := DB.Create(&productReviews).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func seedOrders(DB *gorm.DB) error {
+	orders := []models.Order{
+		{UserID: 1, Total: 200.00, Status: "delivered", OrderDate: time.Now(), CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{UserID: 1, Total: 120.00, Status: "pending", OrderDate: time.Now(), CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{UserID: 2, Total: 150.00, Status: "shipped", OrderDate: time.Now(), CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{UserID: 3, Total: 100.00, Status: "delivered", OrderDate: time.Now(), CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{UserID: 3, Total: 80.00, Status: "cancelled", OrderDate: time.Now(), CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{UserID: 1, Total: 90.00, Status: "returned", OrderDate: time.Now(), CreatedAt: time.Now(), UpdatedAt: time.Now()},
+	}
+
+	if err := DB.Create(&orders).Error; err != nil {
 		return err
 	}
 
