@@ -24,6 +24,10 @@ export default function Breadcrumb({ breadcrumbs }: BreadcrumbProps) {
 							<Link to={"/shop"}>
 								<span className="underline">{breadcrumb}</span>
 							</Link>
+						) : breadcrumb === "Admin Dashboard" ? (
+							<Link to={"/admin/dashboard"}>
+								<span className="underline">{breadcrumb}</span>
+							</Link>
 						) : (
 							<span>{breadcrumb}</span>
 						)}

@@ -18,24 +18,39 @@ export default function Footer() {
 				</div>
 
 				{/* Navigation Links Section with Dividers */}
-				<div className="flex items-center space-x-6 text-gray-700">
-					<a href="/shop" className="hover:text-gray-900 font-medium">
-						Shop
-					</a>
-					<span className="border-l border-gray-400 h-5"></span>{" "}
-					{/* Divider */}
-					<a
-						href="/keyboard-designer"
-						className="hover:text-gray-900 font-medium">
-						Keyboard Designer
-					</a>
-					<span className="border-l border-gray-400 h-5"></span>{" "}
-					{/* Divider */}
-					<a
-						href="/about"
-						className="hover:text-gray-900 font-medium">
-						About
-					</a>
+				<div className="grid grid-cols-3 gap-8 w-full max-w-2xl relative">
+					{/* First Column */}
+					<div className="flex flex-col space-y-3 items-end">
+						<a href="/shop" className="hover:text-gray-900 font-medium">
+							Shop
+						</a>
+						<a href="/keyboard-designer" className="hover:text-gray-900 font-medium">
+							Keyboard Designer
+						</a>
+					</div>
+					
+					{/* Vertical Divider */}
+					<div className="absolute h-full w-px bg-gray-200 left-1/3"></div>
+					
+					{/* Second Column */}
+					<div className="flex flex-col space-y-3 items-center">
+						<a href="/about" className="hover:text-gray-900 font-medium">
+							About
+						</a>
+						<a href="/about" className="hover:text-gray-900 font-medium">
+							Contact Us
+						</a>
+					</div>
+					
+					{/* Vertical Divider */}
+					<div className="absolute h-full w-px bg-gray-200 left-2/3"></div>
+					
+					{/* Third Column */}
+					<div className="flex flex-col space-y-3">
+						<a href="/admin/login" className="hover:text-gray-900 font-medium">
+							Admin Portal
+						</a>
+					</div>
 				</div>
 
 				{/* Social Media Icons */}
