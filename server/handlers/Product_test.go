@@ -9,10 +9,10 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
-	
+
 	"testing"
 
-	"keylab/database"
+	db "keylab/database"
 	"keylab/database/models"
 
 	"github.com/labstack/echo/v4"
@@ -33,6 +33,7 @@ func setupProductTest(t *testing.T) (*Handlers, *db.TestDB, models.Product) {
 		Description: "This is a sample product",
 		Price:       49.99,
 		CategoryID:  category.ID,
+		Stock:       10,
 	}
 	assert.NoError(t, testDB.DB.Create(&product).Error)
 
@@ -75,16 +76,22 @@ func TestCreateProduct(t *testing.T) {
 	defer db.CleanupTestDB(t, testDB)
 
 	e := echo.New()
-	newProduct := models.Product{
-		Name:        "New Product",
-		Slug:        "new-product",
-		Description: "New Product Description",
-		Price:       99.99,
-		CategoryID:  1,
-	}
-	body, _ := json.Marshal(newProduct)
-	req := httptest.NewRequest(http.MethodPost, "/products", bytes.NewReader(body))
-	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+
+	_ = writer.WriteField("name", "New Product")
+	_ = writer.WriteField("slug", "new-product")
+	_ = writer.WriteField("description", "New Product Description")
+	_ = writer.WriteField("price", "99.99")
+	_ = writer.WriteField("category_id", "1")
+	_ = writer.WriteField("stock", "10")
+
+	imagePart, _ := writer.CreateFormFile("product_images", "test.png")
+	_, _ = imagePart.Write([]byte("fake image content"))
+	writer.Close()
+
+	req := httptest.NewRequest(http.MethodPost, "/products", body)
+	req.Header.Set(echo.HeaderContentType, writer.FormDataContentType())
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 
@@ -99,7 +106,17 @@ func TestUpdateProduct(t *testing.T) {
 
 	e := echo.New()
 	product.Name = "Updated Product"
-	body, _ := json.Marshal(product)
+	updated := models.Product{
+		ID:          product.ID,
+		Name:        "Updated Product",
+		Slug:        product.Slug,
+		Description: product.Description,
+		Price:       product.Price,
+		Stock:       product.Stock,
+		CategoryID:  product.CategoryID,
+	}
+	body, _ := json.Marshal(updated)
+
 	req := httptest.NewRequest(http.MethodPut, fmt.Sprintf("/products/%d", product.ID), bytes.NewReader(body))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
@@ -108,6 +125,9 @@ func TestUpdateProduct(t *testing.T) {
 	c.SetParamValues(fmt.Sprint(product.ID))
 
 	err := h.UpdateProduct(c)
+	if rec.Code != http.StatusOK {
+		t.Log("Response Body:", rec.Body.String())
+	}
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, rec.Code)
 }
