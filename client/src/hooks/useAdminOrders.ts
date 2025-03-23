@@ -15,8 +15,10 @@ export const useAdminOrders = () => {
 				setLoading(true)
 				const response = await adminOrdersService.getAllOrders()
 				console.log(response)
-                const ordersData = response.data.orders.map((item: { order: Order }) => item.order)
-                setOrders(ordersData)
+				const ordersData = response.data.orders.map(
+					(item: { order: Order }) => item.order,
+				)
+				setOrders(ordersData)
 			} catch (error) {
 				setError(
 					error instanceof Error

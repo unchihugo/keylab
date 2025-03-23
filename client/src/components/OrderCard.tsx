@@ -73,7 +73,7 @@ export default function OrderCard({ order, isAdmin = false }: OrderCardProps) {
 				<div className="flex justify-end mt-2">
 					<div className="relative inline-block">
 						<select
-							className="py-4 rounded-full border border-black justify-center items-center gap-2 inline-flex duration-200 
+							className="py-1 px-4 rounded-full border border-black justify-center items-center gap-2 inline-flex duration-200 
 							hover:-translate-y-1 hover:drop-shadow-cartoon-y active:translate-y-0 active:drop-shadow-none active:shadow-inner-cartoon-y bg-white appearance-none"
 							defaultValue={order.status}
 							onChange={(e) =>

@@ -1,3 +1,5 @@
+/** @format */
+
 import { OrderStatus } from "../../types/ENUMs/OrderStatus"
 
 const ADMIN_ORDERS_API_URL = "http://localhost:8080/admin/orders"
@@ -8,80 +10,77 @@ const ADMIN_ORDERS_API_URL = "http://localhost:8080/admin/orders"
  * @see ../../../../server/handlers/Cart.go
  */
 export const adminOrdersService = {
-    async getAllOrders() {
-        const response = await fetch(ADMIN_ORDERS_API_URL, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            credentials: "include",
-        })
+	async getAllOrders() {
+		const response = await fetch(ADMIN_ORDERS_API_URL, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		})
 
-        if (!response.ok) {
-            const errorData = await response.json()
-            throw new Error(
-                errorData.message || "Failed to get orders",
-            )
-        }
+		if (!response.ok) {
+			const errorData = await response.json()
+			throw new Error(errorData.message || "Failed to get orders")
+		}
 
-        return response.json()
-    },
+		return response.json()
+	},
 
-    async getOrderDetails(orderId: number) {
-        const response = await fetch(`${ADMIN_ORDERS_API_URL}/${orderId}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            credentials: "include",
-        })
-        
-        if (!response.ok) {
-            const errorData = await response.json()
-            throw new Error(
-                errorData.message || "Failed to get order details",
-            )
-        }
+	async getOrderDetails(orderId: number) {
+		const response = await fetch(`${ADMIN_ORDERS_API_URL}/${orderId}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		})
 
-        return response.json()
-    },
+		if (!response.ok) {
+			const errorData = await response.json()
+			throw new Error(errorData.message || "Failed to get order details")
+		}
 
-    async getUserOrders(userId: number) {
-        const response = await fetch(`${ADMIN_ORDERS_API_URL}/user/${userId}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            credentials: "include",
-        })
+		return response.json()
+	},
 
-        if (!response.ok) {
-            const errorData = await response.json()
-            throw new Error(
-                errorData.message || "Failed to get user orders",
-            )
-        }
+	async getUserOrders(userId: number) {
+		const response = await fetch(`${ADMIN_ORDERS_API_URL}/user/${userId}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			credentials: "include",
+		})
 
-        return response.json()
-    },
+		if (!response.ok) {
+			const errorData = await response.json()
+			throw new Error(errorData.message || "Failed to get user orders")
+		}
 
-    async updateOrderStatus(orderId: number, newStatus: OrderStatus) {
-        const response = await fetch(`${ADMIN_ORDERS_API_URL}/${orderId}/status`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            credentials: "include",
-            body: JSON.stringify({ status: newStatus }),
-        })
+		return response.json()
+	},
 
-        if (!response.ok) {
-            const errorData = await response.json()
-            throw new Error(
-                errorData.message || "Failed to update order status",
-            )
-        }
+	async updateOrderStatus(orderId: number, newStatus: OrderStatus) {
+		const response = await fetch(
+			`${ADMIN_ORDERS_API_URL}/${orderId}/status`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				credentials: "include",
+				body: JSON.stringify({ status: newStatus }),
+			},
+		)
 
-        return response.json()
-    }
+		if (!response.ok) {
+			const errorData = await response.json()
+			throw new Error(
+				errorData.message || "Failed to update order status",
+			)
+		}
+
+		return response.json()
+	},
 }
