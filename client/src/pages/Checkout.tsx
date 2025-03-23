@@ -5,6 +5,7 @@ import Divider from "../components/Divider"
 import LinkButton from "../components/LinkButton"
 import { useCart } from "../hooks/useCarts"
 import { Carts } from "../types/Carts"
+import { Navigate, useNavigate } from "react-router-dom"
 
 export default function Checkout() {
 	const [firstName, setFirstName] = useState("")
@@ -19,6 +20,7 @@ export default function Checkout() {
 	const [expirydate, setExpiryDate] = useState("")
 	const [cvv, setCvv] = useState("")
 	const { carts } = useCart();
+	const nav = useNavigate();
 
 	const shippingPrice = 3.99;
 
@@ -37,6 +39,26 @@ export default function Checkout() {
 		    0,
 	)
 	.toFixed(2)
+
+	const handleCheckout = async () => {
+		try {
+			const response = await fetch("http://localhost:8080/cart/checkout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+            });
+
+			if(response.ok) {
+				nav("/about");
+			} else {
+				console.error("Checkout failed:")
+			} 
+		} catch(error) {
+			console.error("Error during checkout:", error);
+		}
+	};
 
 	return (
 		<div className="flex justify-center items-center bg-primary">
@@ -276,11 +298,11 @@ export default function Checkout() {
 							</form>
 							{/* Pay Now Button */}
 							<div className="mt-6">
-								<LinkButton
-									to="/payment"
-									text="Pay Now"
-									buttonClassNames="mt-3 px-6 bg-secondary-dark"
-								/>
+								<button
+								onClick={handleCheckout}
+                                className="mt-3 px-6 py-3 bg-secondary-dark text-white rounded-md"
+								></button> 
+								Pay Now
 							</div>
 						</div>
 					</div>
