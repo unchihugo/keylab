@@ -7,6 +7,7 @@ import Breadcrumb from "../../components/Breadcrumb";
 import Divider from "../../components/Divider";
 import ErrorBox from "../../components/ErrorBox";
 import Card from "../../components/Card";
+import LinkButton from "../../components/LinkButton";
 
 
 // Register Chart.js components
@@ -109,34 +110,37 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-primary/25 mt-10 py-14">
       <div className="container mx-auto px-6 flex flex-col md:flex-row gap-6">
-      <aside className="w-full lg:w-1/5 bg-white p-6 rounded-lg shadow-lg mb-6 lg:mb-0 h-fit border border-gray-300 mr-4">
-    <h2 className="text-lg font-semibold mb-4">Admin Panel</h2>
-    <nav className="space-y-4">
-        {[
-            { label: "Dashboard", to: "Admin/Dashboard" },
-            { label: "Inventory", to: "Admin/inventory" },
-            { label: "Orders", to: "Admin/Orders " },
-            { label: "Customer Managment", to: "Admin/CustomersManagement" },
-            { label: "Settings", to: "/settings"  },
-        ].map((item, index) => (
-            <div key={item.label}>
-                <div
-                    className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition duration-200 ${
-                        window.location.pathname === item.to
-                            ? "bg-secondary font-bold"
-                            : "hover:bg-secondary/50"
-                    }`}
-                    onClick={() => {
-                        window.location.href = item.to; 
-                    }}
-                >
-                    {item.label}
-                </div>
-                {index !== 3 && <hr className="border-secondary-dark/30 my-2" />}
-            </div>
-        ))}
-    </nav>
-</aside>
+	  <aside className="w-full lg:w-1/5 bg-primary-dark/25 p-4 rounded-2xl space-y-4 mb-6 lg:mb-0 h-fit border border-gray-700 mr-4">
+					<h2 className="text-xl font-bold mb-4">Admin Panel</h2>
+					<div className="flex flex-col space-y-2">
+						<LinkButton
+							to="/admin/dashboard"
+							text="Dashboard"
+							buttonClassNames=" border-black bg-primary text-black transition-all duration-200 ease-in-out hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]"
+						/>
+						<LinkButton
+							to="/admin/orders"
+							text="Orders"
+							buttonClassNames=" border-black bg-primary text-black transition-all duration-200 ease-in-out hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]"
+						/>
+						<LinkButton
+							to="/admin/inventory"
+							text="Inventory"
+							buttonClassNames=" border-black bg-primary text-black transition-all duration-200 ease-in-out hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]"
+						/>
+						<LinkButton
+							to="/admin/reports"
+							text="Reports"
+							buttonClassNames=" border-black bg-primary text-black transition-all duration-200 ease-in-out hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]"
+						/>
+						<LinkButton
+							to="/admin/settings"
+							text="Settings"
+							buttonClassNames=" border-black bg-primary text-black transition-all duration-200 ease-in-out hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]"
+						/>
+					</div>
+				</aside>
+
         {/* Main Dashboard Content */}
         <main className="flex-1 bg-white rounded-2xl p-14 shadow border">
           <Breadcrumb breadcrumbs={["Admin Dashboard", "Overview"]} />
