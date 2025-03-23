@@ -4,7 +4,7 @@ import React from "react"
 import { Link } from "react-router-dom"
 import LinkButton from "./components/LinkButton"
 import keylabIcon from "./assets/keylab-icon.svg"
-import { UserRound, Menu, X } from "lucide-react"
+import { UserRound, Menu, X, ArrowLeft } from "lucide-react"
 import { useAuth } from "./AuthContext"
 import Divider from "./components/Divider"
 import NavLink from "./components/NavLink"
@@ -38,6 +38,7 @@ export default function NavBarAdmin() {
           				${mobileMenuOpen ? "h-full bg-white/100" : "h-20 delay-150 bg-white/75"}`}>
 			<div className="p-5 max-w-screen-2xl flex flex-wrap items-center justify-between mx-auto">
 				<div className="hidden md:flex w-1/3 h-5 items-center gap-3 xl:gap-6">
+					<LinkButton to="/" text="Return to Site" Icon={ArrowLeft} buttonClassNames="bg-white" />
 				</div>
 				<div className="w-1/3">
 					<Link
