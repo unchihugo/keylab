@@ -4,13 +4,13 @@
 import React, { useEffect } from "react"
 import { useAuth } from "../../AuthContext"
 import Divider from "../../components/Divider"
-import { ArrowUpRight, ChevronRight } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import * as formValidation from "../../lib/formValidation"
 import ErrorBox from "../../components/ErrorBox"
 
 export default function AdminLogin() {
-	const { login, isAuthenticated } = useAuth()
+	const { login, isAuthenticated, isAdmin } = useAuth()
 	const [email, setEmail] = React.useState("")
 	const [password, setPassword] = React.useState("")
 	const [errors, setErrors] = React.useState<string[]>([])
@@ -40,7 +40,7 @@ export default function AdminLogin() {
 				setErrors(['Login failed, please try again'])
 				return
 			}
-			if (role === 'admin') {
+			if (isAdmin) {
 				navigate('/admin/dashboard');
 			} else {
 				console.error('Access denied, not an admin')
@@ -53,8 +53,8 @@ export default function AdminLogin() {
 	const navigate = useNavigate()
 	useEffect(() => {
 		if (isAuthenticated) {
-			// redirect to home page if authenticated
-			navigate('/')
+			// redirect to admin dashboard if authenticated
+			navigate('/admin/dashboard')
 		}
 	}, [isAuthenticated, navigate])
 

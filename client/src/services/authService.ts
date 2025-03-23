@@ -83,6 +83,10 @@ export const authService = {
 
 		if (!response.ok) {
 			// handle errors
+			if (response.status === 401) {
+				return null
+			}
+
 			throw new Error(data.message || "Session validation failed")
 		}
 
