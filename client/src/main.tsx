@@ -18,6 +18,7 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import About from "./pages/About"
 import Checkout from "./pages/Checkout"
 import AdminDashboard from "./pages/Admin/Dashboard"
+import KeyboardDesigner from "./pages/keyboard-designer"
 
 const router = createBrowserRouter([
 	{
@@ -46,6 +47,7 @@ const router = createBrowserRouter([
 			{ path: "*", element: <NotFound /> },
 			{ path: "/about", element: <About /> },
 			{ path: "/shop", element: <Shop /> },
+			{ path: "/keyboard-designer", element: <KeyboardDesigner />},
 		],
 	},
 ])

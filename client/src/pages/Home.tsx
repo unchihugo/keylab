@@ -44,7 +44,7 @@ export default function Home() {
 							<div className="flex flex-col md:flex-row gap-3 h-full">
 								{/* First sub-column of second main column */}
 								<Link
-									to={"/shop"}
+									to={"/keyboard-designer"}
 									className="md:w-1/2 bg-[#DDDCED] rounded-lg p-6 h-full flex flex-col justify-between bg-cover bg-center bg-no-repeat"
 									style={{
 										backgroundImage:
