@@ -1,20 +1,14 @@
 /** @format */
 
+import { Search } from "lucide-react"
 import Breadcrumb from "../../components/Breadcrumb"
 import Divider from "../../components/Divider"
 import LinkButton from "../../components/LinkButton"
 import OrderCard from "../../components/OrderCard"
 import { useAdminOrders } from "../../hooks/useAdminOrders"
-import NotFound from "../NotFound"
 
 export default function AdminOrders() {
-	const { orders, loading, error } = useAdminOrders()
-
-	if (loading) return <div>Loading...</div>
-
-	if (error)
-		return <NotFound errorMessage="400 - Bad Request" bodyMessage={error} />
-	if (!orders) return <NotFound bodyMessage="No orders found" />
+	const { orders, loading, error, getUserOrders } = useAdminOrders()
 
 	return (
 		// <div className="flex flex-col items-center justify-center">
@@ -67,9 +61,46 @@ export default function AdminOrders() {
 					<Breadcrumb breadcrumbs={["Admin Dashboard", "Orders"]} />
 					<Divider />
 					<h2 className="text-2xl font-bold mb-4">Sales Overview</h2>
+
+					{/* search */}
+					<div className="flex items-center justify-between mb-4">
+						<div className="relative w-full max-w-md">
+							<form
+								className="flex"
+								onSubmit={(e) => {
+									e.preventDefault()
+									getUserOrders(e.currentTarget.search.value)
+								}}>
+								<input
+									type="number"
+									name="search"
+									placeholder="Search by UserID..."
+									className="w-full px-4 py-2 border border-black rounded-l-full focus:outline-none focus:ring-2 focus:ring-primary"
+									onKeyDown={(e) => {
+										if (e.key === "Enter") {
+											e.preventDefault()
+											getUserOrders(Number(e.currentTarget.value))
+										}
+									}}
+								/>
+								<button
+									type="submit"
+									className="px-4 py-2 bg-primary border-t border-e border-b border-black rounded-r-full hover:bg-primary-dark transition-colors">
+									<Search />
+								</button>
+							</form>
+						</div>
+					</div>
+
 					<div className="grid grid-cols-1 gap-4 lg:grid-cols-2 2xl:grid-cols-3">
+						{loading && <div>Loading...</div>}
+						{error && <div>Error: {error}</div>}
 						{orders.map((order) => (
-							<OrderCard key={order.id} order={order} isAdmin={true} />
+							<OrderCard
+								key={order.id}
+								order={order}
+								isAdmin={true}
+							/>
 						))}
 					</div>
 				</main>

@@ -19,7 +19,9 @@ export const useAdminOrders = () => {
 					(item: { order: Order }) => item.order,
 				)
 				setOrders(ordersData)
+				setError("")
 			} catch (error) {
+				setOrders([])
 				setError(
 					error instanceof Error
 						? error.message
@@ -32,9 +34,31 @@ export const useAdminOrders = () => {
 		fetchAllOrders()
 	}, [])
 
+	const getUserOrders = async (userId: number) => {
+		try {
+			setLoading(true)
+			const response = await adminOrdersService.getUserOrders(userId)
+			const ordersData = response.data.orders.map(
+				(item: { order: Order }) => item.order,
+			)
+			setOrders(ordersData)
+			setError("")
+		}
+		catch (error) {
+			setOrders([])
+			setError(
+				error instanceof Error
+					? error.message
+					: "An error occurred",
+			)
+		}
+		setLoading(false)
+	}
+
 	return {
 		orders,
 		loading,
 		error,
+		getUserOrders,
 	}
 }
