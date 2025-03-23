@@ -1,14 +1,12 @@
 /** @format */
 
 import React, { useState, useEffect } from "react"
-import { useLocation } from 'react-router-dom';
 import ProductCard from "../components/ProductCard"
 import { useProducts } from "../hooks/useProducts"
 import NotFound from "./NotFound"
 
 export default function DisplayPage() {
-	const location = useLocation(); 
-	const { products, loading, error, searchProducts, getProductsByCategory } = useProducts(""); // Fetch products from backend
+	const { products, loading, error, searchProducts, getProductsByCategory } = useProducts("") 
 
 	const [searchTerm, setSearchTerm] = useState<string>("")
 	const [activeFilters, setActiveFilters] = useState<{
@@ -28,27 +26,6 @@ export default function DisplayPage() {
 	const [activeBrands, setActiveBrands] = useState<string[]>([]);
 
 	useEffect(() => {
-		const searchParams = new URLSearchParams(location.search);
-		const categoryParam = searchParams.get('category');
-        if (categoryParam) {
-            if (categoryParam === 'keyboards') {
-                getProductsByCategory("keyboards").then(() => {
-                    setFilteredProducts(products);
-                })
-            } else if (categoryParam === 'keycaps') {
-                getProductsByCategory("keycaps").then(() => {
-                    setFilteredProducts(products);
-                })
-            } else if (categoryParam === 'switches'){
-                getProductsByCategory("switches").then(() => {
-                    setFilteredProducts(products);
-                })
-            } else if (categoryParam === 'accessories'){
-                getProductsByCategory("accessories").then(() => {
-                    setFilteredProducts(products);
-                })
-            }
-        }
         const applyFilters = () => {
             let updatedProducts = products; // Start with all products
 
@@ -93,53 +70,7 @@ export default function DisplayPage() {
         };
 
         applyFilters(); 
-    }, [products, activeFilters, priceRange, activeColors, activeSizes, activeBrands, location.search, getProductsByCategory]);
-	
-
-	//const [sortOption, setSortOption] = useState<string>("new")
-	
-	// Apply all filters and sorting
-	// useEffect(() => {
-	// 	const applyFilters = () => {
-	// 		// let updatedProducts = [...products]
-	// 		// // Apply active filters
-	// 		// const filterKeys = Object.keys(activeFilters).filter(
-	// 		// 	(key) => activeFilters[key],
-	// 		// )
-	// 		// if (filterKeys.length > 0) {
-	// 		// 	updatedProducts = updatedProducts.filter((product) =>
-	// 		// 		filterKeys.some((key) =>
-	// 		// 			product.data.name.toLowerCase().includes(key),
-	// 		// 		),
-	// 		// 	)
-	// 		// }
-	// 		// // Apply price filter
-	// 		// updatedProducts = updatedProducts.filter(
-	// 		// 	(product) => product.data.price <= priceRange,
-	// 		// )
-	// 		// // Apply sorting
-	// 		// switch (sortOption) {
-	// 		// 	case "price-asc":
-	// 		// 		updatedProducts.sort((a, b) => a.data.price - b.data.price)
-	// 		// 		break
-	// 		// 	case "price-desc":
-	// 		// 		updatedProducts.sort((a, b) => b.data.price - a.data.price)
-	// 		// 		break
-	// 		// 	case "rating":
-	// 		// 		updatedProducts.sort(
-	// 		// 			(a, b) => (b.data.rating || 0) - (a.data.rating || 0),
-	// 		// 		)
-	// 		// 		break
-	// 		// 	default:
-	// 		// 		break
-	// 		// }
-	// 		// setFilteredProducts(updatedProducts)
-	// 	}
-
-	// 	// Reapply filters whenever related state changes
-
-	// 	applyFilters()
-	// }, [searchTerm, activeFilters, priceRange, sortOption, products])
+    }, [products, activeFilters, priceRange, activeColors, activeSizes, activeBrands ]); 
 
 	const handleSearch = async (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === "Enter") {
