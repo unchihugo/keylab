@@ -10,21 +10,25 @@ interface Product {
 }
 
 export const inventoryService = {
-  async getProducts(): Promise<Product[]> {
+  async getProducts(): Promise<any> { // Change return type to any
     try {
       const response = await fetch(PRODUCTS_API_URL, {
         method: "GET",
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
-      if (!response.ok) throw new Error("Failed to fetch products");
-      return await response.json();
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to fetch products");
+      }
+      return await response.json(); // Return the entire response
     } catch (error) {
       console.error("Error fetching products:", error);
-      return [];
+      throw error;
     }
   },
 
-  async createProduct(product: Product): Promise<Product | null> {
+  async createProduct(product: Product): Promise<any> { // Change return type to any
     try {
       const response = await fetch(PRODUCTS_API_URL, {
         method: "POST",
@@ -32,15 +36,18 @@ export const inventoryService = {
         credentials: "include",
         body: JSON.stringify(product),
       });
-      if (!response.ok) throw new Error("Failed to create product");
-      return await response.json();
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to create product");
+      }
+      return await response.json(); // Return the entire response
     } catch (error) {
       console.error("Error creating product:", error);
-      return null;
+      throw error;
     }
   },
 
-  async updateProduct(id: string, updatedProduct: Product): Promise<Product | null> {
+  async updateProduct(id: string, updatedProduct: Product): Promise<any> { // Change return type to any
     try {
       const response = await fetch(`${PRODUCTS_API_URL}/${id}`, {
         method: "PUT",
@@ -48,11 +55,14 @@ export const inventoryService = {
         credentials: "include",
         body: JSON.stringify(updatedProduct),
       });
-      if (!response.ok) throw new Error("Failed to update product");
-      return await response.json();
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to update product");
+      }
+      return await response.json(); // Return the entire response
     } catch (error) {
       console.error("Error updating product:", error);
-      return null;
+      throw error;
     }
   },
 
@@ -62,11 +72,14 @@ export const inventoryService = {
         method: "DELETE",
         credentials: "include",
       });
-      if (!response.ok) throw new Error("Failed to delete product");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to delete product");
+      }
       return true;
     } catch (error) {
       console.error("Error deleting product:", error);
-      return false;
+      throw error;
     }
   },
 };

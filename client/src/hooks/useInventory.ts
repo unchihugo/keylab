@@ -14,10 +14,10 @@ export function useInventory() {
     setLoading(true);
     setError(null);
     try {
-      const data = await inventoryService.getProducts();
-      setProducts(data);
-    } catch (err) {
-      setError("Failed to load products");
+      const response = await inventoryService.getProducts(); // Get the entire response
+      setProducts(response.data.products); // Access response.data.products
+    } catch (err: any) {
+      setError(err.message || "Failed to load products");
     } finally {
       setLoading(false);
     }
@@ -27,9 +27,9 @@ export function useInventory() {
     setLoading(true);
     try {
       const newProduct = await inventoryService.createProduct(product);
-      if (newProduct) setProducts((prev) => [...prev, newProduct]);
-    } catch (err) {
-      setError("Failed to add product");
+      if (newProduct) setProducts((prev) => [...prev, newProduct.data]);
+    } catch (err: any) {
+      setError(err.message || "Failed to add product");
     } finally {
       setLoading(false);
     }
@@ -41,11 +41,11 @@ export function useInventory() {
       const updated = await inventoryService.updateProduct(id, updatedProduct);
       if (updated) {
         setProducts((prev) =>
-          prev.map((prod) => (prod.id === id ? updated : prod))
+          prev.map((prod) => (prod.id === id ? updated.data : prod))
         );
       }
-    } catch (err) {
-      setError("Failed to update product");
+    } catch (err: any) {
+      setError(err.message || "Failed to update product");
     } finally {
       setLoading(false);
     }
@@ -58,12 +58,12 @@ export function useInventory() {
       if (success) {
         setProducts((prev) => prev.filter((prod) => prod.id !== id));
       }
-    } catch (err) {
-      setError("Failed to delete product");
+    } catch (err: any) {
+      setError(err.message || "Failed to delete product");
     } finally {
       setLoading(false);
     }
   };
 
   return { products, loading, error, addProduct, updateProduct, deleteProduct };
-} 
+}

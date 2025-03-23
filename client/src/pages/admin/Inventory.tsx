@@ -43,8 +43,13 @@ export default function Inventory() {
     setEditingProduct({ ...product });
   };
 
+  const handleDeleteProduct = (id: string) => {
+    deleteProduct(id);
+    console.log("Product deleted");
+  };
+
   const displayedProducts = products
-    .filter(product => product.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    .filter((product: Product) => product.name.toLowerCase().includes(searchTerm.toLowerCase()))
     .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
@@ -123,7 +128,7 @@ export default function Inventory() {
             </tr>
           </thead>
           <tbody>
-            {displayedProducts.map((product) => (
+            {displayedProducts.map((product: Product) => (
               <tr key={product.id} className="border-b border-gray-200">
                 <td className="py-2 px-4">
                   <img src={product.image} alt={product.name} className="w-16 h-16 rounded" />
@@ -140,7 +145,7 @@ export default function Inventory() {
                     <Edit className="mr-1" />
                   </button>
                   <button
-                    onClick={() => deleteProduct(product.id)}
+                    onClick={() => handleDeleteProduct(product.id)}
                     className="text-red-500 hover:text-red-700 flex items-center"
                   >
                     <Trash2 className="mr-1" />
