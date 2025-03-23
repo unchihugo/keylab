@@ -5,7 +5,8 @@ import Divider from "../components/Divider"
 import LinkButton from "../components/LinkButton"
 import { useCart } from "../hooks/useCarts"
 import { Carts } from "../types/Carts"
-import { Navigate, useNavigate } from "react-router-dom"
+import { cartServices } from "../services/cartServices"
+import { useNavigate } from "react-router-dom"
 
 export default function Checkout() {
 	const [firstName, setFirstName] = useState("")
@@ -40,23 +41,30 @@ export default function Checkout() {
 	)
 	.toFixed(2)
 
-	const handleCheckout = async () => {
+	const checkout = async () => {
 		try {
-			const response = await fetch("http://localhost:8080/cart/checkout", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
+			const customerDetails = {
+                billing_address_id: 0, 
+                shipping_address_id: 0, 
+                new_billing_address: {
+                    street: "123 main st",
+                    city: "New York",
+                    county: "NY", 
+                    postal_code: "10001",
+                    country: "USA",
                 },
-                credentials: "include",
-            });
-
-			if(response.ok) {
-				nav("/about");
-			} else {
-				console.error("Checkout failed:")
-			} 
+                new_shipping_address: {
+                    street: "456 elm st",
+                    city: "Los Angeles",
+                    county: "CA", 
+                    postal_code: "9001",
+                    country: "USA"
+                },
+			};
+			await cartServices.checkoutCart(customerDetails);
+			nav("/payment");
 		} catch(error) {
-			console.error("Error during checkout:", error);
+			console.error("Checkout failed :(")
 		}
 	};
 
@@ -299,10 +307,11 @@ export default function Checkout() {
 							{/* Pay Now Button */}
 							<div className="mt-6">
 								<button
-								onClick={handleCheckout}
-                                className="mt-3 px-6 py-3 bg-secondary-dark text-white rounded-md"
-								></button> 
+									onClick={checkout}
+									className="mt-3 px-6 bg-secondary-dark"
+								> 
 								Pay Now
+								</button>
 							</div>
 						</div>
 					</div>
