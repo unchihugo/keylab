@@ -3,7 +3,7 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
-	"keylab/database"
+	db "keylab/database"
 	"keylab/database/models"
 	"net/http"
 	"net/http/httptest"
@@ -24,21 +24,56 @@ func TestContactUs(t *testing.T) {
 	defer db.CleanupTestDB(t, testDB)
 
 	e := echo.New()
-	contact := models.ContactUsRequest{
-		Forename:    "John",
-		Surname:     "Doe",
-		Email:       "john@example.com",
-		PhoneNumber: "+1234567890",
-		Message:     "Hello, this is a test message",
-	}
-	body, _ := json.Marshal(contact)
 
-	req := httptest.NewRequest(http.MethodPost, "/contact", bytes.NewReader(body))
-	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	rec := httptest.NewRecorder()
-	c := e.NewContext(req, rec)
+	t.Run("Valid Contact Request", func(t *testing.T) {
+		contact := models.ContactUsRequest{
+			Forename:    "John",
+			Surname:     "Doe",
+			Email:       "john@example.com",
+			PhoneNumber: "+1234567890",
+			Message:     "Hello, this is a test message",
+		}
+		body, _ := json.Marshal(contact)
 
-	err := h.ContactUs(c)
-	assert.NoError(t, err)
-	assert.Equal(t, http.StatusOK, rec.Code)
+		req := httptest.NewRequest(http.MethodPost, "/contact", bytes.NewReader(body))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		c := e.NewContext(req, rec)
+
+		err := h.ContactUs(c)
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusOK, rec.Code)
+	})
+
+	t.Run("Invalid JSON Body", func(t *testing.T) {
+		invalidBody := []byte(`{"invalid":}`)
+		req := httptest.NewRequest(http.MethodPost, "/contact", bytes.NewReader(invalidBody))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		c := e.NewContext(req, rec)
+
+		err := h.ContactUs(c)
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusBadRequest, rec.Code)
+	})
+
+	t.Run("Validation Error - Missing Fields", func(t *testing.T) {
+		contact := models.ContactUsRequest{
+			Forename:    "",
+			Surname:     "",
+			Email:       "not-an-email",
+			PhoneNumber: "",
+			Message:     "",
+		}
+		body, _ := json.Marshal(contact)
+
+		req := httptest.NewRequest(http.MethodPost, "/contact", bytes.NewReader(body))
+		req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+		rec := httptest.NewRecorder()
+		c := e.NewContext(req, rec)
+
+		err := h.ContactUs(c)
+		assert.NoError(t, err)
+		assert.Equal(t, http.StatusBadRequest, rec.Code)
+	})
 }
