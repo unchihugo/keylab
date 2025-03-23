@@ -14,8 +14,8 @@ export function useInventory() {
     setLoading(true);
     setError(null);
     try {
-      const response = await inventoryService.getProducts(); // Get the entire response
-      setProducts(response.data.products); // Access response.data.products
+      const response = await inventoryService.getProducts(); 
+      setProducts(response.data.orders); 
     } catch (err: any) {
       setError(err.message || "Failed to load products");
     } finally {
