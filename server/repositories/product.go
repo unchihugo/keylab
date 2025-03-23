@@ -3,16 +3,15 @@ package repositories
 import (
 	"errors"
 	"fmt"
-	db "keylab/database"
 	"keylab/database/models"
 	"log"
 
 	"gorm.io/gorm"
 )
 
-func GetProducts(order string, limit int, offset int) ([]models.Product, error) {
+func GetProducts(order string, limit int, offset int, db *gorm.DB) ([]models.Product, error) {
 	var products []models.Product
-	err := db.DB.Preload("Category").Preload("Category.Parent").Preload("ProductImages").Order(order).Limit(limit).Offset(offset).Find(&products).Error
+	err := db.Preload("Category").Preload("Category.Parent").Preload("ProductImages").Order(order).Limit(limit).Offset(offset).Find(&products).Error
 
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		log.Printf("Error fetching products: %v", err)
@@ -21,9 +20,9 @@ func GetProducts(order string, limit int, offset int) ([]models.Product, error) 
 	return products, err
 }
 
-func GetProductBySlug(slug string) (models.Product, error) {
+func GetProductBySlug(slug string, db *gorm.DB) (models.Product, error) {
 	var product models.Product
-	err := db.DB.Preload("Category").Preload("Category.Parent").Preload("ProductImages").Where("slug = ?", slug).First(&product).Error
+	err := db.Preload("Category").Preload("Category.Parent").Preload("ProductImages").Where("slug = ?", slug).First(&product).Error
 
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		log.Printf("Error fetching product by slug: %v", err)

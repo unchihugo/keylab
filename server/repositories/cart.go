@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"errors"
-	db "keylab/database"
 	"keylab/database/models"
 	"log"
 
@@ -10,9 +9,9 @@ import (
 )
 
 // GetCartItemsByUserID fetches all cart items for a specific user
-func GetCartItemsByUserID(userID int64) ([]models.CartItems, error) {
+func GetCartItemsByUserID(userID int64, db *gorm.DB) ([]models.CartItems, error) {
 	var cartItems []models.CartItems
-	err := db.DB.Preload("Product").Preload("Product.Category").Where("user_id = ?", userID).Find(&cartItems).Error
+	err := db.Preload("Product").Preload("Product.Category").Where("user_id = ?", userID).Find(&cartItems).Error
 
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		log.Printf("Error fetching cart items for user ID %d: %v", userID, err)
@@ -22,9 +21,9 @@ func GetCartItemsByUserID(userID int64) ([]models.CartItems, error) {
 }
 
 // GetCartItemByID fetches a cart item by ID
-func GetCartItemByID(cartItemID int64) (models.CartItems, error) {
+func GetCartItemByID(cartItemID int64, db *gorm.DB) (models.CartItems, error) {
 	var cartItem models.CartItems
-	err := db.DB.Preload("Product").Preload("Product.Category").First(&cartItem, cartItemID).Error
+	err := db.Preload("Product").Preload("Product.Category").First(&cartItem, cartItemID).Error
 
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		log.Printf("Error fetching cart item by ID %d: %v", cartItemID, err)
@@ -34,9 +33,9 @@ func GetCartItemByID(cartItemID int64) (models.CartItems, error) {
 }
 
 // GetProductByID fetches a product by ID
-func GetProductByID(productID int64) (models.Product, error) {
+func GetProductByID(productID int64, db *gorm.DB) (models.Product, error) {
 	var product models.Product
-	err := db.DB.First(&product, productID).Error
+	err := db.First(&product, productID).Error
 
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		log.Printf("Error fetching product by ID %d: %v", productID, err)
@@ -46,8 +45,7 @@ func GetProductByID(productID int64) (models.Product, error) {
 }
 
 // Calculate Card Total
-
-func CalculateTotal(cartItems []models.CartItems) float64 {
+func CalculateTotal(cartItems []models.CartItems, db *gorm.DB) float64 {
 	var total float64
 	for _, item := range cartItems {
 		total += item.Product.Price * float64(item.Quantity)
@@ -56,11 +54,10 @@ func CalculateTotal(cartItems []models.CartItems) float64 {
 }
 
 // Fetch or Store Address
-
-func HandleAddress(userID int64, addressID int64, newAddress *models.Address, addressType models.AddressType) (*models.Address, error) {
+func HandleAddress(userID int64, addressID int64, newAddress *models.Address, addressType models.AddressType, db *gorm.DB) (*models.Address, error) {
 	if addressID != 0 {
 		var address models.Address
-		if err := db.DB.First(&address, addressID).Error; err != nil {
+		if err := db.First(&address, addressID).Error; err != nil {
 			return nil, err
 		}
 		return &address, nil
@@ -69,7 +66,7 @@ func HandleAddress(userID int64, addressID int64, newAddress *models.Address, ad
 	if newAddress != nil {
 		newAddress.UserID = userID
 		newAddress.Type = addressType
-		if err := db.DB.Create(newAddress).Error; err != nil {
+		if err := db.Create(newAddress).Error; err != nil {
 			return nil, err
 		}
 		return newAddress, nil

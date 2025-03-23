@@ -4,11 +4,15 @@ import { useParams } from "react-router-dom"
 import { useProduct } from "../../hooks/useProduct"
 import { useProductReviews } from "../../hooks/useProductReviews"
 import NotFound from "../NotFound"
-import { Minus, Plus } from "lucide-react"
+import { Minus, Plus, Star } from "lucide-react"
 import LinkButton from "../../components/LinkButton"
 import ZoomImage from "../../components/ZoomImage"
 import Breadcrumb from "../../components/Breadcrumb"
 import ProductCarousel from "../../components/ProductCarousel"
+import { useState } from "react"
+import { useAuth } from "../../AuthContext"
+import Divider from "../../components/Divider"
+import UserReviewForm from "../../components/UserReviewForm"
 
 export default function Product() {
 	const { slug } = useParams()
@@ -21,10 +25,18 @@ export default function Product() {
 		addProductToCart,
 		incrementQuantity,
 		decrementQuantity,
+		addToCart,
 	} = useProduct(slug as string)
-	const { reviews, statistics } = useProductReviews(
-		slug as string,
-	)
+	const {
+		reviews,
+		statistics,
+		userReview,
+		submitReview,
+		deleteReview,
+		updateReview,
+	} = useProductReviews(slug as string)
+	const [isEditingReview, setIsEditingReview] = useState(false)
+	const { isAuthenticated } = useAuth()
 
 	if (loading) return <div>Loading...</div>
 	if (error)
@@ -64,13 +76,23 @@ export default function Product() {
 					</div>
 					<div className="lg:col-span-2 flex-col gap-5 inline-flex">
 						<div>
-							<div className="text-black/50">
+							{/* <div className="text-black/50">
 								Tag1 | Tag2 | Tag3
-							</div>
+							</div> */}
 							{statistics ? (
-								<div>
-									{"⭐".repeat(statistics.average_rating)}{" "}
-									<span className="font-bold">
+								<div className="flex">
+									{Array.from(
+										{ length: statistics.average_rating },
+										(_, i) => (
+											<Star
+												key={i}
+												fill="#ffd063"
+												strokeWidth={0}
+												className="inline-block"
+											/>
+										),
+									)}
+									<span className="font-bold me-1">
 										{statistics.average_rating}{" "}
 									</span>
 									({statistics.total_reviews} reviews)
@@ -113,7 +135,7 @@ export default function Product() {
 								<button
 									className="grow shrink basis-0 h-11 bg-white rounded-full border border-black justify-center items-center gap-2 flex"
 									onClick={addProductToCart}>
-									Add to cart
+									{addToCart ? "Added!" : "Add to cart"}
 								</button>
 							</div>
 							<div>
@@ -159,8 +181,18 @@ export default function Product() {
 					<div className="w-full">
 						{statistics ? (
 							<div className="flex justify-center items-center gap-4">
-								<div>
-									{"⭐".repeat(statistics.average_rating)}{" "}
+								<div className="flex justify-center items-center">
+									{Array.from(
+										{ length: statistics.average_rating },
+										(_, i) => (
+											<Star
+												key={i}
+												fill="#ffd063"
+												strokeWidth={0}
+												className="inline-block"
+											/>
+										),
+									)}
 									<span className="font-bold">
 										{statistics.average_rating} average
 									</span>
@@ -170,8 +202,125 @@ export default function Product() {
 								</div>
 							</div>
 						) : (
-							<div>No reviews yet</div>
+							<div className="flex justify-center items-center gap-4">
+								<div>No reviews yet</div>
+								<div className="text-black/50">
+									Be the first to review this product
+								</div>
+							</div>
 						)}
+
+						{/* user's review */}
+						{userReview ? (
+							<div className="mt-4 border border-black w-full bg-white rounded-lg px-6 py-3">
+								{isEditingReview ? (
+									<>
+										<div className="font-medium text-2xl mb-2">
+											Edit your review
+										</div>
+										<UserReviewForm
+											initialRating={userReview.rating}
+											initialComment={userReview.comment}
+											onSubmit={(data) => {
+												updateReview(
+													userReview.id,
+													data,
+												)
+												setIsEditingReview(false)
+											}}
+											buttonText="Update Review"
+										/>
+									</>
+								) : (
+									<>
+										<div className="font-medium text-2xl">
+											Your review
+										</div>
+										<div className="text-lg">
+											{Array.from(
+												{ length: userReview.rating },
+												(_, i) => (
+													<Star
+														key={i}
+														fill="#ffd063"
+														strokeWidth={0}
+														className="inline-block"
+													/>
+												),
+											)}
+										</div>
+										<div className="flex items-center gap-4">
+											<div className="font-bold">
+												{userReview.user_id}
+											</div>
+											<div className="text-black/50 text-sm">
+												{userReview.updated_at
+													? new Date(
+															userReview.updated_at,
+														).toLocaleDateString(
+															"en-US",
+															{
+																year: "numeric",
+																month: "long",
+																day: "numeric",
+															},
+														)
+													: "No date available"}
+											</div>
+										</div>
+										<Divider />
+										<div className="text-pretty">
+											{userReview.comment}
+										</div>
+										<div className="flex gap-2 justify-end">
+											<button
+												className="bg-white text-black p-2 px-4 rounded-full border
+												h-11 border-black justify-center items-center"
+												onClick={() => {
+													deleteReview(userReview.id)
+												}}>
+												Delete review
+											</button>
+											<button
+												className="bg-primary text-black p-2 px-4 rounded-full border
+												h-11 border-black justify-center items-center"
+												onClick={() =>
+													setIsEditingReview(true)
+												}>
+												Edit review
+											</button>
+										</div>
+									</>
+								)}
+							</div>
+						) : isAuthenticated ? (
+							<div className="mt-4 border border-black w-full bg-white rounded-lg px-6 py-3">
+								<div className="font-medium text-2xl mb-2">
+									Write a review
+								</div>
+								<UserReviewForm
+									onSubmit={(data) => {
+										submitReview(data)
+									}}
+								/>
+							</div>
+						) : (
+							<div className="mt-4 border border-black w-full bg-white rounded-lg px-6 py-3">
+								<div className="text-lg font-medium">
+									Sign in to leave a review
+								</div>
+								<div className="flex justify-end">
+									<LinkButton
+										to="/sign-in"
+										text="Sign in"
+										buttonClassNames="bg-primary text-white"
+										textClassNames="p-2"
+									/>
+								</div>
+							</div>
+						)}
+
+						{/* other user reviews */}
 
 						{reviews.length > 0 &&
 							reviews.map((review) => (
@@ -179,12 +328,21 @@ export default function Product() {
 									key={review.id}
 									className="mt-4 border border-black w-full bg-white rounded-lg px-6 py-3">
 									<div className="text-lg">
-										{"⭐".repeat(review.rating)}
+										{Array.from(
+											{ length: review.rating },
+											(_, i) => (
+												<Star
+													key={i}
+													fill="#ffd063"
+													strokeWidth={0}
+													className="inline-block"
+												/>
+											),
+										)}
 									</div>
 									<div className="flex items-center gap-4">
 										<div className="font-bold">
-											{/* TODO: get username instead */}
-											User {review.user_id}
+											{review.user.forename}{" "}{review.user.surname}
 										</div>
 										<div className="text-black/50 text-sm">
 											{review.updated_at
@@ -201,7 +359,10 @@ export default function Product() {
 												: "No date available"}
 										</div>
 									</div>
-									<div>{review.comment}</div>
+									<Divider />
+									<div className="text-pretty">
+										{review.comment}
+									</div>
 								</div>
 							))}
 					</div>

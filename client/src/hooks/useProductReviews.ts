@@ -53,6 +53,26 @@ export const useProductReviews = (slug: string) => {
 		}
 	}, [slug])
 
+	const fetchUserReview = useCallback(async () => {
+		if (!slug) return
+
+		try {
+			setLoading(true)
+			const userReviewData = await reviewService.getReviewByUser(slug)
+			setUserReview(userReviewData.data[0])
+			console.log(userReviewData)
+		} catch (error) {
+			setError(
+				error instanceof Error
+					? error.message
+					: "Failed to fetch user review",
+			)
+			setUserReview(null)
+		} finally {
+			setLoading(false)
+		}
+	}, [slug])
+
 	// submit a new review
 	const submitReview = async (review: {
 		rating: number
@@ -70,11 +90,11 @@ export const useProductReviews = (slug: string) => {
 			}
 
 			const newReview = await reviewService.createReview(slug, review)
-			setUserReview(newReview)
+			setUserReview(newReview.data)
 
 			// refresh reviews after submitting
 			await fetchReviews()
-			return newReview
+			return newReview.data
 		} catch (error) {
 			const errorMsg =
 				error instanceof Error
@@ -82,6 +102,7 @@ export const useProductReviews = (slug: string) => {
 					: "Failed to submit review"
 			setError(errorMsg)
 			setFormErrors([errorMsg])
+			console.warn(errorMsg)
 			return null
 		} finally {
 			setLoading(false)
@@ -92,7 +113,7 @@ export const useProductReviews = (slug: string) => {
 	const deleteReview = async (reviewId: number) => {
 		try {
 			setLoading(true)
-			await reviewService.deleteReview(reviewId)
+			await reviewService.deleteReview(slug, reviewId)
 
 			// remove locally
 			setReviews((prevReviews) =>
@@ -110,6 +131,7 @@ export const useProductReviews = (slug: string) => {
 					? error.message
 					: "Failed to delete review",
 			)
+			console.warn(error)
 			return false
 		} finally {
 			setLoading(false)
@@ -133,14 +155,15 @@ export const useProductReviews = (slug: string) => {
 			}
 
 			const updatedReview = await reviewService.updateReview(
+				slug,
 				reviewId,
 				review,
 			)
-			setUserReview(updatedReview)
+			setUserReview(updatedReview.data)
 
 			// refresh reviews after updating
 			await fetchReviews()
-			return updatedReview
+			return updatedReview.data
 		} catch (error) {
 			const errorMsg =
 				error instanceof Error
@@ -148,6 +171,7 @@ export const useProductReviews = (slug: string) => {
 					: "Failed to update review"
 			setError(errorMsg)
 			setFormErrors([errorMsg])
+			console.warn(errorMsg)
 			return null
 		} finally {
 			setLoading(false)
@@ -158,7 +182,8 @@ export const useProductReviews = (slug: string) => {
 	useEffect(() => {
 		fetchReviews()
 		fetchStatistics()
-	}, [slug, fetchReviews, fetchStatistics])
+		fetchUserReview()
+	}, [slug, fetchReviews, fetchStatistics, fetchUserReview])
 
 	return {
 		reviews,
@@ -167,7 +192,6 @@ export const useProductReviews = (slug: string) => {
 		loading,
 		error,
 		formErrors,
-		fetchReviews,
 		submitReview,
 		deleteReview,
 		updateReview,
