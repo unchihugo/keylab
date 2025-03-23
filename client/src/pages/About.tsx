@@ -194,6 +194,17 @@ export default function About() {
 									<ChevronRight className="-m-2 duration-200 group-hover:translate-x-1" />
 								</button>
 							</form>
+							<div className="text-center mt-4">
+								<p>
+									Prefer to email us directly? Reach out at&nbsp; 
+									<a
+										href="mailto:keylab@outlook.com"
+										className="text-blue-500 underline"
+										>
+											keylab@outlook.com
+										</a>
+								</p>
+							</div>
 							{statusMessage && (
 								<div className="mt-4 text-center">
 									{statusMessage}

@@ -4,7 +4,7 @@ import React from "react"
 import { Link } from "react-router-dom"
 import LinkButton from "./components/LinkButton"
 import keylabIcon from "./assets/keylab-icon.svg"
-import { ShoppingCart, UserRound, Heart, Menu, X } from "lucide-react"
+import { ShoppingCart, UserRound, Mail, Menu, X } from "lucide-react"
 import { useAuth } from "./AuthContext"
 import Divider from "./components/Divider"
 import NavLink from "./components/NavLink"
@@ -75,7 +75,7 @@ export default function NavBar() {
 										<LinkButton
 											to="/favorites"
 											buttonClassNames="ms-2 h-10 w-10 bg-white"
-											Icon={Heart}
+											Icon={Mail}
 										/>
 									</>
 								) : (
