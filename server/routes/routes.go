@@ -88,6 +88,8 @@ func RegisterRoutes(e *echo.Echo, sessionStore *sessions.CookieStore, db *gorm.D
 
 	adminUserGroup := adminGroup.Group("/users")
 	adminUserGroup.GET("", h.GetAllUsers)
+	adminUserGroup.PUT("/users/:id", h.UpdateUserByAdmin)
+	//adminUserGroup.DELETE("/users/:id", h.DeleteUserByAdmin)
 
 	adminOrdersGroup := adminGroup.Group("/orders")
 	adminOrdersGroup.GET("", h.GetAllOrders)
