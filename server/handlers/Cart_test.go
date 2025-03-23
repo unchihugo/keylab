@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	db"keylab/database"
+	db "keylab/database"
 	"keylab/database/models"
 	"net/http"
 	"net/http/httptest"
@@ -198,7 +198,19 @@ func TestUpdateOrderStatus(t *testing.T) {
 	h, testDB, user, _ := setupCartTest(t)
 	defer db.CleanupTestDB(t, testDB)
 
-	order := models.Order{UserID: user.ID, Status: models.Pending, Total: 50}
+	// Create valid addresses
+	shipping := models.Address{UserID: user.ID, Street: "123 A", City: "TestCity", County: "TC", PostalCode: "11111", Country: "X", Type: models.Shipping}
+	billing := models.Address{UserID: user.ID, Street: "456 B", City: "TestCity", County: "TC", PostalCode: "22222", Country: "X", Type: models.Billing}
+	assert.NoError(t, testDB.DB.Create(&shipping).Error)
+	assert.NoError(t, testDB.DB.Create(&billing).Error)
+
+	order := models.Order{
+		UserID:            user.ID,
+		Status:            models.Pending,
+		Total:             50,
+		ShippingAddressID: shipping.ID,
+		BillingAddressID:  billing.ID,
+	}
 	assert.NoError(t, testDB.DB.Create(&order).Error)
 
 	body, _ := json.Marshal(map[string]string{"status": "shipped"})
