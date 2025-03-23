@@ -18,6 +18,14 @@ import (
 func setupReviewHandler(t *testing.T) (*Handlers, *db.TestDB, models.User, models.Product) {
 	testDB := db.SetupTestDB(t)
 
+	category := models.ProductCategory{
+		Name:      "Test Category",
+		Slug:      "test-category",
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+	assert.NoError(t, testDB.DB.Create(&category).Error)
+
 	user := models.User{
 		Forename:    "John",
 		Surname:     "Doe",
@@ -34,6 +42,8 @@ func setupReviewHandler(t *testing.T) (*Handlers, *db.TestDB, models.User, model
 		Slug:        "test-product",
 		Description: "Test Description",
 		Price:       10.0,
+		Stock:       0,
+		CategoryID:  category.ID,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
@@ -65,8 +75,15 @@ func TestCreateReview(t *testing.T) {
 	})
 
 	t.Run("Duplicate Review", func(t *testing.T) {
-		review := models.ProductReviews{ProductID: product.ID, UserID: user.ID, Rating: 5, Comment: "Original"}
-		assert.NoError(t, testDB.DB.Create(&review).Error)
+		existingReview := models.ProductReviews{
+			Rating:    5,
+			Comment:   "Already reviewed",
+			ProductID: product.ID,
+			UserID:    user.ID,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		}
+		assert.NoError(t, testDB.DB.Create(&existingReview).Error)
 
 		newReview := models.ProductReviews{Rating: 4, Comment: "Trying again"}
 		body, _ := json.Marshal(newReview)
@@ -222,7 +239,13 @@ func TestUpdateReview(t *testing.T) {
 
 	review := models.ProductReviews{Rating: 2, Comment: "Not great", ProductID: product.ID, UserID: user.ID}
 	assert.NoError(t, testDB.DB.Create(&review).Error)
-	updated := models.ProductReviews{Rating: 4, Comment: "Actually better now"}
+	updated := models.ProductReviews{
+		ProductID: product.ID,
+		UserID:    user.ID,
+		Rating:    4,
+		Comment:   "Actually better now",
+	}
+
 	body, _ := json.Marshal(updated)
 	e := echo.New()
 
