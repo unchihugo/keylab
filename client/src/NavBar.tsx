@@ -73,7 +73,7 @@ export default function NavBar() {
 											Icon={UserRound}
 										/>
 										<LinkButton
-											to="/favorites"
+											to="/about"
 											buttonClassNames="ms-2 h-10 w-10 bg-white"
 											Icon={Mail}
 										/>

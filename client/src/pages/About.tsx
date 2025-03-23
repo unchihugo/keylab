@@ -198,10 +198,10 @@ export default function About() {
 								<p>
 									Prefer to email us directly? Reach out at&nbsp; 
 									<a
-										href="mailto:keylab@outlook.com"
+										href="mailto:support@keylab.com"
 										className="text-blue-500 underline"
 										>
-											keylab@outlook.com
+											support@keylab.com
 										</a>
 								</p>
 							</div>
