@@ -43,8 +43,8 @@ export default function NavBar() {
 						text="Keyboard Designer"
 						className="hidden lg:block"
 					/>
-					<NavLink to="/shop/switches" text="Switches" />
-					<NavLink to="/shop/keyboards" text="Keyboards" />
+					<NavLink to="/shop?category=8" text="Switches" />
+					<NavLink to="/shop?category=1" text="Keyboards" />
 				</div>
 				<div className="w-1/3">
 					<Link
@@ -126,14 +126,14 @@ export default function NavBar() {
 							onClick={() => setMobileMenuOpen(false)}
 						/>
 						<NavLink
-							to="/shop/switches"
+							to="/shop?category=8"
 							text="Switches"
 							className={`text-xl font-body py-2 duration-300 ease-in-out
 								${mobileMenuOpen ? "translate-x-0 delay-150" : "-translate-x-full delay-200"}`}
 							onClick={() => setMobileMenuOpen(false)}
 						/>
 						<NavLink
-							to="/shop/keyboards"
+							to="/shop?category=1"
 							text="Keyboards"
 							className={`text-xl font-body py-2 duration-300 ease-in-out
 								${mobileMenuOpen ? "translate-x-0 delay-200" : "-translate-x-full delay-150"}`}

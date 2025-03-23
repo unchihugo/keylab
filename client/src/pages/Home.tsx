@@ -34,7 +34,7 @@ export default function Home() {
 					<div className="flex flex-col md:flex-row gap-3">
 						{/* First main column - takes up 1/2 of the space */}
 						<Link
-							to={"/shop"}
+							to={"/shop?category=1"}
 							className="md:w-1/2 bg-white rounded-lg p-6 h-56 md:h-96 flex flex-col justify-between bg-right bg-no-repeat bg-[length:85%] transition-all duration-300 hover:bg-[length:90%]"
 							style={{
 								backgroundImage:
@@ -71,7 +71,7 @@ export default function Home() {
 								<div className="md:w-1/2 flex flex-col gap-3">
 									{/* First row of second sub-column */}
 									<Link
-										to={"/shop"}
+										to={"/shop?category=7"}
 										className="h-1/2 bg-[#E0E1CE] rounded-lg p-6 flex flex-col justify-between bg-center bg-no-repeat bg-[length:55%] transition-all duration-300 hover:bg-[length:60%]"
 										style={{
 											backgroundImage:
@@ -87,7 +87,7 @@ export default function Home() {
 
 									{/* Second row of second sub-column */}
 									<Link
-										to={"/shop"}
+										to={"/shop?category=8"}
 										className="h-1/2 bg-[#E5CCD0] rounded-lg p-6 flex flex-col justify-between bg-center bg-no-repeat bg-[length:80%] transition-all duration-300 hover:bg-[length:85%]"
 										style={{
 											backgroundImage:
