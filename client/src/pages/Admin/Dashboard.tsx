@@ -8,6 +8,7 @@ import Divider from "../../components/Divider";
 import ErrorBox from "../../components/ErrorBox";
 import Card from "../../components/Card";
 import LinkButton from "../../components/LinkButton";
+import { useAdminOrders } from "../../hooks/useAdminOrders";
 
 
 // Register Chart.js components
@@ -19,7 +20,7 @@ interface DashboardStats {
 	totalSalesThisWeek: number
 	totalSalesThisMonth: number
 	newOrders: number
-	incomingOrders: number
+	ShippedOrders: number
 	ordersToProcess: number
 	newCustomers: number
 	lowStockProducts: { id: number; name: string; stock: number }[]
@@ -30,6 +31,7 @@ export default function AdminDashboard() {
 	const [loading, setLoading] = useState<boolean>(true)
 	const [error, setError] = useState<string | null>(null)
 	const [stats, setStats] = useState<DashboardStats | null>(null)
+	const { orders, loading: ordersLoading, error: ordersError } = useAdminOrders()
 
 	useEffect(() => {
 		const fetchDashboardStats = async () => {
@@ -37,13 +39,26 @@ export default function AdminDashboard() {
 				setLoading(true)
 				setError(null)
 				//placeholder data
+                if (ordersLoading) return;
+                if (ordersError) throw new Error(ordersError);
+
+                const ordersToProcessCount = orders.filter(
+					(order) => order.status === "pending" 
+                ).length;
+                const ShippedOrdersCount = orders.filter(
+					(order) => order.status === "shipped" 
+                ).length;
+                const newOrdersCount = orders.filter(
+					(order) => order.status === "pending"
+                ).length;
+
 				const placeholderData: DashboardStats = {
 					totalSalesToday: 1250,
 					totalSalesThisWeek: 8500,
 					totalSalesThisMonth: 35000,
-					newOrders: 50,
-					incomingOrders: 75,
-					ordersToProcess: 30,
+					newOrders: newOrdersCount,
+					ShippedOrders: ShippedOrdersCount,
+					ordersToProcess: ordersToProcessCount,
 					newCustomers: 25,
 					lowStockProducts: [
 						{ id: 1, name: "Keyboards", stock: 5 },
@@ -76,7 +91,7 @@ export default function AdminDashboard() {
 		//};
 
 		fetchDashboardStats()
-	}, [])
+	}, [orders, ordersLoading, ordersError])
 
   const salesTrendChartData = {
     labels: stats?.salesTrend.map((item) => item.date) || [],
@@ -167,8 +182,8 @@ export default function AdminDashboard() {
 						</div>
 						<div className="mt-4">
 							<Card
-								title="New Orders"
-								value={stats.newOrders.toLocaleString()}
+								title="Shipped Orders"
+								value={stats.ShippedOrders.toLocaleString()}
 							/>
 						</div>
 						<Divider />
@@ -196,8 +211,8 @@ export default function AdminDashboard() {
 						</h2>
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 							<Card
-								title="Incoming Orders"
-								value={stats.incomingOrders.toLocaleString()}
+								title="New Orders"
+								value={stats.newOrders.toLocaleString()}
 							/>
 							<div className="bg-white p-4 rounded-lg shadow">
 								<h3 className="text-lg font-semibold mb-2">
