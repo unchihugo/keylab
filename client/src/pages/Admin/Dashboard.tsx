@@ -137,8 +137,8 @@ export default function AdminDashboard() {
 							buttonClassNames=" border-black bg-primary text-black transition-all duration-200 ease-in-out hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]"
 						/>
 						<LinkButton
-							to="/admin/reports"
-							text="Reports"
+							to="/admin/CustomerManagement"
+							text="Customer Management"
 							buttonClassNames=" border-black bg-primary text-black transition-all duration-200 ease-in-out hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]"
 						/>
 						<LinkButton

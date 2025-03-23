@@ -1,3 +1,5 @@
+/** @format */
+
 //same as sign in just slight changes for admin login
 /** @format */
 
@@ -37,13 +39,13 @@ export default function AdminLogin() {
 		try {
 			const role = await login(email, password)
 			if (!role) {
-				setErrors(['Login failed, please try again'])
+				setErrors(["Login failed, please try again"])
 				return
 			}
 			if (isAdmin) {
 				navigate('/admin/dashboard');
 			} else {
-				console.error('Access denied, not an admin')
+				console.error("Access denied, not an admin")
 			}
 		} catch (error) {
 			console.error(error)
@@ -59,62 +61,54 @@ export default function AdminLogin() {
 	}, [isAuthenticated, navigate])
 
 	return (
-		<div className="flex justify-center items-center h-screen bg-primary">	
-					<form onSubmit={handleLogin} className="flex flex col space-y-4">
-						<div className="px-20 py-20 bg-white drop-shadow-cartoon rounded-lg border border-black mb-4 md:mb-0">
-							<div className="text-2xl font-display">Admin Sign in</div>
-							<Divider />
-							<div className="flex flex-col space-y-6">
-								<div>
-									<label
-										htmlFor="email"
-										className="text-sm mb-2 block">
-										Email
-									</label>
-									<input
-										type="email"
-										value={email}
-										onChange={(e) =>
-											setEmail(e.target.value)
-										}
-										className="border border-gray-300 p-2 rounded-lg w-full"
-										placeholder="Enter your email"
-										required
-									/>
-								</div>
-								<div>
-									<label
-										htmlFor="password"
-										className="text-sm mb-2 block">
-										Password
-									</label>
-									<input
-										type="password"
-										value={password}
-										onChange={(e) =>
-											setPassword(e.target.value)
-										}
-										className="border border-gray-300 p-2 rounded-lg w-full"
-										placeholder="Enter your password"
-										required
-									/>
-								</div>
-								<ErrorBox>{errors}</ErrorBox>
-								<button
-									type="submit"
-									className="group bg-black text-white p-2 rounded-full justify-center items-center gap-2 inline-flex">
-									Sign In
-									<ChevronRight className="-m-2 duration-200 group-hover:translate-x-1" />
-								</button>
-								{/* TODO: add forgot password */}
-							</div>
+		<div className="flex justify-center items-center h-screen bg-primary">
+			<form onSubmit={handleLogin} className="flex flex col space-y-4">
+				<div className="px-20 py-20 bg-white drop-shadow-cartoon rounded-lg border border-black mb-4 md:mb-0">
+					<div className="text-2xl font-display">Admin Sign in</div>
+					<Divider />
+					<div className="flex flex-col space-y-6">
+						<div>
+							<label
+								htmlFor="email"
+								className="text-sm mb-2 block">
+								Email
+							</label>
+							<input
+								type="email"
+								value={email}
+								onChange={(e) => setEmail(e.target.value)}
+								className="border border-gray-300 p-2 rounded-lg w-full"
+								placeholder="Enter your email"
+								required
+							/>
 						</div>
-					</form>
-					<div>
-
-
+						<div>
+							<label
+								htmlFor="password"
+								className="text-sm mb-2 block">
+								Password
+							</label>
+							<input
+								type="password"
+								value={password}
+								onChange={(e) => setPassword(e.target.value)}
+								className="border border-gray-300 p-2 rounded-lg w-full"
+								placeholder="Enter your password"
+								required
+							/>
+						</div>
+						<ErrorBox>{errors}</ErrorBox>
+						<button
+							type="submit"
+							className="group bg-black text-white p-2 rounded-full justify-center items-center gap-2 inline-flex">
+							Sign In
+							<ChevronRight className="-m-2 duration-200 group-hover:translate-x-1" />
+						</button>
+						{/* TODO: add forgot password */}
 					</div>
 				</div>
-		
+			</form>
+			<div></div>
+		</div>
 	)
 }
