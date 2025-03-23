@@ -33,9 +33,8 @@ export default function Checkout() {
 	const [expirydate, setExpiryDate] = useState("")
 	const [cvv, setCvv] = useState("")
 	const { carts } = useCart();
-
 	const shippingPrice = 3.99;
-
+	
 	const productPrice = carts
 	    ?.reduce(
 		   (accumulator, item) =>
