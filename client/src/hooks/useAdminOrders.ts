@@ -43,13 +43,10 @@ export const useAdminOrders = () => {
 			)
 			setOrders(ordersData)
 			setError("")
-		}
-		catch (error) {
+		} catch (error) {
 			setOrders([])
 			setError(
-				error instanceof Error
-					? error.message
-					: "An error occurred",
+				error instanceof Error ? error.message : "An error occurred",
 			)
 		}
 		setLoading(false)

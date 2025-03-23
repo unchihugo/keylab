@@ -79,7 +79,9 @@ export default function AdminOrders() {
 									onKeyDown={(e) => {
 										if (e.key === "Enter") {
 											e.preventDefault()
-											getUserOrders(Number(e.currentTarget.value))
+											getUserOrders(
+												Number(e.currentTarget.value),
+											)
 										}
 									}}
 								/>

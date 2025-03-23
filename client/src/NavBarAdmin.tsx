@@ -38,7 +38,12 @@ export default function NavBarAdmin() {
           				${mobileMenuOpen ? "h-full bg-white/100" : "h-20 delay-150 bg-white/75"}`}>
 			<div className="p-5 max-w-screen-2xl flex flex-wrap items-center justify-between mx-auto">
 				<div className="hidden md:flex w-1/3 h-5 items-center gap-3 xl:gap-6">
-					<LinkButton to="/" text="Return to Site" Icon={ArrowLeft} buttonClassNames="bg-white" />
+					<LinkButton
+						to="/"
+						text="Return to Site"
+						Icon={ArrowLeft}
+						buttonClassNames="bg-white"
+					/>
 				</div>
 				<div className="w-1/3">
 					<Link
