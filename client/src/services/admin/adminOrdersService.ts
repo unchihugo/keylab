@@ -1,3 +1,5 @@
+import { OrderStatus } from "../../types/ENUMs/OrderStatus"
+
 const ADMIN_ORDERS_API_URL = "http://localhost:8080/admin/orders"
 
 /**
@@ -63,14 +65,14 @@ export const adminOrdersService = {
         return response.json()
     },
 
-    async updateOrderStatus(orderId: number) {
+    async updateOrderStatus(orderId: number, newStatus: OrderStatus) {
         const response = await fetch(`${ADMIN_ORDERS_API_URL}/${orderId}/status`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
             credentials: "include",
-            body: JSON.stringify({ status: "updated" }),
+            body: JSON.stringify({ status: newStatus }),
         })
 
         if (!response.ok) {
