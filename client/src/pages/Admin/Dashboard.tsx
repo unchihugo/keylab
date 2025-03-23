@@ -113,10 +113,10 @@ export default function AdminDashboard() {
     <h2 className="text-lg font-semibold mb-4">Admin Panel</h2>
     <nav className="space-y-4">
         {[
-            { label: "Dashboard", to: "/dashboard" },
-            { label: "Inventory", to: "/inventory" },
-            { label: "Order Managemet", to: "/order-management " },
-            { label: "Customer Managment", to: "/customers-management" },
+            { label: "Dashboard", to: "Admin/Dashboard" },
+            { label: "Inventory", to: "Admin/inventory" },
+            { label: "Orders", to: "Admin/Orders " },
+            { label: "Customer Managment", to: "Admin/CustomersManagement" },
             { label: "Settings", to: "/settings"  },
         ].map((item, index) => (
             <div key={item.label}>
