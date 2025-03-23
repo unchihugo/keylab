@@ -299,27 +299,6 @@ export default function Home() {
 					</div>
 				</div>
 
-				<section className="py-16 px-8">
-					<div className="flex gap-4">
-						{/* First Product Image Box */}
-						<div className="h-64 w-full bg-gray-200 rounded-md border-4 border-pink-100 flex items-center justify-center">
-							<img
-								src="https://via.placeholder.com/600x400?text=Product+Image" /* replace placeholder with actual product images */
-								alt="Keycaps"
-								className="w-full h-full object-cover rounded-md"
-							/>
-						</div>
-
-						{/* Second Product Image Box */}
-						<div className="h-64 w-full bg-gray-200 rounded-md border-4 border-purple-100 flex items-center justify-center">
-							<img
-								src="https://via.placeholder.com/600x400?text=Product+Image" /* replace placeholder with actual product images */
-								alt="Switches"
-								className="w-full h-full object-cover rounded-md"
-							/>
-						</div>
-					</div>
-				</section>
 			</div>
 		</div>
 	)
