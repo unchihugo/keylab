@@ -26,7 +26,8 @@ import AdminDashboard from "./pages/Admin/Dashboard"
 import KeyboardDesigner from "./pages/keyboard-designer"
 import AdminOrders from "./pages/Admin/Orders"
 import CustomerManagement from "./pages/Admin/CustomerManagement"
-import Payment from "./pages/Payment";
+import Payment from "./pages/Payment"
+import AdminChangePassword from "./pages/Admin/AdminChangePassword"
 
 const router = createBrowserRouter([
 	{
@@ -85,7 +86,11 @@ const router = createBrowserRouter([
 			{ path: "dashboard", element: <AdminDashboard />},
 			{ path: "customers", element: <CustomerManagement /> },
 			{ path: "orders", element: <AdminOrders /> },
+
 			{ path: "inventory", element: <Inventory /> }
+
+			{ path: "settings", element: <AdminChangePassword /> },
+
 		],
 	},
 ])
