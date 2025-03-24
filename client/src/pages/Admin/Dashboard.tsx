@@ -143,7 +143,7 @@ export default function AdminDashboard() {
 						/>
 						<LinkButton
 							to="/admin/settings"
-							text="Settings"
+							text="Change Password"
 							buttonClassNames=" border-black bg-primary text-black transition-all duration-200 ease-in-out hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]"
 						/>
 					</div>
