@@ -221,6 +221,7 @@ func (h *Handlers) CreateProduct(c echo.Context) error {
 
 func (h *Handlers) DeleteProduct(c echo.Context) error {
 	var productImages []models.ProductImage
+	var productReviews []models.ProductReviews
 
 	id, err := convertToInt64(c.Param("id"))
 	if err != nil {
@@ -235,6 +236,23 @@ func (h *Handlers) DeleteProduct(c echo.Context) error {
 	}
 
 	transaction := h.DB.Begin()
+
+	if err := transaction.Where("product_id = ?", product.ID).Find(&productReviews).Error; err != nil {
+		log.Printf("Error fetching product reviews: %v", err)
+		transaction.Rollback()
+		return jsonResponse(c, http.StatusInternalServerError, "Error fetching product reviews")
+	}
+
+	// Delete each review
+	for _, review := range productReviews {
+		if err := transaction.Delete(&review).Error; err != nil {
+			log.Printf("Error deleting product review: %v", err)
+			transaction.Rollback()
+			return jsonResponse(c, http.StatusInternalServerError, "Error deleting product reviews")
+		}
+	}
+
+	// THEN: Continue with existing logic to delete images
 	if err := transaction.Where("product_id = ?", product.ID).Find(&productImages).Error; err != nil {
 		transaction.Rollback()
 		return jsonResponse(c, http.StatusInternalServerError, "Error fetching product images")
