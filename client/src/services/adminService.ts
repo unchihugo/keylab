@@ -39,4 +39,22 @@ export const adminService = {
 
 		return response.json()
 	},
+
+	async deleteUser(userId: number) {
+		const response = await fetch(
+			`http://localhost:8080/admin/users/${userId}`,
+			{
+				method: "DELETE",
+				credentials: "include",
+				headers: { "Content-Type": "application/json" },
+			},
+		)
+
+		if (!response.ok) {
+			const errorData = await response.json()
+			throw new Error(errorData.message || "Failed to delete user")
+		}
+
+		return response.json()
+	},
 }

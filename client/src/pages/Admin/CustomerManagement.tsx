@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react"
 import { adminService } from "../../services/adminService"
-import { Pencil } from "lucide-react"
+import { Pencil, Trash2 } from "lucide-react"
 import Breadcrumb from "../../components/Breadcrumb"
 import LinkButton from "../../components/LinkButton"
 import ErrorBox from "../../components/ErrorBox"
 import * as formValidation from "../../lib/formValidation"
+import { Search } from "lucide-react"
 
 interface User {
 	id: number
@@ -15,6 +16,7 @@ interface User {
 	email: string
 	phoneNumber: string
 	role: string
+	is_deleted: boolean
 }
 
 export default function CustomerManagement() {
@@ -66,9 +68,21 @@ export default function CustomerManagement() {
 		}
 	}
 
-	const filteredUsers = users.filter((user) =>
-		user.email.toLowerCase().includes(searchTerm),
-	)
+	const filteredUsers = users
+		.filter((user) => !user.is_deleted)
+		.filter((user) =>
+			user.email.toLowerCase().includes(searchTerm.toLowerCase()),
+		)
+	const handleDelete = async (userId: number) => {
+		if (!confirm("Are you sure you want to delete this user?")) return
+
+		try {
+			await adminService.deleteUser(userId)
+			setUsers((prev) => prev.filter((u) => u.id !== userId))
+		} catch (err: any) {
+			setErrors([err.message || "Failed to delete user"])
+		}
+	}
 
 	return (
 		<div className="min-h-screen bg-primary/25 py-6">
@@ -114,15 +128,34 @@ export default function CustomerManagement() {
 						Customer Management
 					</h2>
 
-					<input
-						type="text"
-						placeholder="Search by email"
-						className="w-full max-w-sm border px-3 py-2 rounded mb-4"
-						value={searchTerm}
-						onChange={(e) =>
-							setSearchTerm(e.target.value.toLowerCase())
-						}
-					/>
+					{/* Search bar */}
+					<div className="flex items-center justify-between mb-4">
+						<div className="relative w-full max-w-md">
+							<form
+								className="flex"
+								onSubmit={(e) => {
+									e.preventDefault()
+								}}>
+								<input
+									type="text"
+									name="search"
+									placeholder="Search by email..."
+									className="w-full px-4 py-2 border border-black rounded-l-full focus:outline-none focus:ring-2 focus:ring-primary"
+									value={searchTerm}
+									onChange={(e) =>
+										setSearchTerm(
+											e.target.value.toLowerCase(),
+										)
+									}
+								/>
+								<button
+									type="submit"
+									className="px-4 py-2 bg-primary border-t border-e border-b border-black rounded-r-full hover:bg-primary-dark transition-colors">
+									<Search />
+								</button>
+							</form>
+						</div>
+					</div>
 
 					<div className="overflow-x-auto bg-white rounded-lg shadow-md border border-gray-200">
 						<table className="min-w-full divide-y divide-gray-300">
@@ -155,18 +188,25 @@ export default function CustomerManagement() {
 											{user.phoneNumber}
 										</td>
 										<td className="px-4 py-3">
-											<button
-												className="bg-secondary  font-semibold text-black px-3 py-1 rounded hover:bg-blue-700"
-												onClick={() => {
-													setSelectedUser(user)
-													setShowModal(true)
-												}}>
-												<Pencil
-													size={16}
-													className="inline mr-1"
-												/>{" "}
-												Edit
-											</button>
+											<div className="flex items-center gap-2">
+												<button
+													className="bg-secondary text-sm font-medium text-black px-2 py-1 rounded hover:bg-blue-700 flex items-center gap-1"
+													onClick={() => {
+														setSelectedUser(user)
+														setShowModal(true)
+													}}>
+													<Pencil size={12} />
+													Edit
+												</button>
+												<button
+													className="bg-red-600 text-sm font-medium text-white px-2 py-1 rounded hover:bg-red-700 flex items-center gap-1"
+													onClick={() =>
+														handleDelete(user.id)
+													}>
+													<Trash2 size={12} />
+													Delete
+												</button>
+											</div>
 										</td>
 									</tr>
 								))}

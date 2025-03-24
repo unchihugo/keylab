@@ -20,11 +20,13 @@ import Cart from "./pages/Cart"
 import ProtectedRoute from "./components/ProtectedRoute"
 import About from "./pages/About"
 import Checkout from "./pages/Checkout"
-import Inventory from "./pages/admin/Inventory"
+import Inventory from "./pages/Admin/Inventory"
 import Profile from "./pages/User/Profile"
 import AdminDashboard from "./pages/Admin/Dashboard"
-import CustomerManagement from "./pages/Admin/CustomerManagement"
+import KeyboardDesigner from "./pages/keyboard-designer"
 import AdminOrders from "./pages/Admin/Orders"
+import CustomerManagement from "./pages/Admin/CustomerManagement"
+import Payment from "./pages/Payment";
 
 const router = createBrowserRouter([
 	{
@@ -33,6 +35,7 @@ const router = createBrowserRouter([
 		children: [
 			{ path: "/", element: <Home /> },
 			{ path: "/cart", element: <Cart /> },
+			{ path: "/payment", element: <Payment /> },
 			{
 				path: "/checkout",
 				element: (
@@ -59,6 +62,8 @@ const router = createBrowserRouter([
 			{ path: "*", element: <NotFound /> },
 			{ path: "/about", element: <About /> },
 			{ path: "/shop", element: <Shop /> },
+
+			{ path: "/keyboard-designer", element: <KeyboardDesigner />},
 			{
 				path: "/profile",
 				element: (
@@ -78,7 +83,7 @@ const router = createBrowserRouter([
 		),
 		children: [
 			{ path: "dashboard", element: <AdminDashboard />},
-			{ path: "CustomerManagement", element: <CustomerManagement /> },
+			{ path: "customers", element: <CustomerManagement /> },
 			{ path: "orders", element: <AdminOrders /> },
 			{ path: "inventory", element: <Inventory /> }
 		],
