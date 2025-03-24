@@ -5,6 +5,7 @@ import { Product } from "../types/Product"
 import { productService } from "../services/productService"
 import { useNavigate } from "react-router-dom"
 import { cartServices } from "../services/cartServices"
+import { useAuth } from "../AuthContext"
 
 /**
  * Hook that returns a product by its slug
@@ -20,6 +21,7 @@ export const useProduct = (slug: string) => {
 	const [quantity, setQuantity] = useState(1)
 	const navigate = useNavigate()
 	const [addToCart, setAddToCart] = useState(false)
+	const { isAuthenticated } = useAuth();
 
 	// Fetch the product by its slug when the component mounts
 	useEffect(() => {
@@ -104,6 +106,10 @@ export const useProduct = (slug: string) => {
 		if (quantity < 1) return
 		if (quantity > product.data.stock) return
 		if (addToCart) return
+
+		if (!isAuthenticated) {
+			setError("Please log in or register to add items to your cart")
+		}
 
 		try {
 			// Add product to cart
