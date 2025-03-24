@@ -20,9 +20,9 @@ export default function Checkout() {
 	const [cardnumber, setCardNumber] = useState("")
 	const [expirydate, setExpiryDate] = useState("")
 	const [cvv, setCvv] = useState("")
+	const [errorMessage, setErrorMessage] = useState("")
 	const { carts } = useCart();
 	const nav = useNavigate();
-
 	const shippingPrice = 3.99;
 
 	const productPrice = carts
@@ -41,7 +41,22 @@ export default function Checkout() {
 	)
 	.toFixed(2)
 
+	const validation = () => 
+		  firstName.trim() &&
+		  address1.trim() &&
+		  country.trim() &&
+		  postcode.trim() &&
+		  nameoncard.trim() &&
+		  cardnumber.trim() &&
+		  expirydate.trim() &&
+		  cvv.trim()
+
 	const checkout = async () => {
+		
+		if (!validation()) {
+			setErrorMessage("Please fill in delivery and card details")
+			return; 
+		}
 		try {
 			const customerDetails = {
                 billing_address_id: 0, 
@@ -262,6 +277,7 @@ export default function Checkout() {
 										className="border border-gray-300 p-3 rounded-lg w-full"
 										placeholder="Card Number"
 										value={cardnumber}
+										maxLength={16}
 										onChange={(e) =>
 											setCardNumber(e.target.value)
 										}
@@ -271,7 +287,8 @@ export default function Checkout() {
 									<div>
 										<label
 											className="text-sm font-medium block mb-1"
-											htmlFor="expiryDate">
+											htmlFor="expiryDate"
+											>
 											MM/YY
 										</label>
 										<input
@@ -279,6 +296,7 @@ export default function Checkout() {
 											id="expiryDate"
 											className="border border-gray-300 p-3 rounded-lg w-full"
 											placeholder="MM/YY"
+											maxLength={5}
 											value={expirydate}
 											onChange={(e) =>
 												setExpiryDate(e.target.value)
@@ -296,6 +314,7 @@ export default function Checkout() {
 											id="cvv"
 											className="border border-gray-300 p-3 rounded-lg w-full"
 											placeholder="CVV"
+											maxLength={4}
 											value={cvv}
 											onChange={(e) =>
 												setCvv(e.target.value)
@@ -306,6 +325,9 @@ export default function Checkout() {
 							</form>
 							{/* Pay Now Button */}
 							<div className="mt-6">
+                            <div className="text-red-400 mb-2">
+                                {errorMessage}
+                            </div>
 								<button
 									onClick={checkout}
 									className="mt-3 px-6 bg-secondary-dark"
