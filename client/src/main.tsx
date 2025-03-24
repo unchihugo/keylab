@@ -87,7 +87,7 @@ const router = createBrowserRouter([
 			{ path: "customers", element: <CustomerManagement /> },
 			{ path: "orders", element: <AdminOrders /> },
 
-			{ path: "inventory", element: <Inventory /> }
+			{ path: "inventory", element: <Inventory /> },
 
 			{ path: "settings", element: <AdminChangePassword /> },
 
