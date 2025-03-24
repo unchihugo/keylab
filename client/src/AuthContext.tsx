@@ -3,10 +3,17 @@
 import React, { createContext, useContext, useEffect, useState } from "react"
 import { authService } from "./services/authService"
 
+interface User {
+	id: number
+	email: string
+	role: { roleId: number; name: string }
+}
+
 interface AuthContextProps {
 	isAuthenticated: boolean
 	isAdmin: boolean
 	isLoading: boolean
+	user: User | null
 	login: (email: string, password: string) => Promise<string | undefined> // async function that can return a promise
 	register: (
 		forename: string,
@@ -29,7 +36,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const [isAdmin, setIsAdmin] = useState(false)
 	const [isLoading, setIsLoading] = useState(true)
 	const [isTesting] = useState(false) // TODO: set to false when we have supporting backend
-
+	const [user, setUser] = useState<User | null>(null)
 	// login function for ../pages/sign-in.tsx that calls the authService.login function (seperation of concerns) and sets the auth state
 	// Promise added so func waits for data to come back b4 carrying on
 	const login = async (
@@ -108,8 +115,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				}
 				setIsAuthenticated(true)
 				setIsAdmin(data.data.role.roleId === 1)
+				setUser(data.data)
 			} catch {
 				setIsAuthenticated(false)
+				setUser(null)
 			} finally {
 				setIsLoading(false)
 			}
@@ -124,6 +133,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 				isAuthenticated,
 				isAdmin,
 				isLoading,
+				user,
 				login,
 				register,
 				logout,

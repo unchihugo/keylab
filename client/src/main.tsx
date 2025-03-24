@@ -24,7 +24,8 @@ import Profile from "./pages/User/Profile"
 import AdminDashboard from "./pages/Admin/Dashboard"
 import AdminOrders from "./pages/Admin/Orders"
 import CustomerManagement from "./pages/Admin/CustomerManagement"
-import Payment from "./pages/Payment";
+import Payment from "./pages/Payment"
+import AdminChangePassword from "./pages/Admin/AdminChangePassword"
 
 const router = createBrowserRouter([
 	{
@@ -80,6 +81,7 @@ const router = createBrowserRouter([
 			{ path: "dashboard", element: <AdminDashboard /> },
 			{ path: "CustomerManagement", element: <CustomerManagement /> },
 			{ path: "orders", element: <AdminOrders /> },
+			{ path: "settings", element: <AdminChangePassword /> },
 		],
 	},
 ])
