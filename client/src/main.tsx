@@ -44,6 +44,7 @@ const router = createBrowserRouter([
 					</ProtectedRoute>
 				),
 			},
+			// { path: "/thankyou", element: <ThankYou /> },
 			// { path: "/example", element: <div>Example</div> }, - No longer needed?
 			{
 				path: "/protected",

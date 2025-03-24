@@ -1,21 +1,15 @@
 /** @format */
 import { useEffect, useState } from "react"
 import { Bar } from "react-chartjs-2"
-import {
-	Chart as ChartJS,
-	CategoryScale,
-	LinearScale,
-	BarElement,
-	Title,
-	Tooltip,
-	Legend,
-} from "chart.js"
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend} from "chart.js"
 
-import Breadcrumb from "../../components/Breadcrumb"
-import Divider from "../../components/Divider"
-import ErrorBox from "../../components/ErrorBox"
-import LinkButton from "../../components/LinkButton"
-import Card from "../../components/Card"
+import Breadcrumb from "../../components/Breadcrumb";
+import Divider from "../../components/Divider";
+import ErrorBox from "../../components/ErrorBox";
+import Card from "../../components/Card";
+import LinkButton from "../../components/LinkButton";
+import { useAdminOrders } from "../../hooks/useAdminOrders";
+
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
@@ -26,7 +20,7 @@ interface DashboardStats {
 	totalSalesThisWeek: number
 	totalSalesThisMonth: number
 	newOrders: number
-	incomingOrders: number
+	ShippedOrders: number
 	ordersToProcess: number
 	newCustomers: number
 	lowStockProducts: { id: number; name: string; stock: number }[]
@@ -37,6 +31,7 @@ export default function AdminDashboard() {
 	const [loading, setLoading] = useState<boolean>(true)
 	const [error, setError] = useState<string | null>(null)
 	const [stats, setStats] = useState<DashboardStats | null>(null)
+	const { orders, loading: ordersLoading, error: ordersError } = useAdminOrders()
 
 	useEffect(() => {
 		const fetchDashboardStats = async () => {
@@ -44,13 +39,26 @@ export default function AdminDashboard() {
 				setLoading(true)
 				setError(null)
 				//placeholder data
+                if (ordersLoading) return;
+                if (ordersError) throw new Error(ordersError);
+
+                const ordersToProcessCount = orders.filter(
+					(order) => order.status === "pending" 
+                ).length;
+                const ShippedOrdersCount = orders.filter(
+					(order) => order.status === "shipped" 
+                ).length;
+                const newOrdersCount = orders.filter(
+					(order) => order.status === "pending"
+                ).length;
+
 				const placeholderData: DashboardStats = {
 					totalSalesToday: 1250,
 					totalSalesThisWeek: 8500,
 					totalSalesThisMonth: 35000,
-					newOrders: 50,
-					incomingOrders: 75,
-					ordersToProcess: 30,
+					newOrders: newOrdersCount,
+					ShippedOrders: ShippedOrdersCount,
+					ordersToProcess: ordersToProcessCount,
 					newCustomers: 25,
 					lowStockProducts: [
 						{ id: 1, name: "Keyboards", stock: 5 },
@@ -83,18 +91,18 @@ export default function AdminDashboard() {
 		//};
 
 		fetchDashboardStats()
-	}, [])
+	}, [orders, ordersLoading, ordersError])
 
-	const salesTrendChartData = {
-		labels: stats?.salesTrend.map((item) => item.date) || [],
-		datasets: [
-			{
-				label: "Sales",
-				data: stats?.salesTrend.map((item) => item.sales) || [],
-				backgroundColor: "#6392ff",
-			},
-		],
-	}
+  const salesTrendChartData = {
+    labels: stats?.salesTrend.map((item) => item.date) || [],
+    datasets: [
+      {
+        label: "Sales",
+        data: stats?.salesTrend.map((item) => item.sales) || [],
+        backgroundColor: "#A8B9FF",
+      },
+    ],
+  };
 
 	if (loading) {
 		return (
@@ -114,11 +122,10 @@ export default function AdminDashboard() {
 		)
 	}
 
-	return (
-		<div className="min-h-screen bg-primary/25 py-6">
-			<div className="container mx-auto px-6 flex flex-col md:flex-row gap-6">
-				{/* Sidebar Navigation */}
-				<aside className="w-full lg:w-1/5 bg-primary-dark/25 p-4 rounded-2xl space-y-4 mb-6 lg:mb-0 h-fit border border-gray-700 mr-4">
+  return (
+    <div className="min-h-screen bg-primary/25 mt-10 py-14">
+      <div className="container mx-auto px-6 flex flex-col md:flex-row gap-6">
+	  <aside className="w-full lg:w-1/5 bg-primary-dark/25 p-4 rounded-2xl space-y-4 mb-6 lg:mb-0 h-fit border border-gray-700 mr-4">
 					<h2 className="text-xl font-bold mb-4">Admin Panel</h2>
 					<div className="flex flex-col space-y-2">
 						<LinkButton
@@ -137,8 +144,8 @@ export default function AdminDashboard() {
 							buttonClassNames=" border-black bg-primary text-black transition-all duration-200 ease-in-out hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]"
 						/>
 						<LinkButton
-							to="/admin/CustomerManagement"
-							text="Customer Management"
+							to="/admin/reports"
+							text="Reports"
 							buttonClassNames=" border-black bg-primary text-black transition-all duration-200 ease-in-out hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]"
 						/>
 						<LinkButton
@@ -148,10 +155,11 @@ export default function AdminDashboard() {
 						/>
 					</div>
 				</aside>
-				{/* Main Dashboard Content */}
-				<main className="flex-1 bg-white rounded-2xl p-6 border border-black">
-					<Breadcrumb breadcrumbs={["Admin Dashboard", "Overview"]} />
-					<Divider />
+
+        {/* Main Dashboard Content */}
+        <main className="flex-1 bg-white rounded-2xl p-14 shadow border">
+          <Breadcrumb breadcrumbs={["Admin Dashboard", "Overview"]} />
+          <Divider />
 
 					{/* Sales Overview */}
 					<section className="mb-8">
@@ -174,8 +182,8 @@ export default function AdminDashboard() {
 						</div>
 						<div className="mt-4">
 							<Card
-								title="New Orders"
-								value={stats.newOrders.toLocaleString()}
+								title="Shipped Orders"
+								value={stats.ShippedOrders.toLocaleString()}
 							/>
 						</div>
 						<Divider />
@@ -203,8 +211,8 @@ export default function AdminDashboard() {
 						</h2>
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 							<Card
-								title="Incoming Orders"
-								value={stats.incomingOrders.toLocaleString()}
+								title="New Orders"
+								value={stats.newOrders.toLocaleString()}
 							/>
 							<div className="bg-white p-4 rounded-lg shadow">
 								<h3 className="text-lg font-semibold mb-2">
@@ -227,25 +235,13 @@ export default function AdminDashboard() {
 						</div>
 					</section>
 
-					{/* Order Processing */}
-					<section className="mb-8">
-						<h2 className="text-2xl font-bold mb-4">
-							Order Processing
-						</h2>
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-							<Card
-								title="Orders to Process"
-								value={stats.ordersToProcess.toLocaleString()}
-							/>
-							<div className="flex items-center">
-								<LinkButton
-									to="/admin/orders"
-									text="Go to Order Processing"
-									buttonClassNames="bg-secondary-dark text-white"
-								/>
-							</div>
-						</div>
-					</section>
+          {/* Order Processing */}
+          <section className="mb-8">
+            <h2 className="text-2xl font-bold mb-4">Order Processing</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Card title="Orders to Process" value={stats.ordersToProcess.toLocaleString()} />
+            </div>
+          </section>
 
 					{/* Customer Overview */}
 					<section>

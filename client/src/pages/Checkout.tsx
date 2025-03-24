@@ -2,9 +2,23 @@
 
 import React, { useState } from "react"
 import Divider from "../components/Divider"
-import LinkButton from "../components/LinkButton"
+import { validateForename, validateMessage } from "../lib/formValidation";
+import { useNavigate } from 'react-router-dom';
 import { useCart } from "../hooks/useCarts"
 import { Carts } from "../types/Carts"
+
+interface FormErrors {
+	firstName?: string;
+	lastName?: string;
+	address1?: string;
+	address2?: string;
+	city?: string;
+	country?: string;
+	postcode?: string;
+	cardnumber?: string;
+	expirydate?: string;
+	cvv?: string;
+}
 import { cartServices } from "../services/cartServices"
 import { useNavigate } from "react-router-dom"
 
@@ -24,7 +38,7 @@ export default function Checkout() {
 	const { carts } = useCart();
 	const nav = useNavigate();
 	const shippingPrice = 3.99;
-
+	
 	const productPrice = carts
 	    ?.reduce(
 		   (accumulator, item) =>
@@ -40,6 +54,45 @@ export default function Checkout() {
 		    0,
 	)
 	.toFixed(2)
+	const [isProcessing, setIsProcessing] = useState(false);
+
+	const [errors, setErrors] = useState<FormErrors>({});
+	const navigate = useNavigate();
+    const validateForm = () => {
+		const newErrors: FormErrors = {};
+		newErrors.firstName = validateForename(firstName) || "";
+		newErrors.lastName = lastName.trim() ? validateForename(lastName) || "" : "Last name is required";
+        newErrors.address1 = validateMessage(address1) || "";
+		newErrors.address2 = address2.trim() ? validateMessage(address2) || "" : "";
+		newErrors.city = city.trim() ? validateMessage(city) || "" : "City required";
+		newErrors.country = country.trim() ? validateMessage(country) || "" : "Country required";
+		newErrors.postcode = postcode.trim() ? validateMessage(postcode) || "" : "Postcode required";
+        newErrors.cardnumber = cardnumber.match(/^\d{13,19}$/) ? "" : "Invalid card number";
+        newErrors.expirydate = expirydate.match(/^(0[1-9]|1[0-2])\/(\d{2})$/) ? "" : "Invalid expiry date";
+        newErrors.cvv = cvv.match(/^\d{3,4}$/) ? "" : "Invalid CVV";
+
+        setErrors(newErrors);
+        return Object.values(newErrors).every((error) => error === "");
+    };
+
+    const handlePayment = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		console.log("Form submitted");
+	
+		if (!validateForm()){
+			console.log("Validation failed", errors);
+			return;
+		}
+			  
+		
+	
+		setIsProcessing(true); 
+	
+		setTimeout(() => {
+			console.log("Redirecting...");
+			navigate("/thankyou");
+		}, 2000);
+	};
 
 	const validation = () => 
 		  firstName.trim() &&
@@ -111,7 +164,9 @@ export default function Checkout() {
 										onChange={(e) =>
 											setFirstName(e.target.value)
 										}
+										onBlur={validateForm}
 									/>
+									{errors.firstName && <p className="text-red-500 text-sm">{errors.firstName}</p>}
 								</div>
 								<div>
 									<label
@@ -128,7 +183,9 @@ export default function Checkout() {
 										onChange={(e) =>
 											setLastName(e.target.value)
 										}
+										onBlur={validateForm}
 									/>
+									{errors.lastName && <p className="text-red-500 text-sm">{errors.lastName}</p>}
 								</div>
 							</div>
 							<div>
@@ -146,7 +203,9 @@ export default function Checkout() {
 									onChange={(e) =>
 										setAddress1(e.target.value)
 									}
+									onBlur={validateForm}
 								/>
+								 {errors.address1 && <p className="text-red-500 text-sm">{errors.address1}</p>}
 							</div>
 							<div>
 								<label
@@ -181,7 +240,9 @@ export default function Checkout() {
 										onChange={(e) =>
 											setCountry(e.target.value)
 										}
+										onBlur={validateForm}
 									/>
+									{errors.country && <p className="text-red-500 text-sm">{errors.country}</p>}
 								</div>
 								<div>
 									<label
@@ -198,7 +259,9 @@ export default function Checkout() {
 										onChange={(e) =>
 											setCity(e.target.value)
 										}
+										onBlur={validateForm}
 									/>
+									{errors.city && <p className="text-red-500 text-sm">{errors.city}</p>}
 								</div>
 							</div>
 							<div>
@@ -216,7 +279,9 @@ export default function Checkout() {
 									onChange={(e) =>
 										setPostcode(e.target.value)
 									}
+									onBlur={validateForm}
 								/>
+								{errors.postcode && <p className="text-red-500 text-sm">{errors.postcode}</p>}
 							</div>
 						</form>
 					</div>
@@ -247,7 +312,7 @@ export default function Checkout() {
 								Payment
 							</h2>
 							<Divider />
-							<form className="space-y-4 font-body">
+							<form className="space-y-4 font-body"onSubmit={handlePayment}>
 								<div>
 									<label
 										className="text-sm font-medium block mb-1"
@@ -281,7 +346,9 @@ export default function Checkout() {
 										onChange={(e) =>
 											setCardNumber(e.target.value)
 										}
+										onBlur={validateForm}
 									/>
+									{errors.cardnumber && <p className="text-red-500 text-sm">{errors.cardnumber}</p>}
 								</div>
 								<div className="grid grid-cols-2 gap-4">
 									<div>
@@ -301,7 +368,9 @@ export default function Checkout() {
 											onChange={(e) =>
 												setExpiryDate(e.target.value)
 											}
+											onBlur={validateForm}
 										/>
+										{errors.expirydate && <p className="text-red-500 text-sm">{errors.expirydate}</p>}
 									</div>
 									<div>
 										<label
@@ -319,7 +388,9 @@ export default function Checkout() {
 											onChange={(e) =>
 												setCvv(e.target.value)
 											}
+											onBlur={validateForm}
 										/>
+										{errors.cvv && <p className="text-red-500 text-sm">{errors.cvv}</p>}
 									</div>
 								</div>
 							</form>
