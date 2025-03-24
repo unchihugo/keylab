@@ -4,6 +4,8 @@ import { Address } from "./Address"
 import { User } from "./User"
 
 export interface Order {
+	created_at: string | number | Date
+	updated_at: string | number | Date
 	id: number
 	userId: number
 	orderDate: string | null
@@ -13,7 +15,5 @@ export interface Order {
 	billingAddressId: number
 	shippingAddress: Address | null
 	billingAddress: Address | null
-	createdAt: string
-	updatedAt: string
 	user: User
 }
