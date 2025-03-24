@@ -48,14 +48,14 @@ export default function OrderCard({ order, isAdmin = false }: OrderCardProps) {
 					<div className="flex flex-col">
 						<span className="text-black/75">{order.status}</span>
 						<span className="text-xs text-black/50">
-							{new Date(order.updatedAt).toLocaleDateString()}
+							{new Date(order.updated_at).toLocaleDateString()}
 						</span>
 					</div>
 				</div>
 				<div className="flex flex-col">
 					<span className="font-semibold">Order Date</span>
 					<span className="text-black/75">
-						{new Date(order.createdAt).toLocaleDateString()}
+						{new Date(order.created_at).toLocaleDateString()}
 					</span>
 				</div>
 				<div className="flex flex-col">

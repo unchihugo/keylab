@@ -113,36 +113,19 @@ git clone https://github.com/unchihugo/keylab.git
 cd keylab
 ```
 
-2. Copy the environment file and configure:
+2. Copy the environment file and configure the environment variables:
 
 ```bash
 cd server
 cp .env.example .env  # Linux
 copy .env.example .env  # Windows
+# Update the .env file with your database credentials
 ```
 
 3. Start application with Docker
 
 ```bash
 docker-compose up --build
-```
-
-### Manual Setup
-
-#### Frontend
-
-```bash
-cd client
-npm install
-npm run dev
-```
-
-#### Backend
-
-```bash
-cd server
-go mod download
-go run main.go
 ```
 
 ## API Documentation
