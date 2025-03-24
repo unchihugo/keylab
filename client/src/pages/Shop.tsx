@@ -28,7 +28,7 @@ export default function DisplayPage() {
 		prebuilt: false,
 	})
 
-	const [priceRange, setPriceRange] = useState<number>(100)
+	const [priceRange, setPriceRange] = useState<number>(300)
 	const [filteredProducts, setFilteredProducts] = useState(products)
 
 	const [activeColors, setActiveColors] = useState<string[]>([])
@@ -399,13 +399,13 @@ export default function DisplayPage() {
 						<input
 							type="range"
 							min="0"
-							max="100"
+							max="300"
 							value={priceRange}
 							onChange={handlePriceChange}
 							className="w-full focus:ring focus:ring-primary-dark"
 						/>
 					</div>
-					<div>
+					{/* <div>
 						<h3 className="font-medium text-gray-600">Color</h3>
 						<div className="flex flex-wrap space-x-4">
 							<label className="flex items-center space-x-2">
@@ -468,7 +468,7 @@ export default function DisplayPage() {
 								<span className="text-gray-600">Large</span>
 							</label>
 						</div>
-					</div>
+					</div> */}
 				</aside>
 
 				{/* Products Section */}

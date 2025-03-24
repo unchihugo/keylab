@@ -166,12 +166,12 @@ export default function Product() {
 					<ProductCarousel products={relatedProducts} />
 				</div>
 
-				<div className="my-12">
+				{/* <div className="my-12">
 					<div className="text-2xl font-display my-4">
 						Black Friday deals
 					</div>
 					<div className="flex h-40 bg-black/10" />
-				</div>
+				</div> */}
 
 				{/* user reviews section */}
 				<div className="my-24">
