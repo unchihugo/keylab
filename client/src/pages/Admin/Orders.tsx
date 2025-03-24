@@ -45,13 +45,13 @@ export default function AdminOrders() {
 							buttonClassNames=" border-black bg-primary text-black transition-all duration-200 ease-in-out hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]"
 						/>
 						<LinkButton
-							to="/admin/reports"
-							text="Reports"
+							to="/admin/CustomerManagement"
+							text="Customer Management"
 							buttonClassNames=" border-black bg-primary text-black transition-all duration-200 ease-in-out hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]"
 						/>
 						<LinkButton
 							to="/admin/settings"
-							text="Settings"
+							text="Change Password"
 							buttonClassNames=" border-black bg-primary text-black transition-all duration-200 ease-in-out hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]"
 						/>
 					</div>
