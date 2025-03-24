@@ -230,4 +230,22 @@ func (h *Handlers) UpdateUserByAdmin(c echo.Context) error {
 	return jsonResponse(c, http.StatusOK, "User updated successfully", existingUser)
 }
 
-//delete user endpoint
+// DeleteUserByAdmin [DELETE /admin/users/:id]
+// 1. Fetches user ID from the request and validates it
+// 2. Soft deletes the user by setting the is_deleted to true
+// 3. Returns status 200 if successful
+// 4. Returns status 400 if the user ID is invalid
+// 5. Returns status 500 if the update fails
+func (h *Handlers) DeleteUserByAdmin(c echo.Context) error {
+	userID, err := convertToInt64(c.Param("id"))
+	if err != nil {
+		return jsonResponse(c, http.StatusBadRequest, "Invalid user ID")
+	}
+
+	result := h.DB.Model(&models.User{}).Where("id = ?", userID).Update("is_deleted", true)
+	if result.Error != nil {
+		return jsonResponse(c, http.StatusInternalServerError, "Failed to delete user")
+	}
+
+	return jsonResponse(c, http.StatusOK, "User deleted successfully")
+}

@@ -19,6 +19,8 @@ interface FormErrors {
 	expirydate?: string;
 	cvv?: string;
 }
+import { cartServices } from "../services/cartServices"
+import { useNavigate } from "react-router-dom"
 
 export default function Checkout() {
 	const [firstName, setFirstName] = useState("")
@@ -32,7 +34,9 @@ export default function Checkout() {
 	const [cardnumber, setCardNumber] = useState("")
 	const [expirydate, setExpiryDate] = useState("")
 	const [cvv, setCvv] = useState("")
+	const [errorMessage, setErrorMessage] = useState("")
 	const { carts } = useCart();
+	const nav = useNavigate();
 	const shippingPrice = 3.99;
 	
 	const productPrice = carts
@@ -88,6 +92,48 @@ export default function Checkout() {
 			console.log("Redirecting...");
 			navigate("/thankyou");
 		}, 2000);
+	};
+
+	const validation = () => 
+		  firstName.trim() &&
+		  address1.trim() &&
+		  country.trim() &&
+		  postcode.trim() &&
+		  nameoncard.trim() &&
+		  cardnumber.trim() &&
+		  expirydate.trim() &&
+		  cvv.trim()
+
+	const checkout = async () => {
+		
+		if (!validation()) {
+			setErrorMessage("Please fill in delivery and card details")
+			return; 
+		}
+		try {
+			const customerDetails = {
+                billing_address_id: 0, 
+                shipping_address_id: 0, 
+                new_billing_address: {
+                    street: "123 main st",
+                    city: "New York",
+                    county: "NY", 
+                    postal_code: "10001",
+                    country: "USA",
+                },
+                new_shipping_address: {
+                    street: "456 elm st",
+                    city: "Los Angeles",
+                    county: "CA", 
+                    postal_code: "9001",
+                    country: "USA"
+                },
+			};
+			await cartServices.checkoutCart(customerDetails);
+			nav("/payment");
+		} catch(error) {
+			console.error("Checkout failed :(")
+		}
 	};
 
 	return (
@@ -296,6 +342,7 @@ export default function Checkout() {
 										className="border border-gray-300 p-3 rounded-lg w-full"
 										placeholder="Card Number"
 										value={cardnumber}
+										maxLength={16}
 										onChange={(e) =>
 											setCardNumber(e.target.value)
 										}
@@ -307,7 +354,8 @@ export default function Checkout() {
 									<div>
 										<label
 											className="text-sm font-medium block mb-1"
-											htmlFor="expiryDate">
+											htmlFor="expiryDate"
+											>
 											MM/YY
 										</label>
 										<input
@@ -315,6 +363,7 @@ export default function Checkout() {
 											id="expiryDate"
 											className="border border-gray-300 p-3 rounded-lg w-full"
 											placeholder="MM/YY"
+											maxLength={5}
 											value={expirydate}
 											onChange={(e) =>
 												setExpiryDate(e.target.value)
@@ -334,6 +383,7 @@ export default function Checkout() {
 											id="cvv"
 											className="border border-gray-300 p-3 rounded-lg w-full"
 											placeholder="CVV"
+											maxLength={4}
 											value={cvv}
 											onChange={(e) =>
 												setCvv(e.target.value)
@@ -344,13 +394,17 @@ export default function Checkout() {
 									</div>
 								</div>
 							{/* Pay Now Button */}
-							<button
-								type="submit"
-								className="w-full bg-secondary-dark text-white p-3 rounded-lg font-semibold"
-								disabled={isProcessing}>
-								{isProcessing ? "Processing..." : "Pay Now"}
-							</button>
-							</form>
+							<div className="mt-6">
+                            <div className="text-red-400 mb-2">
+                                {errorMessage}
+                            </div>
+								<button
+									onClick={checkout}
+									className="mt-3 px-6 bg-secondary-dark"
+								> 
+								Pay Now
+								</button>
+							</div>
 						</div>
 					</div>
 				</div>

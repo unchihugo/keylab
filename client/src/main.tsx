@@ -22,9 +22,10 @@ import About from "./pages/About"
 import Checkout from "./pages/Checkout"
 import Profile from "./pages/User/Profile"
 import AdminDashboard from "./pages/Admin/Dashboard"
+import KeyboardDesigner from "./pages/keyboard-designer"
 import AdminOrders from "./pages/Admin/Orders"
 import CustomerManagement from "./pages/Admin/CustomerManagement"
-import ThankYou from "./pages/Thankyou"
+import Payment from "./pages/Payment";
 
 const router = createBrowserRouter([
 	{
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
 		children: [
 			{ path: "/", element: <Home /> },
 			{ path: "/cart", element: <Cart /> },
+			{ path: "/payment", element: <Payment /> },
 			{
 				path: "/checkout",
 				element: (
@@ -59,6 +61,8 @@ const router = createBrowserRouter([
 			{ path: "*", element: <NotFound /> },
 			{ path: "/about", element: <About /> },
 			{ path: "/shop", element: <Shop /> },
+
+			{ path: "/keyboard-designer", element: <KeyboardDesigner />},
 			{
 				path: "/profile",
 				element: (

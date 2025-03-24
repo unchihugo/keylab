@@ -34,7 +34,7 @@ export default function Home() {
 					<div className="flex flex-col md:flex-row gap-3">
 						{/* First main column - takes up 1/2 of the space */}
 						<Link
-							to={"/shop?category=keyboard"}
+							to={"/shop?category=1"}
 							className="md:w-1/2 bg-white rounded-lg p-6 h-56 md:h-96 flex flex-col justify-between bg-right bg-no-repeat bg-[length:85%] transition-all duration-300 hover:bg-[length:90%]"
 							style={{
 								backgroundImage:
@@ -53,6 +53,8 @@ export default function Home() {
 							<div className="flex flex-col md:flex-row gap-3 h-full">
 								{/* First sub-column of second main column */}
 								<Link
+									to={"/keyboard-designer"}
+									className="md:w-1/2 bg-[#DDDCED] rounded-lg p-6 h-full flex flex-col justify-between bg-cover bg-center bg-no-repeat"
 									to={"/shop"}
 									className="md:w-1/2 bg-[#DDDCED] rounded-lg p-6 h-full flex flex-col justify-between bg-center bg-no-repeat bg-[length:90%] transition-all duration-300 hover:bg-[length:95%]"
 									style={{
@@ -71,7 +73,7 @@ export default function Home() {
 								<div className="md:w-1/2 flex flex-col gap-3">
 									{/* First row of second sub-column */}
 									<Link
-										to={"/shop?category=keycap"}
+										to={"/shop?category=7"}
 										className="h-1/2 bg-[#E0E1CE] rounded-lg p-6 flex flex-col justify-between bg-center bg-no-repeat bg-[length:55%] transition-all duration-300 hover:bg-[length:60%]"
 										style={{
 											backgroundImage:
@@ -87,7 +89,7 @@ export default function Home() {
 
 									{/* Second row of second sub-column */}
 									<Link
-										to={"/shop?category=switch"}
+										to={"/shop?category=8"}
 										className="h-1/2 bg-[#E5CCD0] rounded-lg p-6 flex flex-col justify-between bg-center bg-no-repeat bg-[length:80%] transition-all duration-300 hover:bg-[length:85%]"
 										style={{
 											backgroundImage:
@@ -299,27 +301,6 @@ export default function Home() {
 					</div>
 				</div>
 
-				<section className="py-16 px-8">
-					<div className="flex gap-4">
-						{/* First Product Image Box */}
-						<div className="h-64 w-full bg-gray-200 rounded-md border-4 border-pink-100 flex items-center justify-center">
-							<img
-								src="https://via.placeholder.com/600x400?text=Product+Image" /* replace placeholder with actual product images */
-								alt="Keycaps"
-								className="w-full h-full object-cover rounded-md"
-							/>
-						</div>
-
-						{/* Second Product Image Box */}
-						<div className="h-64 w-full bg-gray-200 rounded-md border-4 border-purple-100 flex items-center justify-center">
-							<img
-								src="https://via.placeholder.com/600x400?text=Product+Image" /* replace placeholder with actual product images */
-								alt="Switches"
-								className="w-full h-full object-cover rounded-md"
-							/>
-						</div>
-					</div>
-				</section>
 			</div>
 		</div>
 	)
