@@ -20,6 +20,7 @@ import Cart from "./pages/Cart"
 import ProtectedRoute from "./components/ProtectedRoute"
 import About from "./pages/About"
 import Checkout from "./pages/Checkout"
+import Inventory from "./pages/Admin/Inventory"
 import Profile from "./pages/User/Profile"
 import AdminDashboard from "./pages/Admin/Dashboard"
 import KeyboardDesigner from "./pages/keyboard-designer"
@@ -54,6 +55,7 @@ const router = createBrowserRouter([
 					</ProtectedRoute>
 				),
 			},
+
 			{ path: "/sign-in", element: <SignIn /> },
 			{ path: "/register", element: <Register /> },
 			{ path: "/admin/login", element: <AdminLogin /> },
@@ -81,10 +83,14 @@ const router = createBrowserRouter([
 			</ProtectedRoute>
 		),
 		children: [
-			{ path: "dashboard", element: <AdminDashboard /> },
-			{ path: "CustomerManagement", element: <CustomerManagement /> },
+			{ path: "dashboard", element: <AdminDashboard />},
+			{ path: "customers", element: <CustomerManagement /> },
 			{ path: "orders", element: <AdminOrders /> },
+
+			{ path: "inventory", element: <Inventory /> }
+
 			{ path: "settings", element: <AdminChangePassword /> },
+
 		],
 	},
 ])
