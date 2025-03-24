@@ -59,13 +59,7 @@ const router = createBrowserRouter([
 			{ path: "/about", element: <About /> },
 			{ path: "/shop", element: <Shop /> },
 
-			{ 
-				path: "/keyboard-designer", 
-				element: (
-					<ProtectedRoute>
-						<KeyboardDesigner />
-					</ProtectedRoute>
-				) },
+			{ path: "/keyboard-designer", element: <KeyboardDesigner />},
 			{
 				path: "/profile",
 				element: (

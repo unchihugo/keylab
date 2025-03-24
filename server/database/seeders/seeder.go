@@ -170,7 +170,9 @@ func seedProducts(DB *gorm.DB) error {
 		{Name: "Durock T1 67g Tactile PCB Mount", Slug: "durock-t1", Description: "Durock T1 switches provide a pronounced tactile bump with a medium-heavy 67g actuation force. These PCB mount switches offer excellent feedback without the noise of clicky switches.", Price: 0.65, Stock: 800, CategoryID: 2, CreatedAt: time.Now(), UpdatedAt: time.Now()},
 		{Name: "Zeal PC Blue Zilents V2 Silent Tactile", Slug: "zeal-pc-blue-zilents-v2", Description: "Zeal PC Blue Zilents V2 switches combine tactile feedback with near-silent operation. These premium switches are perfect for users who want the feel of tactile switches without the noise.", Price: 1.20, Stock: 600, CategoryID: 2, CreatedAt: time.Now(), UpdatedAt: time.Now()},
 		{Name: "Gateron Beer 50g Tactile PCB Mount", Slug: "gateron-beer", Description: "Gateron Beer switches offer a unique tactile experience with a medium 50g actuation force. Their PCB mount design and distinctive feel make them a favorite among keyboard enthusiasts seeking something different.", Price: 0.70, Stock: 750, CategoryID: 2, CreatedAt: time.Now(), UpdatedAt: time.Now()},
-		{Name: "Custom Keylab Keyboard", Slug: "keylab-custom-keyboard", Description: "A customisable keyboard designed with personalised colour options", Price: 89.99, Stock: 100, CategoryID: 1, CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{Name: "Custom Keylab Keyboard 60%", Slug: "keylab-custom-60", Description: "Compact customisable keyboard designed with personalised colour options", Price: 89.99, Stock: 100, CategoryID: 1, CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{Name: "Custom Keylab Keyboard 75%", Slug: "keylab-custom-75", Description: "A 75% keyboard designed with personalised colour options", Price: 99.99, Stock: 100, CategoryID: 1, CreatedAt: time.Now(), UpdatedAt: time.Now()},
+		{Name: "Custom Keylab Keyboard 100%", Slug: "keylab-custom-100", Description: "Full-sized ustomisable keyboard designed with personalised colour options", Price: 109.99, Stock: 100, CategoryID: 1, CreatedAt: time.Now(), UpdatedAt: time.Now()},
 	}
 
 	if err := DB.Create(&products).Error; err != nil {
