@@ -46,7 +46,7 @@ export default function AdminOrders() {
 						/>
 						<LinkButton
 							buttonClassNames="border-black bg-primary text-black hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]"
-							to="/admin/CustomerManagement"
+							to="/admin/customers"
 							text="Customer Management"
 						/>
 						<LinkButton
