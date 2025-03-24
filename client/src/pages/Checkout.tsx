@@ -393,6 +393,7 @@ export default function Checkout() {
 										{errors.cvv && <p className="text-red-500 text-sm">{errors.cvv}</p>}
 									</div>
 								</div>
+							</form>
 							{/* Pay Now Button */}
 							<div className="mt-6">
                             <div className="text-red-400 mb-2">
