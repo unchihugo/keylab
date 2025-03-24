@@ -20,6 +20,11 @@ import Cart from "./pages/Cart"
 import ProtectedRoute from "./components/ProtectedRoute"
 import About from "./pages/About"
 import Checkout from "./pages/Checkout"
+import Inventory from "./pages/admin/Inventory"
+import Profile from "./pages/User/Profile"
+import AdminDashboard from "./pages/Admin/Dashboard"
+import CustomerManagement from "./pages/Admin/CustomerManagement"
+import AdminOrders from "./pages/Admin/Orders"
 
 const router = createBrowserRouter([
 	{
@@ -44,12 +49,6 @@ const router = createBrowserRouter([
 						{" "}
 						<div>Protected</div>{" "}
 					</ProtectedRoute>
-				),
-			},
-			{ 
-				path: "/Inventory",
-				element: (
-					<Inventory/>
 				),
 			},
 
@@ -78,9 +77,10 @@ const router = createBrowserRouter([
 			</ProtectedRoute>
 		),
 		children: [
-			{ path: "dashboard", element: <AdminDashboard /> },
+			{ path: "dashboard", element: <AdminDashboard />},
 			{ path: "CustomerManagement", element: <CustomerManagement /> },
 			{ path: "orders", element: <AdminOrders /> },
+			{ path: "inventory", element: <Inventory /> }
 		],
 	},
 ])

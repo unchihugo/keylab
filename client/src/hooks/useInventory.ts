@@ -1,14 +1,6 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { inventoryService } from "../services/inventoryService";
-
-interface Product {
-    id: string;
-    name: string;
-    stock: number;
-    price: number;
-    image: string;
-    description: string;
-}
+import { Product } from "../types/Product";
 
 export function useInventory() {
     const [products, setProducts] = useState<Product[]>([]);
