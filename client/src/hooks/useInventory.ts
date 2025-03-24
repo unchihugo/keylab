@@ -50,7 +50,8 @@ export function useInventory() {
             const updated = await inventoryService.updateProduct(id, updatedProduct);
             if (updated && updated.data) {
                 setProducts((prev) =>
-                    prev.map((prod) => (prod.id === id ? updated.data : prod))
+                    prev.map((prod) => 
+                        (prod.data.id.toString() == id ? updated.data : prod))
                 );
             } else {
                 setError("Failed to update product: Invalid API response.");
@@ -69,7 +70,8 @@ export function useInventory() {
             if (!success) {
                 setError("Failed to delete product.");
             } else {
-                setProducts((prev) => prev.filter((prod) => prod.id !== id));
+                setProducts((prev) => 
+                    prev.filter((prod) => prod.data.id.toString() !== id));
             }
 
         } catch (err: any) {
