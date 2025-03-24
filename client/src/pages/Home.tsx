@@ -53,6 +53,8 @@ export default function Home() {
 							<div className="flex flex-col md:flex-row gap-3 h-full">
 								{/* First sub-column of second main column */}
 								<Link
+									to={"/keyboard-designer"}
+									className="md:w-1/2 bg-[#DDDCED] rounded-lg p-6 h-full flex flex-col justify-between bg-cover bg-center bg-no-repeat"
 									to={"/shop"}
 									className="md:w-1/2 bg-[#DDDCED] rounded-lg p-6 h-full flex flex-col justify-between bg-center bg-no-repeat bg-[length:90%] transition-all duration-300 hover:bg-[length:95%]"
 									style={{
