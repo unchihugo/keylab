@@ -110,4 +110,23 @@ export const cartServices = {
 
 		return response.json()
 	},
+
+	
+	async checkoutCart(customerDetails: any) {
+        const response = await fetch(`${CART_API_URL}/checkout`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+			body: JSON.stringify(customerDetails),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to checkout cart");
+        }
+
+        return response.json();
+    },
 }

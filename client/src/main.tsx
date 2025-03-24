@@ -24,6 +24,7 @@ import Profile from "./pages/User/Profile"
 import AdminDashboard from "./pages/Admin/Dashboard"
 import AdminOrders from "./pages/Admin/Orders"
 import CustomerManagement from "./pages/Admin/CustomerManagement"
+import Payment from "./pages/Payment";
 
 const router = createBrowserRouter([
 	{
@@ -32,6 +33,7 @@ const router = createBrowserRouter([
 		children: [
 			{ path: "/", element: <Home /> },
 			{ path: "/cart", element: <Cart /> },
+			{ path: "/payment", element: <Payment /> },
 			{
 				path: "/checkout",
 				element: (
