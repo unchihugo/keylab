@@ -25,9 +25,9 @@ export default function KeyboardDesigner() {
 		"60%" | "75%" | "100%",
 		{ productId: number; price: number }
 	> = {
-		"60%": { productId: 56, price: 89.99 },
-		"75%": { productId: 57, price: 99.99 },
-		"100%": { productId: 59, price: 109.99 },
+		"60%": { productId: 55, price: 89.99 },
+		"75%": { productId: 56, price: 99.99 },
+		"100%": { productId: 57, price: 109.99 },
 	}
 
 	// Color options list for indexing
