@@ -8,6 +8,7 @@ import LinkButton from "../../components/LinkButton"
 import ErrorBox from "../../components/ErrorBox"
 import * as formValidation from "../../lib/formValidation"
 import { Search } from "lucide-react"
+import Divider from "../../components/Divider"
 
 interface User {
 	id: number
@@ -107,7 +108,7 @@ export default function CustomerManagement() {
 							buttonClassNames="border-black bg-primary text-black hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]"
 						/>
 						<LinkButton
-							to="/admin/CustomerManagement"
+							to="/admin/customers"
 							text="Customer Management"
 							buttonClassNames="border-black bg-primary text-black hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]"
 						/>
@@ -124,6 +125,7 @@ export default function CustomerManagement() {
 					<Breadcrumb
 						breadcrumbs={["Admin Dashboard", "Customer Management"]}
 					/>
+					<Divider />
 					<h2 className="text-2xl font-bold mb-6">
 						Customer Management
 					</h2>
