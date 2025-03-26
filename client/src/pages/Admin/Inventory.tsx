@@ -126,7 +126,7 @@ export default function Inventory() {
 						/>
 						<LinkButton
 							to="/admin/settings"
-							text="Settings"
+							text="Change Password"
 							buttonClassNames="border-black bg-primary text-black hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]"
 						/>
 					</div>

@@ -6,6 +6,7 @@ import ErrorBox from "../../components/ErrorBox"
 import { useAuth } from "../../AuthContext"
 import Breadcrumb from "../../components/Breadcrumb"
 import LinkButton from "../../components/LinkButton"
+import Divider from "../../components/Divider"
 
 const AdminChangePassword: React.FC = () => {
 	const { user } = useAuth()
@@ -87,7 +88,7 @@ const AdminChangePassword: React.FC = () => {
 							buttonClassNames="border-black bg-primary text-black hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]"
 						/>
 						<LinkButton
-							to="/admin/CustomerManagement"
+							to="/admin/customers"
 							text="Customer Management"
 							buttonClassNames="border-black bg-primary text-black hover:bg-primary-dark hover:shadow-[4px_4px_0px_black]"
 						/>
@@ -103,6 +104,7 @@ const AdminChangePassword: React.FC = () => {
 					<Breadcrumb
 						breadcrumbs={["Admin Dashboard", "Change Password"]}
 					/>
+					<Divider />
 					<h2 className="text-2xl font-bold mb-6">Change Password</h2>
 					{successMessage && (
 						<p className="text-green-600 mb-4">{successMessage}</p>
